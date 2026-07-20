@@ -6,52 +6,73 @@ This repository contains my daily work, exercises, and projects completed during
 
 # Week 1
 
-## Day 1 — HelloBinX
+## Day 1 — Program Orientation & .NET Development Environment Setup
 
-A simple C# console application created as part of Day 1 of the BinX Backend Internship program.
+Day 1 focused on understanding the BinX Backend Internship program, preparing the .NET development environment, and creating the first C# console application.
 
 ### Project Overview
 
-This project was created to verify the .NET development environment and practice using the `dotnet` CLI.
+The purpose of Day 1 was to prepare the development environment required for the internship program.
 
-The application displays my name and the current date in the console.
+The .NET SDK was installed and verified, Visual Studio and Visual Studio Code were configured, and a simple console application named `HelloBinX` was created.
+
+The application displays my name and the training date in the console.
 
 ### Day 1 Objectives
 
-- Understand the internship program structure.
+- Understand the structure of the BinX Backend Internship program.
 - Install and verify the .NET SDK.
-- Configure Visual Studio and Visual Studio Code.
-- Create a console application using the `dotnet` CLI.
-- Modify the application using C#.
-- Build and run the project successfully.
+- Configure Visual Studio for C# and .NET development.
+- Configure Visual Studio Code with the required C# extension.
+- Create a C# console application.
+- Modify the application code.
+- Build and run the application successfully.
 - Upload the completed project to GitHub.
 
-### Technologies and Tools
+### Development Environment Setup
 
-- C#
-- .NET SDK
-- dotnet CLI
-- Visual Studio
-- Visual Studio Code
-- Git
-- GitHub
+The installed .NET SDK was verified using:
+
+```bash
+dotnet --version
+```
+
+Additional information about the installed .NET environment was checked using:
+
+```bash
+dotnet --info
+```
+
+### IDE Configuration
+
+The following development environments were prepared:
+
+- Visual Studio with .NET desktop development tools.
+- Visual Studio with ASP.NET and web development tools.
+- Visual Studio Code with the C# Dev Kit extension.
+
+Visual Studio is the primary development environment used for the internship tasks.
+
+### Creating the Console Application
+
+The `HelloBinX` console application was created using the .NET CLI:
+
+```bash
+dotnet new console -n HelloBinX
+```
 
 ### Application Code
 
+The console application displays my name and the training date:
+
 ```csharp
 Console.WriteLine("Mohammad Salameh");
-Console.WriteLine($"Today's date: {DateTime.Today:dd/MM/yyyy}");
+Console.WriteLine("19/07/2026");
 ```
 
 ### How to Run
 
-Open the Day 1 project directory:
-
-```bash
-cd "BinX Internship/Week 1/Day 1"
-```
-
-Build the project:
+From inside the `HelloBinX` project directory, build the application:
 
 ```bash
 dotnet build
@@ -67,8 +88,21 @@ dotnet run
 
 ```text
 Mohammad Salameh
-Today's date: DD/MM/YYYY
+19/07/2026
 ```
+
+### Technologies and Tools
+
+- C#
+- .NET SDK
+- dotnet CLI
+- Visual Studio
+- Visual Studio Code
+- C# Dev Kit
+- Terminal
+- Git
+- GitHub
+- Notion
 
 ### Project Files
 
@@ -171,7 +205,7 @@ The runtime type of each variable is also printed using `GetType()`.
 
 ### Copy Behavior
 
-The application demonstrates value-type copy behavior using two integer variables.
+The application demonstrates value-type copy behavior using two integer variables:
 
 ```csharp
 int originalNumber = 10;
@@ -180,14 +214,14 @@ int copiedNumber = originalNumber;
 copiedNumber = 20;
 ```
 
-Changing the copied value does not affect the original value.
+Changing the copied value does not affect the original value:
 
 ```text
 Original number: 10
 Copied number: 20
 ```
 
-The application demonstrates reference-type copy behavior using an array.
+The application demonstrates reference-type copy behavior using an array:
 
 ```csharp
 int[] originalNumbers = { 10, 20, 30 };
@@ -196,7 +230,7 @@ int[] copiedNumbers = originalNumbers;
 copiedNumbers[0] = 100;
 ```
 
-Both variables reference the same array. Therefore, changing the first element through `copiedNumbers` also changes the value accessed through `originalNumbers`.
+Both variables reference the same array. Changing the first element through `copiedNumbers` also changes the value accessed through `originalNumbers`:
 
 ```text
 Original first value: 100
@@ -205,7 +239,7 @@ Copied first value: 100
 
 ### Grade Classifier
 
-The application contains a return-type function that receives a score and returns its classification using a switch expression.
+The application contains a return-type function that receives a score and returns its classification using a switch expression:
 
 ```csharp
 static string DescribeGrade(int score)
@@ -388,19 +422,19 @@ namespace CSharpFundamentalsDay2
 
 ### How to Run
 
-Open the Day 2 project directory:
+Open the `CSharpFundamentalsDay2` project in Visual Studio.
 
-```bash
-cd "BinX Internship/Week 1/Day 2/CSharpFundamentalsDay2"
+Run the application without debugging:
+
+```text
+Ctrl + F5
 ```
 
-Build the project:
+The application can also be built and run from inside the project directory:
 
 ```bash
 dotnet build
 ```
-
-Run the application:
 
 ```bash
 dotnet run
@@ -417,7 +451,7 @@ isActive: True - Type: System.Boolean
 Reference Types:
 name: Mohammad - Type: System.String
 numbers Type: System.Int32[]
-skills Type: System.Collections.Generic.List...
+skills Type: System.Collections.Generic.List`1[System.String]
 
 ==============================================================
 
@@ -459,6 +493,15 @@ When no name is entered:
 ```text
 No name was entered.
 ```
+
+### Technologies and Tools
+
+- C#
+- .NET SDK
+- Visual Studio
+- Console Application
+- Git
+- GitHub
 
 ### Project Files
 
