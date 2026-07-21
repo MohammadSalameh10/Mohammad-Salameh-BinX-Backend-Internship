@@ -14,7 +14,7 @@ Day 1 focused on understanding the BinX Backend Internship program, preparing th
 
 The purpose of Day 1 was to prepare the development environment required for the internship program.
 
-The .NET SDK was installed and verified, Visual Studio and Visual Studio Code were configured, and a simple console application named `HelloBinX` was created.
+The .NET SDK was installed and verified, Visual Studio Code was configured for C# development, and a simple console application named `HelloBinX` was created.
 
 The application displays my name and the training date in the console.
 
@@ -22,9 +22,9 @@ The application displays my name and the training date in the console.
 
 - Understand the structure of the BinX Backend Internship program.
 - Install and verify the .NET SDK.
-- Configure Visual Studio for C# and .NET development.
-- Configure Visual Studio Code with the required C# extension.
-- Create a C# console application.
+- Configure Visual Studio Code for C# development.
+- Install and configure the C# Dev Kit extension.
+- Create a C# console application using the .NET CLI.
 - Modify the application code.
 - Build and run the application successfully.
 - Upload the completed project to GitHub.
@@ -42,16 +42,6 @@ Additional information about the installed .NET environment was checked using:
 ```bash
 dotnet --info
 ```
-
-### IDE Configuration
-
-The following development environments were prepared:
-
-- Visual Studio with .NET desktop development tools.
-- Visual Studio with ASP.NET and web development tools.
-- Visual Studio Code with the C# Dev Kit extension.
-
-Visual Studio is the primary development environment used for the internship tasks.
 
 ### Creating the Console Application
 
@@ -96,13 +86,11 @@ Mohammad Salameh
 - C#
 - .NET SDK
 - dotnet CLI
-- Visual Studio
 - Visual Studio Code
 - C# Dev Kit
 - Terminal
 - Git
 - GitHub
-- Notion
 
 ### Project Files
 
@@ -422,22 +410,17 @@ namespace CSharpFundamentalsDay2
 
 ### How to Run
 
-Open the `CSharpFundamentalsDay2` project in Visual Studio.
+1. Open the `CSharpFundamentalsDay2` project in Visual Studio.
+2. Build the solution using:
 
-Run the application without debugging:
+```text
+Ctrl + Shift + B
+```
+
+3. Run the application without debugging using:
 
 ```text
 Ctrl + F5
-```
-
-The application can also be built and run from inside the project directory:
-
-```bash
-dotnet build
-```
-
-```bash
-dotnet run
 ```
 
 ### Expected Output
@@ -497,7 +480,7 @@ No name was entered.
 ### Technologies and Tools
 
 - C#
-- .NET SDK
+- .NET
 - Visual Studio
 - Console Application
 - Git
@@ -527,7 +510,8 @@ The application:
 - Stores products and their available quantities.
 - Creates a customer and an immutable order request.
 - Verifies that the requested product exists.
-- Verifies that the requested quantity is valid and available.
+- Verifies that the requested quantity is valid.
+- Verifies that the requested quantity is available in stock.
 - Creates an order only when all validation checks pass.
 - Reduces the product stock after creating the order.
 - Sends different notifications through a shared interface.
@@ -614,7 +598,7 @@ if (!products.ContainsKey(request.ProductName))
 }
 ```
 
-It also checks that the requested quantity is greater than zero:
+The application also checks that the requested quantity is greater than zero:
 
 ```csharp
 if (request.Quantity < 1)
@@ -678,7 +662,7 @@ public int StockQuantity
 }
 ```
 
-The values can be initialized through constructors but cannot be changed directly from outside the class.
+The values are initialized through constructors and cannot be changed directly from outside the classes.
 
 ### Interface
 
@@ -1023,22 +1007,17 @@ namespace OrderSystemDay3
 
 ### How to Run
 
-Open the `OrderSystemDay3` project in Visual Studio.
+1. Open the `OrderSystemDay3` project in Visual Studio.
+2. Build the solution using:
 
-Run the application without debugging:
+```text
+Ctrl + Shift + B
+```
+
+3. Run the application without debugging using:
 
 ```text
 Ctrl + F5
-```
-
-The application can also be built and run from inside the project directory:
-
-```bash
-dotnet build
-```
-
-```bash
-dotnet run
 ```
 
 ### Expected Output
@@ -1073,7 +1052,7 @@ Order notification sent for Laptop with quantity 2.
 ### Technologies and Tools
 
 - C#
-- .NET SDK
+- .NET
 - Visual Studio
 - Console Application
 - Git
@@ -1092,8 +1071,6 @@ Order notification sent for Laptop with quantity 2.
 ### Day 3 Folder
 
 [View Day 3 Work](./BinX%20Internship/Week%201/Day%203/OrderSystemDay3)
-
----
 
 ---
 
