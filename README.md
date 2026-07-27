@@ -6,8 +6,8 @@ This repository contains my daily work, exercises, documentation, and projects c
 
 | Week | Focus | Documentation |
 |---|---|---|
-| 1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
-| 2 | Generics, generic constraints, advanced collection interfaces, advanced LINQ, and deferred execution | [View Week 2](./BinX%20Internship/Week%202) |
+| Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
+| Week&nbsp;2 | Generics, generic constraints, advanced collection interfaces, advanced LINQ, and deferred execution | [View Week 2](./BinX%20Internship/Week%202) |
 
 ## Repository Structure
 
