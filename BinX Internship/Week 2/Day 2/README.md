@@ -1,34 +1,22 @@
 # Day 2 — Advanced LINQ & Deferred Execution
 
+This project demonstrates advanced LINQ operations using related customer, order, and order-item data.
+
 ## Learning Objectives
 
-- Explain the difference between deferred and immediate LINQ execution.
-- Use `GroupBy` to summarize related data.
-- Use `Join` to combine two related collections.
-- Use `SelectMany` to flatten nested collections.
-- Identify common LINQ performance pitfalls.
+- Understand deferred and immediate LINQ execution.
+- Group related data using `GroupBy`.
+- Combine collections using `Join`.
+- Flatten nested collections using `SelectMany`.
+- Avoid common LINQ performance issues.
 
-## Key Topics
+## Project Overview
 
-- Deferred vs. immediate execution
-- Grouping data with `GroupBy`
-- Joining related collections with `Join`
-- Flattening nested collections with `SelectMany`
-- LINQ materialization and repeated enumeration
-
-## Hands-On Lab
-
-The application uses three related models:
+The application contains three related models:
 
 - `Customer`
 - `Order`
 - `OrderItem`
-
-Two related collections were created:
-
-- Six customers
-- Six initial orders
-- Multiple order items inside each order
 
 The relationship between customers and orders is based on:
 
@@ -36,48 +24,99 @@ The relationship between customers and orders is based on:
 Customer.Id == Order.CustomerId
 ```
 
-### GroupBy
+Each order also contains a nested collection of order items.
 
-Orders were grouped by `CustomerId` to calculate:
+## Implemented Features
 
-- The number of orders for each customer
-- The total order amount for each customer
+### Grouping Orders
 
-### Join
+`GroupBy` was used to group orders by `CustomerId`.
 
-The customers and orders collections were joined to display:
+For each customer, the application calculates:
 
-- Customer name
-- Order ID
-- Order amount
+- Number of orders
+- Total order amount
 
-Only customers with matching orders appear because LINQ `Join` behaves like an inner join.
+```csharp
+var orderTotalsByCustomer = orders
+    .GroupBy(order => order.CustomerId)
+    .Select(group => new
+    {
+        CustomerId = group.Key,
+        OrderCount = group.Count(),
+        TotalAmount = group.Sum(order => order.Amount)
+    });
+```
 
-### SelectMany
+### Joining Customers and Orders
 
-`SelectMany` was used to flatten the nested `OrderItem` collections from all orders into one sequence.
+`Join` was used to combine customer information with related orders.
 
-Each result contains:
+```csharp
+var customerOrders = customers.Join(
+    orders,
+    customer => customer.Id,
+    order => order.CustomerId,
+    (customer, order) => new
+    {
+        CustomerName = customer.Name,
+        OrderId = order.Id,
+        OrderAmount = order.Amount
+    }
+);
+```
 
-- Order ID
-- Customer ID
-- Product name
-- Quantity
-- Unit price
+The result displays the customer name, order ID, and order amount.
+
+LINQ `Join` behaves like an inner join, so customers without matching orders are not included.
+
+### Flattening Order Items
+
+Each order contains a collection of `OrderItem` objects.
+
+`SelectMany` was used to flatten all nested item collections into one sequence.
+
+```csharp
+var allOrderItems = orders.SelectMany(
+    order => order.Items,
+    (order, item) => new
+    {
+        OrderId = order.Id,
+        CustomerId = order.CustomerId,
+        ProductName = item.ProductName,
+        Quantity = item.Quantity,
+        UnitPrice = item.UnitPrice
+    }
+);
+```
 
 ### Deferred Execution
 
-A query for orders with an amount of at least `500` was defined before adding a new order.
+A LINQ query was defined before modifying the source collection:
 
-The new order was added after defining the query but before enumerating it:
-
-```text
-Order ID: 107
-Customer ID: 6
-Amount: 900
+```csharp
+IEnumerable<Order> highValueOrders = orders
+    .Where(order => order.Amount >= 500m);
 ```
 
-The new order appeared in the result because the query was executed later during the `foreach` loop.
+A new high-value order was then added before the query was enumerated.
+
+The new order appeared in the result because `Where` uses deferred execution. The query was executed only when the program reached the `foreach` loop.
+
+## LINQ Performance Notes
+
+The project also demonstrates two important LINQ performance considerations:
+
+- Avoid calling `ToList()` too early when additional filtering is still required.
+- Avoid enumerating the same deferred query multiple times when its result is used repeatedly.
+
+When a result must be reused, it can be materialized once:
+
+```csharp
+List<Order> highValueOrders = orders
+    .Where(order => order.Amount >= 500m)
+    .ToList();
+```
 
 ## Project Structure
 
@@ -96,16 +135,16 @@ Day 2/
 
 ## Run the Project
 
-From the project directory, run:
+Open the project in Visual Studio and run it using:
 
-```powershell
-dotnet run
+```text
+Ctrl + F5
 ```
 
-## Tools Used
+## Technologies and Tools
 
-- .NET SDK
 - C#
+- .NET
 - LINQ
 - Visual Studio
 - Git
