@@ -1,52 +1,69 @@
-# Week 2 — Advanced C# Concepts
+# Week 2 — Advanced C# and LINQ
 
-## Overview
+Week 2 focuses on advanced C# concepts, including generics, collection interfaces, advanced LINQ operations, and deferred execution.
 
-Week 2 focuses on advanced C# concepts and building reusable, type-safe application components.
+## Week Progress
 
-Day 1 covered generics, generic constraints, collection interfaces, predicates, and the implementation of a reusable generic repository.
-
-## Daily Work
-
-| Day | Topic | Project / Documentation |
+| Day | Topic | Documentation |
 |---|---|---|
 | Day 1 | Generics & Advanced Collections | [View Day 1](./Day%201) |
+| Day 2 | Advanced LINQ & Deferred Execution | [View Day 2](./Day%202) |
 
-## Week 2 Highlights
+## Topics Covered
 
-### Generics
+### Day 1 — Generics & Advanced Collections
 
-- Learned why generics are used in C#.
-- Used type parameters to write reusable and type-safe code.
-- Applied the `where T : class` generic constraint.
-- Used the same generic class with different domain-model types.
+- Generic methods and classes
+- Generic constraints
+- Type safety and code reusability
+- `IEnumerable<T>`
+- `IReadOnlyList<T>`
+- `IList<T>`
+- Generic repository implementation
+
+### Day 2 — Advanced LINQ & Deferred Execution
+
+- Deferred and immediate LINQ execution
+- Grouping data with `GroupBy`
+- Combining related collections with `Join`
+- Flattening nested collections with `SelectMany`
+- LINQ materialization using `ToList`
+- Avoiding repeated query enumeration
+- Common LINQ performance pitfalls
+
+## Projects
 
 ### Generic Repository
 
-- Created a reusable `Repository<T>` class.
-- Added `Add`, `GetAll`, and `Find` operations.
-- Stored items internally using `List<T>`.
-- Searched for items using `Predicate<T>` and lambda expressions.
-- Used the repository with `Product` and `Customer`.
+A reusable generic repository was implemented with:
 
-### Collection Interfaces
+- `Add`
+- `GetAll`
+- `Find`
 
-- Reviewed `IEnumerable<T>`, `IReadOnlyList<T>`, and `IList<T>`.
-- Returned `IReadOnlyList<T>` from `GetAll()`.
-- Confirmed that callers cannot add or remove items from the returned collection directly.
+The repository uses a generic constraint and returns an `IReadOnlyList<T>` to prevent direct modification through the returned collection.
 
-## Tools Used
+[View the Day 1 project](./Day%201)
+
+### Advanced LINQ Application
+
+A console application was created using related customer, order, and order-item data.
+
+The application demonstrates:
+
+- Grouping orders by customer
+- Calculating total order amounts
+- Joining customers with their orders
+- Flattening nested order items
+- Demonstrating deferred execution
+
+[View the Day 2 project](./Day%202)
+
+## Technologies and Tools
 
 - C#
 - .NET
+- LINQ
 - Visual Studio
-- Console Application
-- PowerShell
 - Git
 - GitHub
-
-## Summary
-
-Week 2 began with an introduction to generics and advanced collection interfaces in C#.
-
-A reusable generic repository was created and tested with two different domain-model types. The repository maintains type safety, supports adding and searching for items, and protects its internal collection by returning an `IReadOnlyList<T>`.
