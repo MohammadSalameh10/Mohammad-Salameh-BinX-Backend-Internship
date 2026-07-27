@@ -2,12 +2,6 @@
 
 This repository contains my daily work, exercises, documentation, and projects completed during the BinX Backend Internship program.
 
-## Notion Documentation
-
-Detailed daily learning notes, hands-on exercises, challenges, and screenshots are documented in Notion.
-
-https://app.notion.com/p/Backend-Internship-Training-Program-3a23b8feb91f800ebc18d4334e3efff4?source=copy_link
-
 ## Internship Progress
 
 | Week | Focus | Documentation |
