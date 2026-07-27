@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CollectionsLinqDay4")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ff55156e0f759fc03df6ba705c2785880c06389")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b99757124b4aecf18eb4ebd6e119c960c116576")]
 [assembly: System.Reflection.AssemblyProductAttribute("CollectionsLinqDay4")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CollectionsLinqDay4")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
