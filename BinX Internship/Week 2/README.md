@@ -1,6 +1,6 @@
 # Week 2 — Advanced C# and LINQ
 
-Week 2 focuses on advanced C# concepts, including generics, collection interfaces, advanced LINQ operations, and deferred execution.
+Week 2 focuses on advanced C# concepts, including generics, collection interfaces, advanced LINQ operations, deferred execution, asynchronous programming, concurrency, and cancellation.
 
 ## Week Progress
 
@@ -8,6 +8,7 @@ Week 2 focuses on advanced C# concepts, including generics, collection interface
 |---|---|---|
 | Day 1 | Generics & Advanced Collections | [View Day 1](./Day%201) |
 | Day 2 | Advanced LINQ & Deferred Execution | [View Day 2](./Day%202) |
+| Day 3 | Async/Await Deep Dive & Concurrency Basics | [View Day 3](./Day%203) |
 
 ## Topics Covered
 
@@ -30,6 +31,18 @@ Week 2 focuses on advanced C# concepts, including generics, collection interface
 - LINQ materialization using `ToList`
 - Avoiding repeated query enumeration
 - Common LINQ performance pitfalls
+
+### Day 3 — Async/Await Deep Dive & Concurrency Basics
+
+- Task-based asynchronous programming
+- `Task` and `Task<T>`
+- Asynchronous methods using `async` and `await`
+- Avoiding blocking with `.Result` and `.Wait()`
+- Sequential and concurrent execution
+- Running independent operations with `Task.WhenAll`
+- Measuring execution time using `Stopwatch`
+- Cancelling asynchronous operations with `CancellationToken`
+- Handling `OperationCanceledException`
 
 ## Projects
 
@@ -59,11 +72,29 @@ The application demonstrates:
 
 [View the Day 2 project](./Day%202)
 
+### Concurrent Async Operations
+
+A console application was created to compare sequential and concurrent asynchronous execution.
+
+The application demonstrates:
+
+- Simulating multiple data sources using `Task.Delay`
+- Executing operations sequentially with individual `await` statements
+- Running independent operations concurrently with `Task.WhenAll`
+- Comparing elapsed execution times
+- Cancelling an operation during execution with `CancellationToken`
+- Handling cancellation using `OperationCanceledException`
+
+[View the Day 3 project](./Day%203)
+
 ## Technologies and Tools
 
 - C#
 - .NET
 - LINQ
+- Async/Await
+- `Task.WhenAll`
+- `CancellationToken`
 - Visual Studio
 - Git
 - GitHub
