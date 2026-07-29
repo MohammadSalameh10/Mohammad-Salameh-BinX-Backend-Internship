@@ -7,7 +7,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week | Focus | Documentation |
 |---|---|---|
 | Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
-| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, deferred execution, asynchronous programming, concurrency, and cancellation | [View Week 2](./BinX%20Internship/Week%202) |
+| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web API setup, routing, Controllers, and Minimal APIs | [View Week 2](./BinX%20Internship/Week%202) |
 
 ## Repository Structure
 
@@ -24,7 +24,8 @@ BinX Internship/
     ├── README.md
     ├── Day 1/
     ├── Day 2/
-    └── Day 3/
+    ├── Day 3/
+    └── Day 4/
 ```
 
 Each week contains a summary README, and each day contains its own task documentation and project files.
@@ -40,6 +41,12 @@ Each week contains a summary README, and each day contains its own task document
 - Sequential and concurrent execution
 - Running independent operations with `Task.WhenAll`
 - Cancelling asynchronous operations with `CancellationToken`
+- ASP.NET Core Web API development
+- The minimal hosting model in `Program.cs`
+- Controllers and Minimal APIs
+- Routes, route parameters, and HTTP verbs
+- Swagger and OpenAPI documentation
+- API testing with Postman
 - Git and GitHub workflows
 
 ## Author
