@@ -1,6 +1,6 @@
-# Week 2 — Advanced C# and LINQ
+# Week 2 — Advanced C#, LINQ, and ASP.NET Core
 
-Week 2 focuses on advanced C# concepts, including generics, collection interfaces, advanced LINQ operations, deferred execution, asynchronous programming, concurrency, and cancellation.
+Week 2 focuses on advanced C# concepts, LINQ, asynchronous programming, and the fundamentals of building and testing ASP.NET Core Web APIs.
 
 ## Week Progress
 
@@ -9,6 +9,7 @@ Week 2 focuses on advanced C# concepts, including generics, collection interface
 | Day 1 | Generics & Advanced Collections | [View Day 1](./Day%201) |
 | Day 2 | Advanced LINQ & Deferred Execution | [View Day 2](./Day%202) |
 | Day 3 | Async/Await Deep Dive & Concurrency Basics | [View Day 3](./Day%203) |
+| Day 4 | ASP.NET Core Project Setup & Routing | [View Day 4](./Day%204) |
 
 ## Topics Covered
 
@@ -43,6 +44,18 @@ Week 2 focuses on advanced C# concepts, including generics, collection interface
 - Measuring execution time using `Stopwatch`
 - Cancelling asynchronous operations with `CancellationToken`
 - Handling `OperationCanceledException`
+
+### Day 4 — ASP.NET Core Project Setup & Routing
+
+- ASP.NET Core Web API project structure
+- The minimal hosting model in `Program.cs`
+- Service registration and the HTTP request pipeline
+- Controllers and Minimal APIs
+- Routes and route parameters
+- HTTP verbs and REST conventions
+- Swagger and OpenAPI configuration
+- Testing endpoints using Postman
+- Saving API requests inside a Postman collection
 
 ## Projects
 
@@ -87,6 +100,34 @@ The application demonstrates:
 
 [View the Day 3 project](./Day%203)
 
+### ASP.NET Core Routing API
+
+An ASP.NET Core Web API application was created to demonstrate routing using Controllers and Minimal APIs.
+
+The application demonstrates:
+
+- Creating an ASP.NET Core Web API project
+- Configuring services and middleware in `Program.cs`
+- Creating a `Product` domain model
+- Returning a hardcoded list of products
+- Retrieving a single product using a route parameter
+- Building endpoints with a Controller
+- Building the same endpoints using Minimal APIs
+- Returning `200 OK` and `404 Not Found` responses
+- Documenting endpoints using Swagger
+- Testing and saving requests using Postman
+
+The application contains the following endpoints:
+
+| Approach | HTTP Verb | Route |
+|---|---|---|
+| Controller | GET | `/api/Products` |
+| Controller | GET | `/api/Products/{id}` |
+| Minimal API | GET | `/minimal/products` |
+| Minimal API | GET | `/minimal/products/{id}` |
+
+[View the Day 4 project](./Day%204)
+
 ## Technologies and Tools
 
 - C#
@@ -95,6 +136,12 @@ The application demonstrates:
 - Async/Await
 - `Task.WhenAll`
 - `CancellationToken`
+- ASP.NET Core Web API
+- Controllers
+- Minimal APIs
+- Swagger
+- OpenAPI
+- Postman
 - Visual Studio
 - Git
 - GitHub
