@@ -1,6 +1,6 @@
 # Week 2 — Advanced C#, LINQ, and ASP.NET Core
 
-Week 2 focuses on advanced C# concepts, LINQ, asynchronous programming, and the fundamentals of building and testing ASP.NET Core Web APIs.
+Week 2 focuses on advanced C# concepts, LINQ, asynchronous programming, ASP.NET Core Web APIs, middleware, and dependency injection.
 
 ## Week Progress
 
@@ -10,6 +10,7 @@ Week 2 focuses on advanced C# concepts, LINQ, asynchronous programming, and the 
 | Day 2 | Advanced LINQ & Deferred Execution | [View Day 2](./Day%202) |
 | Day 3 | Async/Await Deep Dive & Concurrency Basics | [View Day 3](./Day%203) |
 | Day 4 | ASP.NET Core Project Setup & Routing | [View Day 4](./Day%204) |
+| Day 5 | Middleware Pipeline & Dependency Injection; Week 2 Synthesis | [View Day 5](./Day%205) |
 
 ## Topics Covered
 
@@ -56,6 +57,19 @@ Week 2 focuses on advanced C# concepts, LINQ, asynchronous programming, and the 
 - Swagger and OpenAPI configuration
 - Testing endpoints using Postman
 - Saving API requests inside a Postman collection
+
+### Day 5 — Middleware Pipeline & Dependency Injection
+
+- The ASP.NET Core middleware pipeline
+- Middleware execution order
+- Creating custom middleware
+- Logging request methods and paths
+- Endpoint selection using `UseRouting`
+- Dependency injection
+- Service lifetimes: Transient, Scoped, and Singleton
+- Interface-based service registration
+- Constructor injection inside a controller
+- Week 2 synthesis and documentation
 
 ## Projects
 
@@ -128,6 +142,31 @@ The application contains the following endpoints:
 
 [View the Day 4 project](./Day%204)
 
+### Middleware and Dependency Injection API
+
+An ASP.NET Core Web API application was created to demonstrate custom middleware, pipeline ordering, service registration, and constructor injection.
+
+The application demonstrates:
+
+- Logging each request method and path using custom middleware
+- Passing requests to the next pipeline component
+- Testing the middleware before `UseRouting`
+- Correcting the middleware order to access the selected endpoint
+- Creating `IProductService` and `ProductService`
+- Registering the product service with a `Scoped` lifetime
+- Injecting `IProductService` into `ProductsController`
+- Moving product data and search logic from the controller into a service
+- Returning `200 OK` and `404 Not Found` responses
+
+The application contains the following endpoints:
+
+| HTTP Verb | Route | Description |
+|---|---|---|
+| GET | `/api/Products` | Returns all products |
+| GET | `/api/Products/{id}` | Returns a product by ID |
+
+[View the Day 5 project](./Day%205)
+
 ## Technologies and Tools
 
 - C#
@@ -139,6 +178,11 @@ The application contains the following endpoints:
 - ASP.NET Core Web API
 - Controllers
 - Minimal APIs
+- Middleware
+- Dependency Injection
+- `IProductService`
+- Service lifetimes
+- Constructor injection
 - Swagger
 - OpenAPI
 - Postman
