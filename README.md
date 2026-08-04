@@ -8,7 +8,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 |---|---|---|
 | Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
 | Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection | [View Week 2](./BinX%20Internship/Week%202) |
-| Week&nbsp;3 | REST API design, resource modeling, HTTP status codes, API versioning, SQL Server schema design, database normalization, keys, relationships, and ERDs | [View Week 3](./BinX%20Internship/Week%203) |
+| Week&nbsp;3 | REST API design, resource modeling, SQL Server schema design, database normalization, Entity Framework Core, Code-First development, and migrations | [View Week 3](./BinX%20Internship/Week%203) |
 
 ## Repository Structure
 
@@ -31,7 +31,8 @@ BinX Internship/
 └── Week 3/
     ├── README.md
     ├── Day 1/
-    └── Day 2/
+    ├── Day 2/
+    └── Day 3/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -72,6 +73,15 @@ Each week contains a summary README, and each completed day contains its own tas
 - Entity Relationship Diagrams
 - Database design using `dbdiagram.io`
 - Database implementation using SQL Server Management Studio
+- Entity Framework Core with SQL Server
+- Entity models and navigation properties
+- `DbContext` and `DbSet<T>`
+- Entity configuration using Fluent API
+- Connection strings and database configuration
+- Code-First migrations
+- Generating migrations with `Add-Migration`
+- Applying migrations with `Update-Database`
+- Verifying generated tables using SQL Server Object Explorer
 - Swagger and OpenAPI documentation
 - Git and GitHub workflows
 
