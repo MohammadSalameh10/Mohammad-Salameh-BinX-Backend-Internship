@@ -69,10 +69,10 @@ namespace TaskTrackerApi.Models
 
         public string Email { get; set; } = string.Empty;
 
-        public ICollection<TaskItem> Tasks { get; set; }
+        public List<TaskItem> Tasks { get; set; }
             = new List<TaskItem>();
 
-        public ICollection<Comment> Comments { get; set; }
+        public List<Comment> Comments { get; set; }
             = new List<Comment>();
     }
 }
@@ -101,7 +101,7 @@ namespace TaskTrackerApi.Models
 
         public DateTime? DueDate { get; set; }
 
-        public ICollection<Comment> Comments { get; set; }
+        public List<Comment> Comments { get; set; }
             = new List<Comment>();
     }
 }
@@ -333,33 +333,3 @@ Day 3/
 - Visual Studio
 - Visual Studio Package Manager Console
 - Visual Studio SQL Server Object Explorer
-
-## What I Learned
-
-- How Entity Framework Core maps C# classes to database tables.
-- How scalar properties map to columns.
-- How navigation properties represent relationships.
-- How `DbContext` manages access to the database.
-- How `DbSet<T>` represents a database table.
-- How to configure entities using Fluent API.
-- How to define keys, indexes, and relationships.
-- How to register `AppDbContext` using Dependency Injection.
-- How to configure a SQL Server connection string.
-- How to generate and inspect a Code-First migration.
-- How to apply a migration using `Update-Database`.
-- How EF Core records applied migrations.
-- How to verify generated tables using a database GUI client.
-
-## Challenges
-
-The first challenge was ensuring that the entity classes matched the Day 2 ERD.
-
-I addressed this by creating separate models for `Users`, `Tasks`, and `Comments` and mapping `TaskItem` to the `Tasks` table.
-
-Another challenge was configuring the three one-to-many relationships correctly.
-
-I used foreign-key properties, navigation properties, and Fluent API configuration to define the relationships.
-
-The initial migration command also stopped because the project referenced a vulnerable package version. I updated the package, rebuilt the project, and generated the migration successfully.
-
-Finally, I verified that the generated SQL Server database matched the EF Core models and configuration.
