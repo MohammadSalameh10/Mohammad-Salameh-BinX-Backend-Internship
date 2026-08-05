@@ -8,7 +8,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 |---|---|---|
 | Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
 | Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection | [View Week 2](./BinX%20Internship/Week%202) |
-| Week&nbsp;3 | REST API design, resource modeling, SQL Server schema design, database normalization, Entity Framework Core, Code-First development, and migrations | [View Week 3](./BinX%20Internship/Week%203) |
+| Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, and API testing | [View Week 3](./BinX%20Internship/Week%203) |
 
 ## Repository Structure
 
@@ -32,7 +32,8 @@ BinX Internship/
     ├── README.md
     ├── Day 1/
     ├── Day 2/
-    └── Day 3/
+    ├── Day 3/
+    └── Day 4/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -82,6 +83,22 @@ Each week contains a summary README, and each completed day contains its own tas
 - Generating migrations with `Add-Migration`
 - Applying migrations with `Update-Database`
 - Verifying generated tables using SQL Server Object Explorer
+- Asynchronous CRUD operations with Entity Framework Core
+- Creating records with `Add` and `SaveChangesAsync`
+- Read-only queries using `AsNoTracking`
+- Asynchronous queries using `ToListAsync` and `FirstOrDefaultAsync`
+- Entity Framework Core change tracking
+- Updating tracked entities
+- Deleting entities with `Remove`
+- Request models for create and update operations
+- Request validation using Data Annotations
+- Service interfaces and service implementations
+- Separating database operations from API controllers
+- Registering application services using Dependency Injection
+- Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, and `404 Not Found`
+- Returning resource locations using `CreatedAtAction`
+- Testing successful and invalid API requests using Postman
+- Managing delete order for related database records
 - Swagger and OpenAPI documentation
 - Git and GitHub workflows
 
