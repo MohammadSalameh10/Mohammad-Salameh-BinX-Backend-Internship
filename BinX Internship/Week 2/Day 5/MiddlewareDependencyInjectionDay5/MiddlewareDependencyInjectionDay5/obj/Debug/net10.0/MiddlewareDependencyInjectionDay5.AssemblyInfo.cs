@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiddlewareDependencyInjectionDay5")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8abf4cddf90e81d3ca1ce9fa78a82a4cf5948f42")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+048831215af0c67a3ec424c419846c03fd86e28f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiddlewareDependencyInjectionDay5")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiddlewareDependencyInjectionDay5")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
