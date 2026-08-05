@@ -2,13 +2,15 @@
 
 ## Overview
 
-Week 3 focuses on REST API design, resource modeling, SQL Server schema design, database normalization, and Entity Framework Core Code-First development.
+Week 3 focuses on REST API design, resource modeling, SQL Server schema design, database normalization, Entity Framework Core Code-First development, and implementing asynchronous CRUD operations.
 
 The first exercise focused on designing a RESTful API before implementing it, including resource naming, HTTP methods, status codes, nested resources, and API versioning.
 
 The second exercise focused on designing and implementing a normalized SQL Server database schema for the same Task Tracker domain.
 
 The third exercise focused on creating an ASP.NET Core Web API project, configuring Entity Framework Core with SQL Server, defining entity models and relationships, generating the first migration, and applying it to the database.
+
+The fourth exercise focused on implementing complete asynchronous CRUD operations for Users, Tasks, and Comments using Entity Framework Core, request validation, a service layer, Dependency Injection, and Postman testing.
 
 This README will continue to be updated as the remaining Week 3 exercises are completed.
 
@@ -163,9 +165,109 @@ TaskTrackerEfCoreDb
 
 [View Day 3 Documentation](./Day%203/README.md)
 
+---
+
+### Day 4 — Implementing CRUD Operations with EF Core
+
+Implemented complete asynchronous CRUD operations for the Task Tracker API using Entity Framework Core.
+
+CRUD operations were implemented for:
+
+```text
+Users
+Tasks
+Comments
+```
+
+The exercise included:
+
+- Creating separate request models for create and update operations.
+- Validating incoming requests using Data Annotations.
+- Creating service interfaces and service implementations.
+- Registering services using Dependency Injection.
+- Keeping database logic outside the controllers.
+- Implementing asynchronous create, read, update, and delete operations.
+- Using `AsNoTracking` for read-only queries.
+- Using EF Core change tracking for update operations.
+- Calling `SaveChangesAsync` after database changes.
+- Returning appropriate HTTP status codes.
+- Returning `201 Created` with a `Location` header.
+- Returning `400 Bad Request` for invalid request data.
+- Returning `404 Not Found` for missing resources.
+- Testing successful and invalid requests using Postman.
+- Organizing Postman requests into Users, Tasks, and Comments folders.
+- Documenting the implementation in Notion and GitHub.
+
+Service interfaces:
+
+```text
+IUserService
+ITaskService
+ICommentService
+```
+
+Service implementations:
+
+```text
+UserService
+TaskService
+CommentService
+```
+
+Each service implements:
+
+```text
+GetAllAsync
+GetByIdAsync
+CreateAsync
+UpdateAsync
+DeleteAsync
+```
+
+Implemented endpoints:
+
+```http
+POST   /api/users
+GET    /api/users
+GET    /api/users/{id}
+PUT    /api/users/{id}
+DELETE /api/users/{id}
+
+POST   /api/tasks
+GET    /api/tasks
+GET    /api/tasks/{id}
+PUT    /api/tasks/{id}
+DELETE /api/tasks/{id}
+
+POST   /api/comments
+GET    /api/comments
+GET    /api/comments/{id}
+PUT    /api/comments/{id}
+DELETE /api/comments/{id}
+```
+
+Tested HTTP status codes:
+
+```text
+200 OK
+201 Created
+204 No Content
+400 Bad Request
+404 Not Found
+```
+
+Because the resources are connected through foreign-key relationships, records were deleted in this order:
+
+```text
+Comment → Task → User
+```
+
+[View Day 4 Documentation](./Day%204/README.md)
+
 ## Tools Used
 
 - Postman
+- Swagger
 - ASP.NET Core Web API
 - Entity Framework Core
 - SQL Server
@@ -189,10 +291,15 @@ Week 3/
 │   ├── README.md
 │   ├── task-tracker-erd.png
 │   └── task-tracker-ssms-diagram.png
-└── Day 3/
+├── Day 3/
+│   ├── README.md
+│   ├── initial-create-migration.png
+│   ├── task-tracker-efcore-tables.png
+│   └── TaskTrackerApi/
+└── Day 4/
     ├── README.md
-    ├── initial-create-migration.png
-    ├── task-tracker-efcore-tables.png
+    ├── task-tracker-crud-endpoints.png
+    ├── task-tracker-postman-tests.png
     └── TaskTrackerApi/
 ```
 
@@ -203,5 +310,5 @@ Week 3/
 | Day 1 | REST API Design Principles & Resource Modeling | Completed |
 | Day 2 | SQL Server Schema Design & Normalization | Completed |
 | Day 3 | Entity Framework Core Setup & Code-First Migrations | Completed |
-| Day 4 | To be added | Not started |
+| Day 4 | Implementing CRUD Operations with EF Core | Completed |
 | Day 5 | To be added | Not started |
