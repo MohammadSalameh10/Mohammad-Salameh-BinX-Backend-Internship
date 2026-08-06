@@ -2,17 +2,17 @@
 
 ## Overview
 
-Week 3 focuses on REST API design, resource modeling, SQL Server schema design, database normalization, Entity Framework Core Code-First development, and implementing asynchronous CRUD operations.
+Week 3 focused on REST API design, resource modeling, SQL Server schema design, database normalization, Entity Framework Core Code-First development, asynchronous CRUD operations, and API testing and documentation using Postman.
 
 The first exercise focused on designing a RESTful API before implementing it, including resource naming, HTTP methods, status codes, nested resources, and API versioning.
 
-The second exercise focused on designing and implementing a normalized SQL Server database schema for the same Task Tracker domain.
+The second exercise focused on designing and implementing a normalized SQL Server database schema for the Task Tracker domain.
 
 The third exercise focused on creating an ASP.NET Core Web API project, configuring Entity Framework Core with SQL Server, defining entity models and relationships, generating the first migration, and applying it to the database.
 
-The fourth exercise focused on implementing complete asynchronous CRUD operations for Users, Tasks, and Comments using Entity Framework Core, request validation, a service layer, Dependency Injection, and Postman testing.
+The fourth exercise focused on implementing complete asynchronous CRUD operations for Users, Tasks, and Comments using Entity Framework Core, request validation, a service layer, Dependency Injection, and appropriate HTTP responses.
 
-This README will continue to be updated as the remaining Week 3 exercises are completed.
+The fifth exercise focused on organizing the API requests into a reusable Postman collection, testing success and error paths, adding automated test scripts, configuring an environment variable, exporting the collection, and assembling the Week 3 deliverables.
 
 ## Completed Days
 
@@ -264,6 +264,112 @@ Comment → Task → User
 
 [View Day 4 Documentation](./Day%204/README.md)
 
+---
+
+### Day 5 — Testing & Documenting the API with Postman
+
+Organized, tested, automated, exported, and documented the Task Tracker API using Postman.
+
+The Postman collection was named:
+
+```text
+Week 3 Day 5 - Task Tracker API
+```
+
+The collection contains separate folders for:
+
+```text
+Users
+Tasks
+Comments
+```
+
+The exercise included:
+
+- Organizing the saved CRUD requests by resource.
+- Keeping successful and error-path requests together.
+- Testing invalid input and missing resources.
+- Adding Post-response test scripts.
+- Automatically asserting expected HTTP status codes.
+- Verifying that successful create responses contain an `id`.
+- Creating a Postman environment.
+- Adding a `baseUrl` environment variable.
+- Updating the requests to use `{{baseUrl}}`.
+- Exporting the completed collection as JSON.
+- Documenting the API and the Week 3 deliverables.
+- Preparing the Week 3 synthesis for the mentor check-in.
+
+Environment configuration:
+
+```text
+Environment: Task Tracker Local Environment
+Variable:    baseUrl
+Value:       https://localhost:7277
+```
+
+Request URL example:
+
+```http
+GET {{baseUrl}}/api/users
+```
+
+Automated test examples:
+
+```javascript
+pm.test("Status code is 200", () => {
+    pm.response.to.have.status(200);
+});
+```
+
+```javascript
+pm.test("Status code is 201", () => {
+    pm.response.to.have.status(201);
+});
+
+pm.test("Response has an id", () => {
+    pm.expect(pm.response.json()).to.have.property("id");
+});
+```
+
+```javascript
+pm.test("Status code is 404", () => {
+    pm.response.to.have.status(404);
+});
+```
+
+Exported collection:
+
+```text
+task-tracker-api.postman_collection.json
+```
+
+[View Day 5 Documentation](./Day%205/README.md)
+
+[View Exported Postman Collection](./Day%205/task-tracker-api.postman_collection.json)
+
+## Week 3 Deliverables
+
+- REST API resource design
+- RESTful endpoint map
+- SQL Server ERD
+- Normalized database schema
+- Primary-key and foreign-key relationships
+- Entity Framework Core models
+- Fluent API configuration
+- Code-First migration
+- SQL Server database
+- CRUD endpoints for Users, Tasks, and Comments
+- Request validation
+- Service interfaces and implementations
+- Dependency Injection
+- Success-path API tests
+- Error-path API tests
+- Automated Postman test scripts
+- Postman environment
+- Exported Postman collection
+- Notion documentation
+- GitHub documentation
+
 ## Tools Used
 
 - Postman
@@ -296,11 +402,15 @@ Week 3/
 │   ├── initial-create-migration.png
 │   ├── task-tracker-efcore-tables.png
 │   └── TaskTrackerApi/
-└── Day 4/
+├── Day 4/
+│   ├── README.md
+│   ├── task-tracker-crud-endpoints.png
+│   ├── task-tracker-postman-tests.png
+│   └── TaskTrackerApi/
+└── Day 5/
     ├── README.md
-    ├── task-tracker-crud-endpoints.png
-    ├── task-tracker-postman-tests.png
-    └── TaskTrackerApi/
+    ├── task-tracker-api.postman_collection.json
+    └── postman-automated-tests.png
 ```
 
 ## Progress
@@ -311,4 +421,4 @@ Week 3/
 | Day 2 | SQL Server Schema Design & Normalization | Completed |
 | Day 3 | Entity Framework Core Setup & Code-First Migrations | Completed |
 | Day 4 | Implementing CRUD Operations with EF Core | Completed |
-| Day 5 | To be added | Not started |
+| Day 5 | Testing & Documenting the API with Postman; Week 3 Synthesis | Completed |
