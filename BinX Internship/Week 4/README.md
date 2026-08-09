@@ -75,8 +75,8 @@ The registration request contains:
 
 ```json
 {
-  "email": "testuser@example.com",
-  "password": "Test@12345"
+  "email": "mohammad@gmail.com",
+  "password": "Mm@123123"
 }
 ```
 
@@ -100,7 +100,7 @@ A deliberately weak password was tested:
 
 ```json
 {
-  "email": "weakuser@example.com",
+  "email": "mohammad1@gmail.com",
   "password": "123"
 }
 ```
