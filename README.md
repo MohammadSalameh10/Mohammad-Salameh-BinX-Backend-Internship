@@ -4,11 +4,12 @@ This repository contains my daily work, exercises, documentation, and projects c
 
 ## Internship Progress
 
-| Week | Focus | Documentation |
-|---|---|---|
-| Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
-| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection | [View Week 2](./BinX%20Internship/Week%202) |
-| Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation | [View Week 3](./BinX%20Internship/Week%203) |
+| Week   | Focus                                                                                                                                                                                                                                                         | Documentation                               |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Week 1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow                                                                                                                                                  | [View Week 1](./BinX%20Internship/Week%201) |
+| Week 2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                     | [View Week 2](./BinX%20Internship/Week%202) |
+| Week 3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation  | [View Week 3](./BinX%20Internship/Week%203) |
+| Week 4 | ASP.NET Core Identity, Entity Framework Core Identity integration, user registration, password hashing, and password validation                                                                                                                               | [View Week 4](./BinX%20Internship/Week%204) |
 
 ## Repository Structure
 
@@ -28,18 +29,23 @@ BinX Internship/
 │   ├── Day 3/
 │   ├── Day 4/
 │   └── Day 5/
-└── Week 3/
+├── Week 3/
+│   ├── README.md
+│   ├── Day 1/
+│   ├── Day 2/
+│   ├── Day 3/
+│   ├── Day 4/
+│   └── Day 5/
+└── Week 4/
     ├── README.md
-    ├── Day 1/
-    ├── Day 2/
-    ├── Day 3/
-    ├── Day 4/
-    └── Day 5/
+    └── Day 1/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
 
 ## Current Learning Areas
+
+### C# and .NET
 
 - C# and .NET fundamentals
 - Object-oriented programming
@@ -52,21 +58,29 @@ Each week contains a summary README, and each completed day contains its own tas
 - Sequential and concurrent execution
 - Running independent operations with `Task.WhenAll`
 - Cancelling asynchronous operations with `CancellationToken`
+
+### ASP.NET Core
+
 - ASP.NET Core Web API development
 - The minimal hosting model in `Program.cs`
 - Controllers and Minimal APIs
 - Routes, route parameters, and HTTP verbs
 - Middleware pipeline and execution ordering
 - Custom request-logging middleware
-- Dependency injection and service lifetimes
+- Dependency Injection and service lifetimes
 - Constructor injection using interfaces
+
+### REST APIs
+
 - REST API design principles
 - Resource-based API modeling
 - RESTful resource naming conventions
 - Nested resource relationships
 - Correct HTTP status-code usage
 - URL-based API versioning
-- API design and testing with Postman
+
+### SQL Server and Database Design
+
 - SQL Server database design
 - Database normalization using `1NF`, `2NF`, and `3NF`
 - Primary keys and foreign keys
@@ -75,6 +89,9 @@ Each week contains a summary README, and each completed day contains its own tas
 - Entity Relationship Diagrams
 - Database design using `dbdiagram.io`
 - Database implementation using SQL Server Management Studio
+
+### Entity Framework Core
+
 - Entity Framework Core with SQL Server
 - Entity models and navigation properties
 - `DbContext` and `DbSet<T>`
@@ -84,13 +101,16 @@ Each week contains a summary README, and each completed day contains its own tas
 - Generating migrations with `Add-Migration`
 - Applying migrations with `Update-Database`
 - Verifying generated tables using SQL Server Object Explorer
-- Asynchronous CRUD operations with Entity Framework Core
+- Asynchronous CRUD operations
 - Creating records with `Add` and `SaveChangesAsync`
 - Read-only queries using `AsNoTracking`
 - Asynchronous queries using `ToListAsync` and `FirstOrDefaultAsync`
 - Entity Framework Core change tracking
 - Updating tracked entities
 - Deleting entities with `Remove`
+
+### API Architecture and Validation
+
 - Request models for create and update operations
 - Request validation using Data Annotations
 - Service interfaces and service implementations
@@ -98,8 +118,28 @@ Each week contains a summary README, and each completed day contains its own tas
 - Registering application services using Dependency Injection
 - Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, and `404 Not Found`
 - Returning resource locations using `CreatedAtAction`
-- Testing successful and invalid API requests using Postman
 - Managing delete order for related database records
+
+### ASP.NET Core Identity
+
+- ASP.NET Core Identity integration
+- `IdentityUser` and `IdentityRole`
+- `IdentityDbContext<IdentityUser>`
+- Identity integration with Entity Framework Core
+- Identity database migrations
+- Identity service registration
+- `UserManager<IdentityUser>`
+- User registration using `UserManager.CreateAsync`
+- Password hashing using ASP.NET Core Identity
+- PBKDF2 password hashing
+- Unique password salts
+- Built-in password validation
+- Authentication and authorization middleware
+
+### Postman and API Testing
+
+- API design and testing with Postman
+- Testing successful and invalid API requests
 - Organizing Postman collections by API resource
 - Testing success paths and realistic error paths
 - Writing automated Postman tests using `pm.test`
@@ -107,8 +147,13 @@ Each week contains a summary README, and each completed day contains its own tas
 - Creating Postman environments
 - Using the `baseUrl` environment variable
 - Exporting and sharing Postman collections
-- Documenting API endpoints and test results
+
+### Development Tools and Workflow
+
 - Swagger and OpenAPI documentation
+- Visual Studio
+- SQL Server Management Studio
+- Postman
 - Git and GitHub workflows
 
 ## Author
