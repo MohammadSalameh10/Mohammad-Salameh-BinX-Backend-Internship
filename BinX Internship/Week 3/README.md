@@ -1,38 +1,33 @@
-# Week 3 — Backend Internship
+# Week 3 — REST APIs, SQL Server, Entity Framework Core & Postman
 
 ## Overview
 
-Week 3 focused on REST API design, resource modeling, SQL Server schema design, database normalization, Entity Framework Core Code-First development, asynchronous CRUD operations, and API testing and documentation using Postman.
+Week 3 focused on designing and building a complete Task Tracker API workflow, starting with REST API design and database modeling, then moving to Entity Framework Core, asynchronous CRUD operations, and API testing with Postman.
 
-The first exercise focused on designing a RESTful API before implementing it, including resource naming, HTTP methods, status codes, nested resources, and API versioning.
+The same Task Tracker domain was developed throughout the week to connect API design, database design, backend implementation, and testing.
 
-The second exercise focused on designing and implementing a normalized SQL Server database schema for the Task Tracker domain.
+## Daily Work
 
-The third exercise focused on creating an ASP.NET Core Web API project, configuring Entity Framework Core with SQL Server, defining entity models and relationships, generating the first migration, and applying it to the database.
+| Day   | Topic                                                        | Project / Documentation |
+| ----- | ------------------------------------------------------------ | ----------------------- |
+| Day 1 | REST API Design Principles & Resource Modeling               | [View Day 1](./Day%201) |
+| Day 2 | SQL Server Schema Design & Normalization                     | [View Day 2](./Day%202) |
+| Day 3 | Entity Framework Core Setup & Code-First Migrations          | [View Day 3](./Day%203) |
+| Day 4 | Implementing CRUD Operations with EF Core                    | [View Day 4](./Day%204) |
+| Day 5 | Testing & Documenting the API with Postman; Week 3 Synthesis | [View Day 5](./Day%205) |
 
-The fourth exercise focused on implementing complete asynchronous CRUD operations for Users, Tasks, and Comments using Entity Framework Core, request validation, a service layer, Dependency Injection, and appropriate HTTP responses.
+## Topics Covered
 
-The fifth exercise focused on organizing the API requests into a reusable Postman collection, testing success and error paths, adding automated test scripts, configuring an environment variable, exporting the collection, and assembling the Week 3 deliverables.
+### REST API Design
 
-## Completed Days
+- Designed the Task Tracker API around resources.
+- Used plural resource names.
+- Selected appropriate HTTP methods.
+- Defined success and error status codes.
+- Designed nested resource routes.
+- Selected URL-based API versioning.
 
-### Day 1 — REST API Design Principles & Resource Modeling
-
-Designed a REST resource map for a Task Tracker API.
-
-The exercise included:
-
-- Identifying the core API resources.
-- Naming resources using plural nouns.
-- Designing CRUD endpoints for the `tasks` resource.
-- Using the appropriate HTTP methods.
-- Assigning success and error status codes.
-- Creating a nested resource endpoint.
-- Selecting URL-based API versioning.
-- Organizing the resource map in Postman.
-- Documenting the API design in Notion and GitHub.
-
-Core resources:
+The core resources were:
 
 ```text
 users
@@ -40,47 +35,17 @@ tasks
 comments
 ```
 
-Designed endpoints:
+### Database Design & Normalization
 
-```http
-GET    /api/v1/tasks
-GET    /api/v1/tasks/{id}
-POST   /api/v1/tasks
-PUT    /api/v1/tasks/{id}
-DELETE /api/v1/tasks/{id}
-GET    /api/v1/users/{userId}/tasks
-```
+- Designed the Task Tracker database schema.
+- Applied First, Second, and Third Normal Form.
+- Defined primary keys and foreign keys.
+- Modeled one-to-many relationships.
+- Selected appropriate SQL Server column types.
+- Created an ERD using `dbdiagram.io`.
+- Implemented the schema in SQL Server.
 
-[View Day 1 Documentation](./Day%201/README.md)
-
----
-
-### Day 2 — SQL Server Schema Design & Normalization
-
-Designed and implemented a normalized database schema for the Task Tracker API.
-
-The exercise included:
-
-- Identifying the required database entities and attributes.
-- Applying First, Second, and Third Normal Form.
-- Defining primary keys and foreign keys.
-- Modeling one-to-many relationships.
-- Selecting appropriate SQL Server column types.
-- Designing an ERD using `dbdiagram.io`.
-- Creating the database and tables in SQL Server Management Studio.
-- Adding primary-key, unique, not-null, and foreign-key constraints.
-- Creating a database diagram in SQL Server Management Studio.
-- Documenting the database design in Notion and GitHub.
-
-Database entities:
-
-```text
-Users
-Tasks
-Comments
-```
-
-Relationships:
+The main relationships were:
 
 ```text
 Users.Id → Tasks.UserId
@@ -88,63 +53,15 @@ Tasks.Id → Comments.TaskId
 Users.Id → Comments.UserId
 ```
 
-Implemented database:
+### Entity Framework Core
 
-```text
-TaskTrackerDb
-├── dbo.Users
-├── dbo.Tasks
-└── dbo.Comments
-```
-
-The final schema satisfies:
-
-```text
-1NF
-2NF
-3NF
-```
-
-[View Day 2 Documentation](./Day%202/README.md)
-
----
-
-### Day 3 — Entity Framework Core Setup & Code-First Migrations
-
-Created a new ASP.NET Core Web API project for the Task Tracker domain and configured Entity Framework Core with SQL Server.
-
-The exercise included:
-
-- Creating the `TaskTrackerApi` project.
-- Installing the EF Core SQL Server and Tools packages.
-- Defining the `User`, `TaskItem`, and `Comment` entity models.
-- Adding foreign-key and navigation properties.
-- Creating the `AppDbContext`.
-- Exposing a `DbSet<T>` for each entity.
-- Configuring tables, columns, indexes, and relationships using Fluent API.
-- Adding the SQL Server connection string.
-- Registering `AppDbContext` using Dependency Injection.
-- Generating the `InitialCreate` migration.
-- Inspecting the generated migration file.
-- Applying the migration using `Update-Database`.
-- Verifying the generated tables using Visual Studio SQL Server Object Explorer.
-- Documenting the implementation in Notion and GitHub.
-
-Entity models:
-
-```text
-User
-TaskItem
-Comment
-```
-
-DbContext tables:
-
-```text
-DbSet<User>      → Users
-DbSet<TaskItem>  → Tasks
-DbSet<Comment>   → Comments
-```
+- Created the `TaskTrackerApi` ASP.NET Core Web API project.
+- Installed and configured Entity Framework Core with SQL Server.
+- Created `User`, `TaskItem`, and `Comment` entity models.
+- Created `AppDbContext`.
+- Configured entities and relationships using Fluent API.
+- Registered `AppDbContext` using Dependency Injection.
+- Created and applied the initial Code-First migration.
 
 Migration commands:
 
@@ -153,25 +70,9 @@ Add-Migration InitialCreate
 Update-Database
 ```
 
-Generated database:
+### CRUD Operations
 
-```text
-TaskTrackerEfCoreDb
-├── dbo.Users
-├── dbo.Tasks
-├── dbo.Comments
-└── dbo.__EFMigrationsHistory
-```
-
-[View Day 3 Documentation](./Day%203/README.md)
-
----
-
-### Day 4 — Implementing CRUD Operations with EF Core
-
-Implemented complete asynchronous CRUD operations for the Task Tracker API using Entity Framework Core.
-
-CRUD operations were implemented for:
+Asynchronous CRUD operations were implemented for:
 
 ```text
 Users
@@ -179,42 +80,17 @@ Tasks
 Comments
 ```
 
-The exercise included:
+The application uses:
 
-- Creating separate request models for create and update operations.
-- Validating incoming requests using Data Annotations.
-- Creating service interfaces and service implementations.
-- Registering services using Dependency Injection.
-- Keeping database logic outside the controllers.
-- Implementing asynchronous create, read, update, and delete operations.
-- Using `AsNoTracking` for read-only queries.
-- Using EF Core change tracking for update operations.
-- Calling `SaveChangesAsync` after database changes.
-- Returning appropriate HTTP status codes.
-- Returning `201 Created` with a `Location` header.
-- Returning `400 Bad Request` for invalid request data.
-- Returning `404 Not Found` for missing resources.
-- Testing successful and invalid requests using Postman.
-- Organizing Postman requests into Users, Tasks, and Comments folders.
-- Documenting the implementation in Notion and GitHub.
+- Request models
+- Data Annotations
+- Service interfaces
+- Service implementations
+- Dependency Injection
+- Async EF Core operations
+- Appropriate HTTP status codes
 
-Service interfaces:
-
-```text
-IUserService
-ITaskService
-ICommentService
-```
-
-Service implementations:
-
-```text
-UserService
-TaskService
-CommentService
-```
-
-Each service implements:
+Each service provides:
 
 ```text
 GetAllAsync
@@ -224,7 +100,59 @@ UpdateAsync
 DeleteAsync
 ```
 
-Implemented endpoints:
+### Postman Testing
+
+The Task Tracker API was organized and tested using Postman.
+
+The tests covered:
+
+- Successful CRUD requests
+- Invalid request data
+- Missing resources
+- Automated status-code assertions
+- Response validation
+- Environment variables
+
+A Postman environment was created using:
+
+```text
+baseUrl = https://localhost:7277
+```
+
+Requests then used:
+
+```http
+{{baseUrl}}/api/users
+{{baseUrl}}/api/tasks
+{{baseUrl}}/api/comments
+```
+
+The completed Postman collection was exported as:
+
+```text
+task-tracker-api.postman_collection.json
+```
+
+## Project
+
+### Task Tracker API
+
+The main project developed during Week 3 was an ASP.NET Core Web API for managing users, tasks, and comments.
+
+The project includes:
+
+- RESTful API endpoints
+- SQL Server database
+- Entity Framework Core
+- Code-First migrations
+- Entity relationships
+- Request validation
+- Service layer
+- Dependency Injection
+- Asynchronous CRUD operations
+- Postman API tests
+
+The main endpoints include:
 
 ```http
 POST   /api/users
@@ -246,7 +174,7 @@ PUT    /api/comments/{id}
 DELETE /api/comments/{id}
 ```
 
-Tested HTTP status codes:
+The API was tested with the following HTTP status codes:
 
 ```text
 200 OK
@@ -256,169 +184,33 @@ Tested HTTP status codes:
 404 Not Found
 ```
 
-Because the resources are connected through foreign-key relationships, records were deleted in this order:
+[View the Day 4 implementation](./Day%204)
 
-```text
-Comment → Task → User
-```
+[View the Day 5 Postman testing](./Day%205)
 
-[View Day 4 Documentation](./Day%204/README.md)
+## Technologies and Tools
 
----
-
-### Day 5 — Testing & Documenting the API with Postman
-
-Organized, tested, automated, exported, and documented the Task Tracker API using Postman.
-
-The Postman collection was named:
-
-```text
-Week 3 Day 5 - Task Tracker API
-```
-
-The collection contains separate folders for:
-
-```text
-Users
-Tasks
-Comments
-```
-
-The exercise included:
-
-- Organizing the saved CRUD requests by resource.
-- Keeping successful and error-path requests together.
-- Testing invalid input and missing resources.
-- Adding Post-response test scripts.
-- Automatically asserting expected HTTP status codes.
-- Verifying that successful create responses contain an `id`.
-- Creating a Postman environment.
-- Adding a `baseUrl` environment variable.
-- Updating the requests to use `{{baseUrl}}`.
-- Exporting the completed collection as JSON.
-- Documenting the API and the Week 3 deliverables.
-- Preparing the Week 3 synthesis for the mentor check-in.
-
-Environment configuration:
-
-```text
-Environment: Task Tracker Local Environment
-Variable:    baseUrl
-Value:       https://localhost:7277
-```
-
-Request URL example:
-
-```http
-GET {{baseUrl}}/api/users
-```
-
-Automated test examples:
-
-```javascript
-pm.test("Status code is 200", () => {
-    pm.response.to.have.status(200);
-});
-```
-
-```javascript
-pm.test("Status code is 201", () => {
-    pm.response.to.have.status(201);
-});
-
-pm.test("Response has an id", () => {
-    pm.expect(pm.response.json()).to.have.property("id");
-});
-```
-
-```javascript
-pm.test("Status code is 404", () => {
-    pm.response.to.have.status(404);
-});
-```
-
-Exported collection:
-
-```text
-task-tracker-api.postman_collection.json
-```
-
-[View Day 5 Documentation](./Day%205/README.md)
-
-[View Exported Postman Collection](./Day%205/task-tracker-api.postman_collection.json)
-
-## Week 3 Deliverables
-
-- REST API resource design
-- RESTful endpoint map
-- SQL Server ERD
-- Normalized database schema
-- Primary-key and foreign-key relationships
-- Entity Framework Core models
-- Fluent API configuration
-- Code-First migration
-- SQL Server database
-- CRUD endpoints for Users, Tasks, and Comments
-- Request validation
-- Service interfaces and implementations
-- Dependency Injection
-- Success-path API tests
-- Error-path API tests
-- Automated Postman test scripts
-- Postman environment
-- Exported Postman collection
-- Notion documentation
-- GitHub documentation
-
-## Tools Used
-
-- Postman
-- Swagger
+- C#
 - ASP.NET Core Web API
 - Entity Framework Core
 - SQL Server
 - SQL Server Management Studio
+- Fluent API
+- Dependency Injection
+- Swagger
+- OpenAPI
+- Postman
 - Visual Studio
 - Visual Studio Package Manager Console
 - Visual Studio SQL Server Object Explorer
 - dbdiagram.io
-- Notion
 - Git
 - GitHub
 
-## Repository Structure
+## Summary
 
-```text
-Week 3/
-├── README.md
-├── Day 1/
-│   └── README.md
-├── Day 2/
-│   ├── README.md
-│   ├── task-tracker-erd.png
-│   └── task-tracker-ssms-diagram.png
-├── Day 3/
-│   ├── README.md
-│   ├── initial-create-migration.png
-│   ├── task-tracker-efcore-tables.png
-│   └── TaskTrackerApi/
-├── Day 4/
-│   ├── README.md
-│   ├── task-tracker-crud-endpoints.png
-│   ├── task-tracker-postman-tests.png
-│   └── TaskTrackerApi/
-└── Day 5/
-    ├── README.md
-    ├── task-tracker-api.postman_collection.json
-    └── postman-automated-tests.png
-```
+During Week 3, I designed and implemented the main data and CRUD layers of the Task Tracker API.
 
-## Progress
+I started by designing RESTful resources and a normalized SQL Server database schema. I then implemented the domain using ASP.NET Core Web API and Entity Framework Core, configured entity relationships, generated Code-First migrations, and built asynchronous CRUD operations using a service layer.
 
-| Day | Topic | Status |
-|---|---|---|
-| Day 1 | REST API Design Principles & Resource Modeling | Completed |
-| Day 2 | SQL Server Schema Design & Normalization | Completed |
-| Day 3 | Entity Framework Core Setup & Code-First Migrations | Completed |
-| Day 4 | Implementing CRUD Operations with EF Core | Completed |
-| Day 5 | Testing & Documenting the API with Postman; Week 3 Synthesis | Completed |
+Finally, I tested successful and error paths using Postman, added automated test scripts and environment variables, and exported the completed Postman collection.
