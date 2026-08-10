@@ -4,7 +4,7 @@
 
 This exercise focused on integrating ASP.NET Core Identity into the existing Task Tracker API and implementing user registration.
 
-ASP.NET Core Identity was configured with Entity Framework Core and SQL Server. A registration endpoint was implemented using `UserManager<IdentityUser>` to create users and securely hash their passwords.
+ASP.NET Core Identity was configured with Entity Framework Core and SQL Server. A registration endpoint was implemented using `UserManager<IdentityUser>` to create users, validate passwords, securely hash them, and store the Identity users in the database.
 
 The registration endpoint was tested in Postman with both valid credentials and a deliberately weak password.
 
@@ -16,11 +16,13 @@ The registration endpoint was tested in Postman with both valid credentials and 
 - Register Identity services using Dependency Injection.
 - Implement user registration using `UserManager.CreateAsync`.
 - Understand how Identity handles password hashing.
+- Understand the purpose of PBKDF2 and password salts.
 - Return meaningful validation errors for invalid registration requests.
+- Test successful and invalid registration requests using Postman.
 
 ## ASP.NET Core Identity
 
-ASP.NET Core Identity provides a built-in system for managing application users.
+ASP.NET Core Identity is a built-in membership system for managing application users and authentication-related data.
 
 It provides features such as:
 
@@ -29,9 +31,11 @@ It provides features such as:
 - Role management
 - Account confirmation
 
-Using Identity avoids implementing custom password storage and hashing logic.
+Using ASP.NET Core Identity avoids manually implementing security-critical functionality such as user storage and password hashing.
 
-## Identity Package
+Instead of creating custom password-handling logic, the application can rely on Identity's built-in and tested implementation.
+
+## NuGet Package
 
 The following NuGet package was added to the project:
 
@@ -39,9 +43,13 @@ The following NuGet package was added to the project:
 Microsoft.AspNetCore.Identity.EntityFrameworkCore
 ```
 
+### Microsoft.AspNetCore.Identity.EntityFrameworkCore
+
 This package integrates ASP.NET Core Identity with Entity Framework Core.
 
-## AppDbContext Configuration
+It allows Identity users, roles, and other Identity-related data to be stored in the application's database using Entity Framework Core.
+
+## Identity & Entity Framework Core
 
 The existing `AppDbContext` was updated to inherit from:
 
@@ -57,7 +65,13 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
 }
 ```
 
-The existing application entities remained in the same context:
+### IdentityDbContext
+
+`IdentityDbContext` is a DbContext provided by ASP.NET Core Identity.
+
+By inheriting from it, the application gains the Entity Framework Core configuration required for storing Identity data such as users and roles.
+
+The Task Tracker's existing entities remain in the same context:
 
 ```csharp
 public DbSet<User> Users => Set<User>();
@@ -67,17 +81,48 @@ public DbSet<TaskItem> Tasks => Set<TaskItem>();
 public DbSet<Comment> Comments => Set<Comment>();
 ```
 
-The call to:
+This means the database contains both the existing Task Tracker entities and the ASP.NET Core Identity schema.
+
+The context also calls:
 
 ```csharp
 base.OnModelCreating(modelBuilder);
 ```
 
-allows Identity to configure its database model alongside the existing Task Tracker entities.
+This allows the Identity base context to configure its model alongside the Task Tracker application's existing entity configuration.
 
-## Identity Migration
+## IdentityUser and IdentityRole
 
-A new migration was created after adding Identity:
+The project uses:
+
+```csharp
+IdentityUser
+```
+
+to represent users managed by ASP.NET Core Identity.
+
+It also uses:
+
+```csharp
+IdentityRole
+```
+
+to represent roles that can be assigned to Identity users.
+
+They are configured when registering Identity:
+
+```csharp
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+```
+
+For this exercise, `IdentityUser` is used directly rather than creating a custom Identity user class.
+
+## Identity Database Schema
+
+After `AppDbContext` was changed to use `IdentityDbContext`, Entity Framework Core detected the additional Identity entities.
+
+A new migration was created:
 
 ```powershell
 Add-Migration AddIdentity
@@ -89,7 +134,19 @@ The migration was then applied to SQL Server:
 Update-Database
 ```
 
-This added the ASP.NET Core Identity schema to the existing database.
+This added the ASP.NET Core Identity schema alongside the existing application tables.
+
+The Identity schema includes tables for data such as:
+
+```text
+Users
+Roles
+UserRoles
+```
+
+along with supporting Identity tables.
+
+The existing Task Tracker tables remained in the same database.
 
 ## Identity Service Registration
 
@@ -100,12 +157,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 ```
 
-This configures:
+This configuration connects:
 
 ```text
-IdentityUser → Application users
-IdentityRole → Application roles
-AppDbContext → Identity data storage
+IdentityUser  → Application users
+IdentityRole  → Application roles
+AppDbContext  → Identity data storage through Entity Framework Core
 ```
 
 The authentication and authorization middleware were also added to the request pipeline:
@@ -115,7 +172,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 ```
 
-Authentication runs before authorization so that the application can identify the user before checking what the user is allowed to access.
+Authentication runs before authorization so that the application can first identify the user before checking what that user is allowed to access.
 
 ## Registration Request
 
@@ -133,9 +190,11 @@ public class RegisterRequest
 }
 ```
 
-The registration request contains an email address and password.
+The request model defines the data accepted by the registration endpoint.
 
-Example:
+`[Required]` ensures that the values are provided, while `[EmailAddress]` validates that the submitted email has a valid email format.
+
+Example request:
 
 ```json
 {
@@ -143,6 +202,24 @@ Example:
   "password": "Test@12345"
 }
 ```
+
+## UserManager
+
+ASP.NET Core Identity provides:
+
+```csharp
+UserManager<IdentityUser>
+```
+
+`UserManager` is responsible for operations related to Identity users.
+
+For this exercise, it is used to create a new user through:
+
+```csharp
+CreateAsync
+```
+
+The application therefore does not manually hash the password or directly insert the Identity user into the database.
 
 ## Registration Endpoint
 
@@ -170,7 +247,7 @@ var result = await _userManager.CreateAsync(
     request.Password);
 ```
 
-`UserManager.CreateAsync` handles password hashing and persists the new Identity user.
+`UserManager.CreateAsync` handles the registration process, including password validation, password hashing, and persisting the Identity user.
 
 If registration fails, the Identity validation errors are returned:
 
@@ -193,15 +270,64 @@ An invalid registration returns:
 400 Bad Request
 ```
 
+## Registration Flow
+
+```text
+Client
+   ↓
+POST /api/Auths/register
+   ↓
+AuthsController
+   ↓
+Create IdentityUser
+   ↓
+UserManager.CreateAsync
+   ↓
+Validate Password
+   ↓
+Hash Password
+   ↓
+Store Identity User
+   ↓
+Success → 201 Created
+Failure → 400 Bad Request + Identity Errors
+```
+
 ## Password Hashing
 
-ASP.NET Core Identity hashes passwords instead of storing plain-text passwords.
+Passwords should never be stored in plain text.
 
-Identity uses PBKDF2 by default with a unique salt for password hashing.
+ASP.NET Core Identity automatically hashes passwords before storing them in the database.
 
-The unique salt means that two users who use the same password will not have identical stored password hashes.
+Identity uses PBKDF2 by default for password hashing.
 
-Password hashing is handled automatically by ASP.NET Core Identity through `UserManager`, so no custom password hashing code was implemented.
+### PBKDF2
+
+PBKDF2 is a password-based key derivation algorithm designed to make password guessing more computationally expensive.
+
+This helps make brute-force attempts against stored password hashes more difficult.
+
+Because Identity already handles this process, no custom password hashing implementation was added to the project.
+
+### Password Salt
+
+Identity also uses a unique salt when hashing passwords.
+
+A salt is additional unique data used during the password-hashing process.
+
+Because each password uses a unique salt, two users who choose the same password do not end up with identical stored password hashes.
+
+This also makes precomputed attacks such as rainbow-table attacks less effective.
+
+Password hashing and salting are handled automatically by ASP.NET Core Identity through `UserManager`.
+
+## Password Validation
+
+ASP.NET Core Identity also validates passwords before creating users.
+
+If a password does not satisfy the configured Identity password requirements, `CreateAsync` fails and returns specific validation errors.
+
+These errors can then be returned by the API to explain why registration failed.
 
 ## Postman Testing
 
@@ -232,7 +358,7 @@ The successful response confirms that the Identity user was created successfully
 
 ### Weak Password
 
-A deliberately weak password was used to verify Identity password validation.
+A deliberately weak password was used to verify Identity's built-in password validation.
 
 Request:
 
@@ -261,7 +387,21 @@ This confirms that password validation is handled automatically by ASP.NET Core 
 
 ### Weak Password Validation Test
 
-![Weak Password Validation](./registration-weak-password.png)
+![Weak Password Validation](./weak-password-validation.png)
+
+## Hands-On Lab Completed
+
+The following tasks were completed:
+
+- Added the ASP.NET Core Identity Entity Framework Core package.
+- Extended `AppDbContext` using `IdentityDbContext<IdentityUser>`.
+- Created and applied an Identity migration.
+- Added the Identity schema to the existing SQL Server database.
+- Registered Identity using `IdentityUser` and `IdentityRole`.
+- Implemented user registration using `UserManager.CreateAsync`.
+- Returned Identity validation errors for invalid registration attempts.
+- Tested successful registration using Postman.
+- Tested registration with a deliberately weak password using Postman.
 
 ## Project Changes
 
