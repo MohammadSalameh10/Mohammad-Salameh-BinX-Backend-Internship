@@ -387,7 +387,7 @@ This confirms that password validation is handled automatically by ASP.NET Core 
 
 ### Weak Password Validation Test
 
-![Weak Password Validation](./weak-password-validation.png)
+![Weak Password Validation](./registration-weak-password.png)
 
 ## Hands-On Lab Completed
 
