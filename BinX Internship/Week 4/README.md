@@ -4,13 +4,14 @@
 
 Week 4 focuses on authentication and security in ASP.NET Core applications.
 
-The existing Task Tracker API from Week 3 is extended with ASP.NET Core Identity to support secure user management and authentication.
+The existing Task Tracker API from Week 3 is extended with ASP.NET Core Identity and JWT authentication to support secure user registration, login, token issuance, and protected API endpoints.
 
 ## Daily Work
 
-| Day   | Topic                                             | Project / Documentation |
-| ----- | ------------------------------------------------- | ----------------------- |
-| Day 1 | ASP.NET Core Identity & User Registration         | [View Day 1](./Day%201) |
+| Day   | Topic                                     | Project / Documentation |
+| ----- | ----------------------------------------- | ----------------------- |
+| Day 1 | ASP.NET Core Identity & User Registration | [View Day 1](./Day%201) |
+| Day 2 | JWT Authentication & Token Issuance       | [View Day 2](./Day%202) |
 
 ## Topics Covered
 
@@ -63,7 +64,7 @@ app.UseAuthorization();
 
 ### User Registration
 
-A registration endpoint was implemented using `UserManager<IdentityUser>`.
+A registration endpoint was implemented using ASP.NET Core Identity.
 
 The endpoint is:
 
@@ -90,7 +91,7 @@ _userManager.CreateAsync(user, request.Password)
 
 ### Password Hashing & Validation
 
-ASP.NET Core Identity handles password hashing automatically using PBKDF2 with a unique salt.
+ASP.NET Core Identity handles password hashing automatically using its built-in password hasher.
 
 No custom password hashing logic was implemented.
 
@@ -113,7 +114,146 @@ PasswordRequiresNonAlphanumeric
 PasswordRequiresLower
 ```
 
-## Project
+### JWT Authentication
+
+JWT authentication was added to authenticate registered users after login.
+
+A JWT contains three main parts:
+
+```text
+Header.Payload.Signature
+```
+
+The generated token contains claims representing the authenticated user, including:
+
+- User ID
+- Email
+
+The JWT payload is encoded rather than encrypted, so sensitive information should not be stored inside token claims.
+
+### Login & Token Issuance
+
+A login endpoint was implemented:
+
+```http
+POST /api/Auths/login
+```
+
+The login request contains:
+
+```json
+{
+  "email": "mohammad@gmail.com",
+  "password": "Mm@123123"
+}
+```
+
+The user is retrieved using `UserManager`, and the submitted password is verified using:
+
+```csharp
+_signInManager.CheckPasswordSignInAsync(
+    user,
+    request.Password,
+    false)
+```
+
+Invalid credentials return:
+
+```text
+401 Unauthorized
+```
+
+After successful authentication, a signed JWT is generated and returned to the client.
+
+The token contains the following user claims:
+
+```text
+sub
+email
+```
+
+### JWT Signing & Expiration
+
+The JWT is signed using:
+
+```text
+HMAC SHA-256
+```
+
+The signing key, issuer, and audience are read from the application's JWT configuration.
+
+The access token is configured with a lifetime of:
+
+```text
+15 minutes
+```
+
+A short-lived access token limits how long an expired or compromised token can remain usable.
+
+### JWT Bearer Authentication
+
+JWT Bearer Authentication was configured in `Program.cs`.
+
+Incoming tokens are validated for:
+
+- Issuer
+- Audience
+- Lifetime
+- Signing key
+
+The authentication middleware validates the Bearer token before protected endpoint code executes.
+
+### Protected Endpoints
+
+The existing task endpoint was protected using:
+
+```csharp
+[Authorize]
+```
+
+The protected endpoint is:
+
+```http
+GET /api/Tasks
+```
+
+The client must send a valid JWT using:
+
+```text
+Authorization: Bearer <token>
+```
+
+Requests without a valid token are rejected with:
+
+```text
+401 Unauthorized
+```
+
+### Token Validation & Expiration Testing
+
+The generated JWT was decoded to verify its claims.
+
+The decoded token confirmed the expected:
+
+```text
+sub
+email
+exp
+iss
+aud
+```
+
+The token lifetime was also temporarily reduced to test expiration.
+
+After the token expired, a request was sent to the protected endpoint and the API returned:
+
+```text
+401 Unauthorized
+```
+
+The final token lifetime was then restored to 15 minutes.
+
+## Projects
 
 ### Task Tracker API — Identity Integration
 
@@ -144,6 +284,39 @@ The endpoint was tested using Postman with both valid credentials and a delibera
 
 [View the Day 1 project and documentation](./Day%201)
 
+### Task Tracker API — JWT Authentication
+
+The Task Tracker API was extended with login and JWT-based authentication.
+
+The Day 2 implementation includes:
+
+- Login request model
+- Authentication service
+- `UserManager`
+- `SignInManager`
+- Credential verification
+- JWT generation
+- User ID and email claims
+- JWT signing using HMAC SHA-256
+- 15-minute access-token expiration
+- JWT Bearer Authentication
+- Issuer, audience, lifetime, and signing-key validation
+- Protected endpoint using `[Authorize]`
+- Expired-token testing
+
+The login endpoint returns:
+
+```text
+200 OK           → Successful login with JWT
+401 Unauthorized → Invalid credentials
+```
+
+The protected task endpoint also returns `401 Unauthorized` when a valid Bearer token is not provided.
+
+The generated token was decoded to verify its claims, and token expiration was tested against the protected endpoint.
+
+[View the Day 2 project and documentation](./Day%202)
+
 ## Technologies and Tools
 
 - C#
@@ -151,9 +324,20 @@ The endpoint was tested using Postman with both valid credentials and a delibera
 - ASP.NET Core Identity
 - Entity Framework Core
 - SQL Server
+- `IdentityUser`
+- `IdentityRole`
+- `UserManager`
+- `SignInManager`
+- JWT
+- JWT Bearer Authentication
+- System.IdentityModel.Tokens.Jwt
+- HMAC SHA-256
+- Claims
+- Authorization
 - Dependency Injection
 - Visual Studio
 - Visual Studio Package Manager Console
 - Postman
+- jwt.io
 - Git
 - GitHub
