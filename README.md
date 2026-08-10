@@ -4,12 +4,12 @@ This repository contains my daily work, exercises, documentation, and projects c
 
 ## Internship Progress
 
-| Week   | Focus                                                                                                                                                                                                                                                         | Documentation                               |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| Week 1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow                                                                                                                                                  | [View Week 1](./BinX%20Internship/Week%201) |
-| Week 2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                     | [View Week 2](./BinX%20Internship/Week%202) |
-| Week 3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation  | [View Week 3](./BinX%20Internship/Week%203) |
-| Week 4 | ASP.NET Core Identity, Entity Framework Core Identity integration, user registration, password hashing, and password validation                                                                                                                               | [View Week 4](./BinX%20Internship/Week%204) |
+| Week   | Focus | Documentation |
+| ------ | ----- | ------------- |
+| Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
+| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection | [View Week 2](./BinX%20Internship/Week%202) |
+| Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation | [View Week 3](./BinX%20Internship/Week%203) |
+| Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, claims, JWT Bearer authentication, token expiration, and protected endpoints | [View Week 4](./BinX%20Internship/Week%204) |
 
 ## Repository Structure
 
@@ -38,7 +38,8 @@ BinX Internship/
 │   └── Day 5/
 └── Week 4/
     ├── README.md
-    └── Day 1/
+    ├── Day 1/
+    └── Day 2/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -116,7 +117,7 @@ Each week contains a summary README, and each completed day contains its own tas
 - Service interfaces and service implementations
 - Separating database operations from API controllers
 - Registering application services using Dependency Injection
-- Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, and `404 Not Found`
+- Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, and `404 Not Found`
 - Returning resource locations using `CreatedAtAction`
 - Managing delete order for related database records
 
@@ -129,12 +130,36 @@ Each week contains a summary README, and each completed day contains its own tas
 - Identity database migrations
 - Identity service registration
 - `UserManager<IdentityUser>`
+- `SignInManager<IdentityUser>`
 - User registration using `UserManager.CreateAsync`
+- Credential verification using `CheckPasswordSignInAsync`
 - Password hashing using ASP.NET Core Identity
 - PBKDF2 password hashing
 - Unique password salts
 - Built-in password validation
 - Authentication and authorization middleware
+
+### JWT Authentication
+
+- JWT structure: Header, Payload, and Signature
+- JWT claims
+- User ID and email claims
+- Login using ASP.NET Core Identity
+- JWT token generation
+- JWT signing using HMAC SHA-256
+- JWT issuer and audience configuration
+- Short-lived access tokens
+- 15-minute token expiration
+- JWT Bearer Authentication
+- JWT issuer validation
+- JWT audience validation
+- JWT lifetime validation
+- JWT signing-key validation
+- Protecting API endpoints using `[Authorize]`
+- Sending JWTs using the Bearer authentication scheme
+- Returning `401 Unauthorized` for invalid credentials
+- Rejecting missing or expired JWTs
+- Decoding JWTs and verifying claims
 
 ### Postman and API Testing
 
@@ -147,13 +172,18 @@ Each week contains a summary README, and each completed day contains its own tas
 - Creating Postman environments
 - Using the `baseUrl` environment variable
 - Exporting and sharing Postman collections
+- Testing JWT login and token issuance
+- Sending Bearer tokens to protected endpoints
+- Testing expired JWT rejection
 
 ### Development Tools and Workflow
 
 - Swagger and OpenAPI documentation
 - Visual Studio
 - SQL Server Management Studio
+- Visual Studio Package Manager Console
 - Postman
+- jwt.io
 - Git and GitHub workflows
 
 ## Author
