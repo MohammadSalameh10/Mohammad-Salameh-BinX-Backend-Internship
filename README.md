@@ -4,12 +4,12 @@ This repository contains my daily work, exercises, documentation, and projects c
 
 ## Internship Progress
 
-| Week   | Focus | Documentation |
-| ------ | ----- | ------------- |
-| Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow | [View Week 1](./BinX%20Internship/Week%201) |
-| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection | [View Week 2](./BinX%20Internship/Week%202) |
-| Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation | [View Week 3](./BinX%20Internship/Week%203) |
-| Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, claims, JWT Bearer authentication, token expiration, and protected endpoints | [View Week 4](./BinX%20Internship/Week%204) |
+| Week   | Focus                                                                                                                                                                                                                                                                                                                                 | Documentation                               |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow                                                                                                                                                                                                                         | [View Week 1](./BinX%20Internship/Week%201) |
+| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                                                                                            | [View Week 2](./BinX%20Internship/Week%202) |
+| Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                         | [View Week 3](./BinX%20Internship/Week%203) |
+| Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, claims, JWT Bearer authentication, protected routes, role-based access control, claims-based authorization, policy-based authorization, and Postman token reuse | [View Week 4](./BinX%20Internship/Week%204) |
 
 ## Repository Structure
 
@@ -39,7 +39,8 @@ BinX Internship/
 └── Week 4/
     ├── README.md
     ├── Day 1/
-    └── Day 2/
+    ├── Day 2/
+    └── Day 3/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -117,7 +118,7 @@ Each week contains a summary README, and each completed day contains its own tas
 - Service interfaces and service implementations
 - Separating database operations from API controllers
 - Registering application services using Dependency Injection
-- Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, and `404 Not Found`
+- Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, and `404 Not Found`
 - Returning resource locations using `CreatedAtAction`
 - Managing delete order for related database records
 
@@ -130,9 +131,13 @@ Each week contains a summary README, and each completed day contains its own tas
 - Identity database migrations
 - Identity service registration
 - `UserManager<IdentityUser>`
+- `RoleManager<IdentityRole>`
 - `SignInManager<IdentityUser>`
 - User registration using `UserManager.CreateAsync`
 - Credential verification using `CheckPasswordSignInAsync`
+- Role creation using `RoleManager`
+- Assigning users to roles using `UserManager.AddToRoleAsync`
+- Retrieving user roles using `UserManager.GetRolesAsync`
 - Password hashing using ASP.NET Core Identity
 - PBKDF2 password hashing
 - Unique password salts
@@ -144,6 +149,8 @@ Each week contains a summary README, and each completed day contains its own tas
 - JWT structure: Header, Payload, and Signature
 - JWT claims
 - User ID and email claims
+- Role claims
+- Custom permission claims
 - Login using ASP.NET Core Identity
 - JWT token generation
 - JWT signing using HMAC SHA-256
@@ -161,6 +168,21 @@ Each week contains a summary README, and each completed day contains its own tas
 - Rejecting missing or expired JWTs
 - Decoding JWTs and verifying claims
 
+### Authorization
+
+- Protecting controllers and endpoints using `[Authorize]`
+- Understanding authentication vs authorization
+- Role-based access control
+- Restricting endpoints using `[Authorize(Roles = "Admin")]`
+- Understanding `401 Unauthorized` vs `403 Forbidden`
+- Claims-based authorization
+- Custom permission claims
+- Policy-based authorization
+- Named authorization policies
+- Requiring claims using `RequireClaim`
+- Applying policies using `[Authorize(Policy = "...")]`
+- Combining JWT authentication with authorization rules
+
 ### Postman and API Testing
 
 - API design and testing with Postman
@@ -175,6 +197,11 @@ Each week contains a summary README, and each completed day contains its own tas
 - Testing JWT login and token issuance
 - Sending Bearer tokens to protected endpoints
 - Testing expired JWT rejection
+- Storing JWTs in environment variables
+- Capturing login tokens using Post-response scripts
+- Reusing `{{token}}` automatically in protected requests
+- Testing role-based authorization
+- Testing policy-based authorization
 
 ### Development Tools and Workflow
 
