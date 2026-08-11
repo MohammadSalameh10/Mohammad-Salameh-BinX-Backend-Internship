@@ -768,41 +768,6 @@ Authorized?
     └── Authorized → Endpoint executes
 ```
 
-## NuGet Packages
-
-No additional NuGet packages were required specifically for this exercise.
-
-The implementation reused the ASP.NET Core Identity and JWT authentication packages configured during the previous exercises:
-
-```text
-Microsoft.AspNetCore.Identity.EntityFrameworkCore
-Microsoft.AspNetCore.Authentication.JwtBearer
-System.IdentityModel.Tokens.Jwt
-```
-
-### Microsoft.AspNetCore.Identity.EntityFrameworkCore
-
-Provides Identity integration with Entity Framework Core, including users, roles, and user-role relationships.
-
-It was used in this exercise through components such as:
-
-```text
-IdentityUser
-IdentityRole
-UserManager
-RoleManager
-```
-
-### Microsoft.AspNetCore.Authentication.JwtBearer
-
-Provides JWT Bearer Authentication for ASP.NET Core and processes the JWT sent in the `Authorization` header.
-
-This allows ASP.NET Core authorization attributes and policies to operate on an authenticated user.
-
-### System.IdentityModel.Tokens.Jwt
-
-Provides the JWT functionality used to create tokens and add claims such as user ID, email, roles, and permissions.
-
 ## Hands-On Lab Completed
 
 The following tasks were completed:
