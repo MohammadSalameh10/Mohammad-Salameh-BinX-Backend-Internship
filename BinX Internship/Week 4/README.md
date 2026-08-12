@@ -2,27 +2,28 @@
 
 ## Overview
 
-Week 4 focuses on authentication, authorization, and security in ASP.NET Core applications.
+Week 4 focuses on authentication, authorization, security, and input validation in ASP.NET Core applications.
 
-The existing Task Tracker API from Week 3 is extended with ASP.NET Core Identity, JWT authentication, protected routes, role-based access control, claims, and authorization policies.
+The existing Task Tracker API from Week 3 is extended with ASP.NET Core Identity, JWT authentication, protected routes, role-based access control, claims, authorization policies, and FluentValidation for structured request validation.
 
 ## Daily Work
 
-| Day   | Topic                                                        | Project / Documentation |
-| ----- | ------------------------------------------------------------ | ----------------------- |
-| Day 1 | ASP.NET Core Identity & User Registration                    | [View Day 1](./Day%201) |
-| Day 2 | JWT Authentication & Token Issuance                          | [View Day 2](./Day%202) |
-| Day 3 | Protecting Routes, Roles & Policy-Based Authorization        | [View Day 3](./Day%203) |
+| Day   | Topic                                                 | Project / Documentation |
+| ----- | ----------------------------------------------------- | ----------------------- |
+| Day 1 | ASP.NET Core Identity & User Registration             | [View Day 1](./Day%201) |
+| Day 2 | JWT Authentication & Token Issuance                   | [View Day 2](./Day%202) |
+| Day 3 | Protecting Routes, Roles & Policy-Based Authorization | [View Day 3](./Day%203) |
+| Day 4 | Input Validation with FluentValidation                | [View Day 4](./Day%204) |
 
 ## Topics Covered
 
 ### ASP.NET Core Identity
 
-- Integrated ASP.NET Core Identity into the existing Task Tracker API.
-- Used `IdentityUser` for Identity users.
-- Used `IdentityRole` for Identity roles.
-- Integrated Identity with Entity Framework Core.
-- Used Identity instead of implementing custom password storage and hashing logic.
+* Integrated ASP.NET Core Identity into the existing Task Tracker API.
+* Used `IdentityUser` for Identity users.
+* Used `IdentityRole` for Identity roles.
+* Integrated Identity with Entity Framework Core.
+* Used Identity instead of implementing custom password storage and hashing logic.
 
 ### Identity & Entity Framework Core
 
@@ -171,10 +172,10 @@ JWT Bearer Authentication was configured to validate incoming tokens.
 
 The API validates:
 
-- Issuer
-- Audience
-- Lifetime
-- Signing key
+* Issuer
+* Audience
+* Lifetime
+* Signing key
 
 The Bearer token is validated before protected endpoint code executes.
 
@@ -248,23 +249,17 @@ The Delete Task endpoint was restricted using:
 [Authorize(Roles = "Admin")]
 ```
 
-The authorization behavior was tested with both roles.
-
 A valid JWT belonging to the `User` role returned:
 
 ```text
 403 Forbidden
 ```
 
-when attempting to delete a task.
-
-A valid JWT belonging to the `Admin` role was allowed to execute the Delete endpoint and returned:
+A valid JWT belonging to the `Admin` role successfully executed the Delete endpoint and returned:
 
 ```text
 204 No Content
 ```
-
-for a successful deletion.
 
 ### `401 Unauthorized` vs `403 Forbidden`
 
@@ -351,8 +346,6 @@ const response = pm.response.json();
 pm.environment.set("token", response.token);
 ```
 
-This automatically stores the JWT returned by the login endpoint.
-
 Protected requests can then use:
 
 ```text
@@ -361,7 +354,170 @@ Protected requests can then use:
 
 as their Bearer Token instead of manually copying and pasting the JWT.
 
-The automatic token reuse was tested successfully against a protected Task endpoint.
+### DataAnnotations vs FluentValidation
+
+Task request validation was moved from DataAnnotations to FluentValidation.
+
+DataAnnotations are useful for simple validation rules placed directly on request-model properties.
+
+FluentValidation keeps validation logic in separate validator classes and provides more flexibility for expressing business-oriented rules.
+
+The Task create and update request models were cleaned so their validation responsibility is handled by dedicated validators.
+
+### FluentValidation Validators
+
+Two validator classes were created:
+
+```text
+CreateTaskRequestValidator
+UpdateTaskRequestValidator
+```
+
+Both inherit from:
+
+```csharp
+AbstractValidator<T>
+```
+
+Validation rules are defined using:
+
+```csharp
+RuleFor(...)
+```
+
+with custom messages using:
+
+```csharp
+WithMessage(...)
+```
+
+### Create Task Validation
+
+The `CreateTaskRequestValidator` validates:
+
+```text
+Title
+UserId
+DueDate
+```
+
+The implemented rules include:
+
+```text
+Title
+→ Must not be empty.
+→ Must not exceed 200 characters.
+
+UserId
+→ Must be greater than 0.
+
+DueDate
+→ Optional.
+→ If provided, it must be in the future.
+```
+
+### Update Task Validation
+
+A separate `UpdateTaskRequestValidator` was created for Update requests.
+
+It applies the same validation requirements to task updates.
+
+Keeping Create and Update validation in dedicated classes separates validation logic from the request models and makes the rules easier to maintain.
+
+### FluentValidation Integration
+
+Automatic FluentValidation support was registered in `Program.cs`:
+
+```csharp
+builder.Services.AddFluentValidationAutoValidation();
+```
+
+Validators were registered using assembly scanning:
+
+```csharp
+builder.Services
+    .AddValidatorsFromAssemblyContaining<
+        CreateTaskRequestValidator>();
+```
+
+This allows the application to discover the Create and Update validators automatically.
+
+### Automatic Validation Pipeline
+
+Invalid requests are validated before the controller action executes.
+
+```text
+Client Request
+      ↓
+Model Binding
+      ↓
+FluentValidation
+      ↓
+Valid?
+ ├── No  → 400 Bad Request
+ └── Yes → Controller Action
+```
+
+This keeps controller actions focused on request processing rather than repeating validation checks.
+
+### Structured Validation Errors
+
+Invalid requests return structured validation errors associated with the property that failed validation.
+
+For example:
+
+```json
+{
+  "status": 400,
+  "errors": {
+    "Title": [
+      "Title is required."
+    ]
+  }
+}
+```
+
+This provides API clients with both the invalid field and the reason validation failed.
+
+### Create Validation Testing
+
+Each Create validation rule was tested individually using Postman.
+
+The following cases returned:
+
+```text
+Empty Title
+→ 400 Bad Request
+→ Title is required.
+
+UserId = 0
+→ 400 Bad Request
+→ UserId must be greater than 0.
+
+Past DueDate
+→ 400 Bad Request
+→ DueDate must be in the future.
+```
+
+### Update Validation Testing
+
+The Update validator was tested using the same individual validation approach:
+
+```text
+Empty Title
+→ 400 Bad Request
+→ Title is required.
+
+UserId = 0
+→ 400 Bad Request
+→ UserId must be greater than 0.
+
+Past DueDate
+→ 400 Bad Request
+→ DueDate must be in the future.
+```
+
+Testing each rule separately confirmed that every validation requirement returns its expected structured error message.
 
 ## Projects
 
@@ -369,16 +525,16 @@ The automatic token reuse was tested successfully against a protected Task endpo
 
 The Day 1 implementation includes:
 
-- ASP.NET Core Identity integration
-- Identity with Entity Framework Core
-- Identity database migration
-- `IdentityUser`
-- `IdentityRole`
-- `UserManager`
-- Registration request model
-- Registration endpoint
-- Password hashing
-- Password validation
+* ASP.NET Core Identity integration
+* Identity with Entity Framework Core
+* Identity database migration
+* `IdentityUser`
+* `IdentityRole`
+* `UserManager`
+* Registration request model
+* Registration endpoint
+* Password hashing
+* Password validation
 
 The registration endpoint returns:
 
@@ -393,16 +549,16 @@ The registration endpoint returns:
 
 The Day 2 implementation includes:
 
-- Login request model
-- Authentication service
-- Credential verification
-- JWT generation
-- User ID and email claims
-- JWT signing using HMAC SHA-256
-- 15-minute access-token expiration
-- JWT Bearer Authentication
-- Protected endpoint using `[Authorize]`
-- Expired-token testing
+* Login request model
+* Authentication service
+* Credential verification
+* JWT generation
+* User ID and email claims
+* JWT signing using HMAC SHA-256
+* 15-minute access-token expiration
+* JWT Bearer Authentication
+* Protected endpoint using `[Authorize]`
+* Expired-token testing
 
 The login endpoint returns:
 
@@ -417,20 +573,19 @@ The login endpoint returns:
 
 The Day 3 implementation includes:
 
-- Controller-level `[Authorize]`
-- `User` and `Admin` Identity roles
-- Role creation using `RoleManager`
-- User-role assignment using `UserManager`
-- Role claims inside JWTs
-- Admin-only Delete endpoint
-- `401 Unauthorized` and `403 Forbidden` testing
-- Custom permission claim
-- Named authorization policy
-- Policy-protected Create Task endpoint
-- Postman Environment
-- Automatic JWT capture and reuse
+* Controller-level `[Authorize]`
+* `User` and `Admin` Identity roles
+* Role creation using `RoleManager`
+* User-role assignment using `UserManager`
+* Role claims inside JWTs
+* Admin-only Delete endpoint
+* Custom permission claim
+* Named authorization policy
+* Policy-protected Create Task endpoint
+* Postman Environment
+* Automatic JWT capture and reuse
 
-Authorization behavior was verified through multiple tests:
+Authorization behavior was verified through:
 
 ```text
 No Token
@@ -451,31 +606,75 @@ Admin → CanCreateTasks Policy
 
 [View the Day 3 project and documentation](./Day%203)
 
+### Task Tracker API — FluentValidation
+
+The Day 4 implementation includes:
+
+* FluentValidation integration
+* Dedicated Create validator
+* Dedicated Update validator
+* Validation logic separated from request models
+* `RuleFor` validation rules
+* Custom validation messages
+* Positive `UserId` validation
+* Conditional future `DueDate` validation
+* Automatic validation before controller execution
+* Structured `400 Bad Request` responses
+* Individual Postman testing for each validation rule
+
+Validation behavior was verified through:
+
+```text
+Create — Empty Title
+→ 400 Bad Request
+
+Create — UserId = 0
+→ 400 Bad Request
+
+Create — Past DueDate
+→ 400 Bad Request
+
+Update — Empty Title
+→ 400 Bad Request
+
+Update — UserId = 0
+→ 400 Bad Request
+
+Update — Past DueDate
+→ 400 Bad Request
+```
+
+[View the Day 4 project and documentation](./Day%204)
+
 ## Technologies and Tools
 
-- C#
-- ASP.NET Core Web API
-- ASP.NET Core Identity
-- Entity Framework Core
-- SQL Server
-- `IdentityUser`
-- `IdentityRole`
-- `UserManager`
-- `RoleManager`
-- `SignInManager`
-- JWT
-- JWT Bearer Authentication
-- HMAC SHA-256
-- Claims
-- Role-Based Authorization
-- Claims-Based Authorization
-- Policy-Based Authorization
-- `[Authorize]`
-- Dependency Injection
-- Visual Studio
-- Visual Studio Package Manager Console
-- Postman
-- Postman Environments
-- jwt.io
-- Git
-- GitHub
+* C#
+* ASP.NET Core Web API
+* ASP.NET Core Identity
+* Entity Framework Core
+* SQL Server
+* `IdentityUser`
+* `IdentityRole`
+* `UserManager`
+* `RoleManager`
+* `SignInManager`
+* JWT
+* JWT Bearer Authentication
+* HMAC SHA-256
+* Claims
+* Role-Based Authorization
+* Claims-Based Authorization
+* Policy-Based Authorization
+* `[Authorize]`
+* FluentValidation
+* `AbstractValidator<T>`
+* `RuleFor`
+* Structured Validation Errors
+* Dependency Injection
+* Visual Studio
+* Visual Studio Package Manager Console
+* Postman
+* Postman Environments
+* jwt.io
+* Git
+* GitHub
