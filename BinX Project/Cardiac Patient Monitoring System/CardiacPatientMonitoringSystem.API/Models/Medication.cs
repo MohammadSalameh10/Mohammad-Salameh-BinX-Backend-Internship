@@ -15,5 +15,7 @@
         public DateTime StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
+
+        public Patient Patient { get; set; } = null!;
     }
 }

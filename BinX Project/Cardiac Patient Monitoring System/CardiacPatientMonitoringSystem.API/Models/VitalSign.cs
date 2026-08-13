@@ -15,5 +15,7 @@
         public int OxygenSaturation { get; set; }
 
         public DateTime RecordedAt { get; set; }
+
+        public Patient Patient { get; set; } = null!;
     }
 }
