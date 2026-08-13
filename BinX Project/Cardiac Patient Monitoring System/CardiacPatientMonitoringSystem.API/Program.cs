@@ -19,6 +19,7 @@ namespace CardiacPatientMonitoringSystem.API
                    builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddScoped<IPatientService, PatientService>();
+            builder.Services.AddScoped<IVitalSignService, VitalSignService>();
 
             builder.Services.AddControllers();
           
