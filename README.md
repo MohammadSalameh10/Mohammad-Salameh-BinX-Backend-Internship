@@ -4,12 +4,12 @@ This repository contains my daily work, exercises, documentation, and projects c
 
 ## Internship Progress
 
-| Week   | Focus                                                                                                                                                                                                                                                                                                       | Documentation                               |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow                                                                                                                                                                                               | [View Week 1](./BinX%20Internship/Week%201) |
-| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                                                                  | [View Week 2](./BinX%20Internship/Week%202) |
-| Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                               | [View Week 3](./BinX%20Internship/Week%203) |
-| Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, and structured validation errors | [View Week 4](./BinX%20Internship/Week%204) |
+| Week   | Focus                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Documentation                               |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Week&nbsp;1 | .NET setup, C# fundamentals, OOP, collections, LINQ basics, async/await, exception handling, and Git workflow                                                                                                                                                                                                                                                                                                                                                                                            | [View Week 1](./BinX%20Internship/Week%201) |
+| Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                                                                                                                                                                                                                                                                | [View Week 2](./BinX%20Internship/Week%202) |
+| Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                                                                                                                                                                                               | [View Week 3](./BinX%20Internship/Week%203) |
+| Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
 
 ## Repository Structure
 
@@ -41,7 +41,8 @@ BinX Internship/
     ├── Day 1/
     ├── Day 2/
     ├── Day 3/
-    └── Day 4/
+    ├── Day 4/
+    └── Day 5/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -72,6 +73,13 @@ Each week contains a summary README, and each completed day contains its own tas
 * Custom request-logging middleware
 * Dependency Injection and service lifetimes
 * Constructor injection using interfaces
+* ASP.NET Core built-in Rate Limiting
+* Fixed-window rate limiting policies
+* Applying endpoint rate-limit policies with `EnableRateLimiting`
+* CORS configuration using named policies
+* HTTPS redirection
+* HSTS configuration
+* Security hardening in the middleware pipeline
 
 ### REST APIs
 
@@ -111,6 +119,9 @@ Each week contains a summary README, and each completed day contains its own tas
 * Entity Framework Core change tracking
 * Updating tracked entities
 * Deleting entities with `Remove`
+* EF Core query parameterization
+* SQL injection prevention with LINQ and parameterized queries
+* Reviewing raw SQL usage for security risks
 
 ### API Architecture and Validation
 
@@ -128,7 +139,7 @@ Each week contains a summary README, and each completed day contains its own tas
 * Service interfaces and service implementations
 * Separating database operations from API controllers
 * Registering application services using Dependency Injection
-* Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, and `404 Not Found`
+* Returning `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, and `429 Too Many Requests`
 * Returning resource locations using `CreatedAtAction`
 * Managing delete order for related database records
 
@@ -213,6 +224,23 @@ Each week contains a summary README, and each completed day contains its own tas
 * Structured validation error responses
 * Preventing invalid requests from reaching controller actions
 
+### API Security Hardening
+
+* Rate limiting to reduce excessive request patterns
+* Stricter rate limiting for login endpoints
+* Returning `429 Too Many Requests` when limits are exceeded
+* Named CORS policies
+* Restricting allowed frontend origins
+* Testing allowed and disallowed origins
+* Understanding browser-enforced CORS behavior
+* HTTPS redirection
+* Testing `307 Temporary Redirect`
+* HSTS outside the Development environment
+* Understanding Content-Security-Policy as a security concept
+* SQL injection prevention
+* EF Core automatic query parameterization
+* Reviewing `FromSqlRaw`, `ExecuteSqlRaw`, `FromSqlInterpolated`, and manually written SQL usage
+
 ### Postman and API Testing
 
 * API design and testing with Postman
@@ -235,6 +263,11 @@ Each week contains a summary README, and each completed day contains its own tas
 * Testing FluentValidation rules individually
 * Verifying field-specific validation messages
 * Verifying structured `400 Bad Request` responses
+* Testing rate-limit rejection with `429 Too Many Requests`
+* Testing allowed and disallowed CORS origins
+* Inspecting `Access-Control-Allow-Origin`
+* Disabling automatic redirect following to test HTTPS redirection
+* Verifying `307 Temporary Redirect` and the HTTPS `Location` header
 
 ### Development Tools and Workflow
 
