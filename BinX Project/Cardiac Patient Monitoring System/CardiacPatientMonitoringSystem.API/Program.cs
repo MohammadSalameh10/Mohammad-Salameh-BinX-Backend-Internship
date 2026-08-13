@@ -1,5 +1,7 @@
 
 using CardiacPatientMonitoringSystem.API.Data;
+using CardiacPatientMonitoringSystem.API.Services.Classes;
+using CardiacPatientMonitoringSystem.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CardiacPatientMonitoringSystem.API
@@ -15,6 +17,8 @@ namespace CardiacPatientMonitoringSystem.API
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(
                    builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IPatientService, PatientService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
