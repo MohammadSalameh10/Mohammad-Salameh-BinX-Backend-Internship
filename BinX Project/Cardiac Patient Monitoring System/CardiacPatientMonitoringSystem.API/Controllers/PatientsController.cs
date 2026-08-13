@@ -1,11 +1,14 @@
 ﻿using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CardiacPatientMonitoringSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PatientsController : ControllerBase
     {
         private readonly IPatientService _patientService;
@@ -16,6 +19,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var patients = await _patientService.GetAllAsync();
@@ -24,6 +28,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var patient = await _patientService.GetByIdAsync(id);
@@ -35,9 +40,17 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Patient")]
         public async Task<IActionResult> Create(CreatePatientRequest request)
         {
-            var patient = await _patientService.CreateAsync(request);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+                return Unauthorized();
+
+            var patient = await _patientService.CreateAsync(
+                userId,
+                request);
 
             return CreatedAtAction(
                 nameof(GetById),
@@ -46,6 +59,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, UpdatePatientRequest request)
         {
             var updated = await _patientService.UpdateAsync(id, request);
@@ -57,6 +71,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _patientService.DeleteAsync(id);

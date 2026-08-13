@@ -52,11 +52,11 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<PatientResponse> CreateAsync(CreatePatientRequest request)
+        public async Task<PatientResponse> CreateAsync(string userId, CreatePatientRequest request)
         {
             var patient = new Patient
             {
-                UserId = request.UserId,
+                UserId = userId,
                 FullName = request.FullName,
                 DateOfBirth = request.DateOfBirth,
                 Gender = request.Gender,
