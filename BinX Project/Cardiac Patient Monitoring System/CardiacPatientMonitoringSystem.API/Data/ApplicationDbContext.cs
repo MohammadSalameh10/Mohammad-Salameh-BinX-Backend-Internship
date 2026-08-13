@@ -36,6 +36,12 @@ namespace CardiacPatientMonitoringSystem.API.Data
                 .HasForeignKey(a => a.PatientId);
 
             modelBuilder.Entity<Patient>()
+                .HasOne<IdentityUser>()
+                .WithOne()
+                .HasForeignKey<Patient>(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Patient>()
                 .HasIndex(p => p.UserId)
                 .IsUnique();
         }
