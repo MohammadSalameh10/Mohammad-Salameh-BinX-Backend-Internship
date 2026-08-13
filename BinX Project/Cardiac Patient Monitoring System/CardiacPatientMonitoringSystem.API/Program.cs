@@ -2,6 +2,9 @@
 using CardiacPatientMonitoringSystem.API.Data;
 using CardiacPatientMonitoringSystem.API.Services.Classes;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
+using CardiacPatientMonitoringSystem.API.Validators;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +58,11 @@ namespace CardiacPatientMonitoringSystem.API
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddControllers();
-          
+
+            builder.Services.AddFluentValidationAutoValidation();
+
+            builder.Services.AddValidatorsFromAssemblyContaining<CreatePatientRequestValidator>();
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddSwaggerGen();
