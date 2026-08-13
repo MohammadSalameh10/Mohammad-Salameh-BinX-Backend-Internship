@@ -48,11 +48,17 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<AppointmentResponse> CreateAsync(CreateAppointmentRequest request)
+        public async Task<AppointmentResponse?> CreateAsync(string userId, CreateAppointmentRequest request)
         {
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            if (patient == null)
+                return null;
+
             var appointment = new Appointment
             {
-                PatientId = request.PatientId,
+                PatientId = patient.Id,
                 AppointmentDate = request.AppointmentDate,
                 Reason = request.Reason,
                 Notes = request.Notes

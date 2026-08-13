@@ -52,11 +52,17 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<VitalSignResponse> CreateAsync(CreateVitalSignRequest request)
+        public async Task<VitalSignResponse?> CreateAsync(string userId, CreateVitalSignRequest request)
         {
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            if (patient == null)
+                return null;
+
             var vitalSign = new VitalSign
             {
-                PatientId = request.PatientId,
+                PatientId = patient.Id,
                 HeartRate = request.HeartRate,
                 SystolicBloodPressure = request.SystolicBloodPressure,
                 DiastolicBloodPressure = request.DiastolicBloodPressure,

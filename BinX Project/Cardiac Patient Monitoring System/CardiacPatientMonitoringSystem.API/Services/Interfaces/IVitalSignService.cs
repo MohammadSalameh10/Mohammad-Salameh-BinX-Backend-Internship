@@ -7,7 +7,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Interfaces
     {
         Task<List<VitalSignResponse>> GetAllAsync();
         Task<VitalSignResponse?> GetByIdAsync(int id);
-        Task<VitalSignResponse> CreateAsync(CreateVitalSignRequest request);
+        Task<VitalSignResponse?> CreateAsync(string userId, CreateVitalSignRequest request);
         Task<bool> UpdateAsync(int id, UpdateVitalSignRequest request);
         Task<bool> DeleteAsync(int id);
     }

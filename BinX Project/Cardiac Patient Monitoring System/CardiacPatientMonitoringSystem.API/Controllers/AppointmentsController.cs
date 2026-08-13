@@ -1,6 +1,8 @@
 ﻿using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CardiacPatientMonitoringSystem.API.Controllers
 {
@@ -16,6 +18,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var appointments = await _appointmentService.GetAllAsync();
@@ -24,6 +27,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var appointment = await _appointmentService.GetByIdAsync(id);
@@ -35,9 +39,20 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Patient")]
         public async Task<IActionResult> Create(CreateAppointmentRequest request)
         {
-            var appointment = await _appointmentService.CreateAsync(request);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+                return Unauthorized();
+
+            var appointment = await _appointmentService.CreateAsync(
+                userId,
+                request);
+
+            if (appointment == null)
+                return NotFound();
 
             return CreatedAtAction(
                 nameof(GetById),
@@ -46,6 +61,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, UpdateAppointmentRequest request)
         {
             var updated = await _appointmentService.UpdateAsync(id, request);
@@ -57,6 +73,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _appointmentService.DeleteAsync(id);
