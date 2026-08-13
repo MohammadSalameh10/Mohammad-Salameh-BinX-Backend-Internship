@@ -2,9 +2,9 @@
 
 ## Overview
 
-Week 4 focuses on authentication, authorization, security, and input validation in ASP.NET Core applications.
+Week 4 focuses on authentication, authorization, security, input validation, and API hardening in ASP.NET Core applications.
 
-The existing Task Tracker API from Week 3 is extended with ASP.NET Core Identity, JWT authentication, protected routes, role-based access control, claims, authorization policies, and FluentValidation for structured request validation.
+The existing Task Tracker API from Week 3 is extended with ASP.NET Core Identity, JWT authentication, protected routes, role-based access control, claims, authorization policies, FluentValidation for structured request validation, rate limiting, CORS restrictions, HTTPS redirection, HSTS, and SQL injection prevention practices.
 
 ## Daily Work
 
@@ -14,6 +14,7 @@ The existing Task Tracker API from Week 3 is extended with ASP.NET Core Identity
 | Day 2 | JWT Authentication & Token Issuance                   | [View Day 2](./Day%202) |
 | Day 3 | Protecting Routes, Roles & Policy-Based Authorization | [View Day 3](./Day%203) |
 | Day 4 | Input Validation with FluentValidation                | [View Day 4](./Day%204) |
+| Day 5 | Rate Limiting, CORS & Security Hardening              | [View Day 5](./Day%205) |
 
 ## Topics Covered
 
@@ -519,6 +520,200 @@ Past DueDate
 
 Testing each rule separately confirmed that every validation requirement returns its expected structured error message.
 
+### Rate Limiting
+
+ASP.NET Core built-in rate limiting was added to control how many requests clients can send during a defined time window.
+
+Two fixed-window policies were configured:
+
+```text
+GeneralPolicy
+→ 20 requests per minute
+
+LoginPolicy
+→ 5 requests per minute
+```
+
+The login endpoint uses a stricter limit because repeated login attempts can indicate brute-force activity.
+
+Rate-limit rejection responses were configured as:
+
+```text
+429 Too Many Requests
+```
+
+The rate-limiting middleware was enabled using:
+
+```csharp
+app.UseRateLimiter();
+```
+
+General API controllers use:
+
+```csharp
+[EnableRateLimiting("GeneralPolicy")]
+```
+
+while the login endpoint uses:
+
+```csharp
+[EnableRateLimiting("LoginPolicy")]
+```
+
+### Rate Limiting Testing
+
+The login endpoint was called repeatedly within the same one-minute window.
+
+After exceeding the configured limit, the API returned:
+
+```text
+429 Too Many Requests
+```
+
+This confirmed that the stricter login rate limit was working correctly.
+
+### CORS Configuration
+
+A named CORS policy was created:
+
+```text
+AllowFrontend
+```
+
+The policy allows only:
+
+```text
+https://myapp.com
+```
+
+It was configured using:
+
+```csharp
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("https://myapp.com")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+```
+
+The policy was enabled in the middleware pipeline using:
+
+```csharp
+app.UseCors("AllowFrontend");
+```
+
+### CORS Testing
+
+The allowed origin:
+
+```text
+https://myapp.com
+```
+
+received:
+
+```text
+Access-Control-Allow-Origin: https://myapp.com
+```
+
+A disallowed origin:
+
+```text
+https://evil.com
+```
+
+did not receive the `Access-Control-Allow-Origin` response header.
+
+This confirmed that the API only grants CORS permission to the configured frontend origin.
+
+### HTTPS Redirection
+
+HTTPS redirection was enabled using:
+
+```csharp
+app.UseHttpsRedirection();
+```
+
+An HTTP request to:
+
+```text
+http://localhost:5122/api/Tasks
+```
+
+returned:
+
+```text
+307 Temporary Redirect
+```
+
+with:
+
+```text
+Location: https://localhost:7277/api/Tasks
+```
+
+This confirmed that HTTP requests are redirected to HTTPS.
+
+### HSTS
+
+HSTS was configured outside the Development environment:
+
+```csharp
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+```
+
+HSTS instructs supported browsers to use HTTPS for future requests to the domain.
+
+It was configured but not directly tested because the application was running in the Development environment.
+
+### Security Headers
+
+The lesson covered baseline HTTP security protections including:
+
+```text
+HTTPS Redirection
+HSTS
+Content-Security-Policy
+```
+
+HTTPS redirection and HSTS were configured during the hands-on exercise.
+
+Content-Security-Policy was covered conceptually but was not implemented as part of the completed lab.
+
+### SQL Injection Prevention
+
+The Task Tracker API uses:
+
+```text
+Entity Framework Core
++
+LINQ
+```
+
+for database access.
+
+EF Core automatically parameterizes values used in normal LINQ queries, helping protect the application from SQL injection.
+
+The project was reviewed for raw SQL usage by searching for:
+
+```text
+FromSqlRaw
+ExecuteSqlRaw
+FromSqlInterpolated
+SELECT
+```
+
+No matches were found.
+
+This confirmed that the current project does not contain manually written raw SQL queries and continues to rely on EF Core parameterized queries.
+
 ## Projects
 
 ### Task Tracker API — Identity Integration
@@ -646,6 +841,45 @@ Update — Past DueDate
 
 [View the Day 4 project and documentation](./Day%204)
 
+### Task Tracker API — Security Hardening
+
+The Day 5 implementation includes:
+
+* ASP.NET Core built-in Rate Limiting
+* General fixed-window rate limit
+* Stricter login rate limit
+* `429 Too Many Requests` responses
+* `EnableRateLimiting`
+* Named CORS policy
+* Restricted frontend origin
+* Allowed and disallowed CORS testing
+* HTTPS redirection
+* HSTS configuration
+* SQL injection code review
+* EF Core parameterization review
+
+Security behavior was verified through:
+
+```text
+Excessive Login Requests
+→ 429 Too Many Requests
+
+Allowed Origin
+→ Access-Control-Allow-Origin returned
+
+Disallowed Origin
+→ No Access-Control-Allow-Origin header
+
+HTTP Request
+→ 307 Temporary Redirect
+→ Redirected to HTTPS
+
+Raw SQL Review
+→ No unsafe raw SQL found
+```
+
+[View the Day 5 project and documentation](./Day%205)
+
 ## Technologies and Tools
 
 * C#
@@ -670,6 +904,15 @@ Update — Past DueDate
 * `AbstractValidator<T>`
 * `RuleFor`
 * Structured Validation Errors
+* ASP.NET Core Rate Limiting
+* `EnableRateLimiting`
+* Fixed Window Rate Limiting
+* CORS
+* Named CORS Policies
+* HTTPS Redirection
+* HSTS
+* EF Core Parameterization
+* SQL Injection Prevention
 * Dependency Injection
 * Visual Studio
 * Visual Studio Package Manager Console
