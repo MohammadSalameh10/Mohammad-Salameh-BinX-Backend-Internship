@@ -859,19 +859,6 @@ policies.
 
 ---
 
-# Testing Evidence
-
-The following screenshots document the completed security tests:
-
-```text
-login-rate-limit-429.png
-cors-allowed-origin.png
-cors-disallowed-origin.png
-https-redirection-307.png
-```
-
----
-
 # Tools Used
 
 - ASP.NET Core Web API
