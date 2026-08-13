@@ -20,6 +20,7 @@ namespace CardiacPatientMonitoringSystem.API
 
             builder.Services.AddScoped<IPatientService, PatientService>();
             builder.Services.AddScoped<IVitalSignService, VitalSignService>();
+            builder.Services.AddScoped<IMedicationService, MedicationService>();
 
             builder.Services.AddControllers();
           
