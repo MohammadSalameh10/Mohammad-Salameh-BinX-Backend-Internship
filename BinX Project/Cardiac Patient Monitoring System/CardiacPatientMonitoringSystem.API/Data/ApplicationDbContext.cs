@@ -13,5 +13,25 @@ namespace CardiacPatientMonitoringSystem.API.Data
         public DbSet<VitalSign> VitalSigns { get; set; }
         public DbSet<Medication> Medications { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Patient>()
+                .HasMany(p => p.VitalSigns)
+                .WithOne(v => v.Patient)
+                .HasForeignKey(v => v.PatientId);
+
+            modelBuilder.Entity<Patient>()
+                .HasMany(p => p.Medications)
+                .WithOne(m => m.Patient)
+                .HasForeignKey(m => m.PatientId);
+
+            modelBuilder.Entity<Patient>()
+                .HasMany(p => p.Appointments)
+                .WithOne(a => a.Patient)
+                .HasForeignKey(a => a.PatientId);
+        }
     }
 }
