@@ -3,6 +3,3 @@
 **/bin/
 **/obj/
 *.user
-
-# Local development settings
-**/appsettings.Development.json
