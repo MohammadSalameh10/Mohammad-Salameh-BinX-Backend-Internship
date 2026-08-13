@@ -70,19 +70,7 @@ namespace CardiacPatientMonitoringSystem.API
 
             using (var scope = app.Services.CreateScope())
             {
-                var roleManager = scope.ServiceProvider
-                    .GetRequiredService<RoleManager<IdentityRole>>();
-
-                string[] roles = { "Admin", "Patient" };
-
-                foreach (var role in roles)
-                {
-                    if (!await roleManager.RoleExistsAsync(role))
-                    {
-                        await roleManager.CreateAsync(
-                            new IdentityRole(role));
-                    }
-                }
+                await DbSeeder.SeedAsync(scope.ServiceProvider);
             }
 
             // Configure the HTTP request pipeline.
