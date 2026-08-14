@@ -52,8 +52,14 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<PatientResponse> CreateAsync(string userId, CreatePatientRequest request)
+        public async Task<PatientResponse?> CreateAsync(string userId, CreatePatientRequest request)
         {
+            var existingPatient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            if (existingPatient != null)
+                return null;
+
             var patient = new Patient
             {
                 UserId = userId,

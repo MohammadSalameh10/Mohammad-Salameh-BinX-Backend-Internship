@@ -9,7 +9,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Interfaces
 
         Task<PatientResponse?> GetByIdAsync(int id);
 
-        Task<PatientResponse> CreateAsync(string userId, CreatePatientRequest request);
+        Task<PatientResponse?> CreateAsync(string userId, CreatePatientRequest request);
 
         Task<bool> UpdateAsync(int id, UpdatePatientRequest request);
 

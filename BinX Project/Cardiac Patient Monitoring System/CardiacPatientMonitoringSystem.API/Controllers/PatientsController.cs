@@ -52,6 +52,9 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
                 userId,
                 request);
 
+            if (patient == null)
+                return BadRequest("Patient profile already exists.");
+
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = patient.Id },
