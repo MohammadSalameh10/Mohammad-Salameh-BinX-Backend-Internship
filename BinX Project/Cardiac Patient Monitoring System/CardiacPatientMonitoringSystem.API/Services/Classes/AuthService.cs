@@ -35,7 +35,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             if (!result.Succeeded)
                 return result;
 
-            await _userManager.AddToRoleAsync(user, "Patient");
+            var roleResult = await _userManager.AddToRoleAsync(
+                user,
+                "Patient");
+
+            if (!roleResult.Succeeded)
+                return roleResult;
 
             return result;
         }
