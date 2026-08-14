@@ -23,8 +23,11 @@ namespace CardiacPatientMonitoringSystem.API.Data
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(
+                    var roleResult = await roleManager.CreateAsync(
                         new IdentityRole(role));
+
+                    if (!roleResult.Succeeded)
+                        return;
                 }
             }
 
@@ -47,9 +50,12 @@ namespace CardiacPatientMonitoringSystem.API.Data
 
                 if (adminResult.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(
+                    var adminRoleResult = await userManager.AddToRoleAsync(
                         adminUser,
                         "Admin");
+
+                    if (!adminRoleResult.Succeeded)
+                        return;
                 }
             }
 
@@ -70,12 +76,15 @@ namespace CardiacPatientMonitoringSystem.API.Data
                     identityUser,
                     patientPassword);
 
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(
-                        identityUser,
-                        "Patient");
-                }
+                if (!result.Succeeded)
+                    return;
+
+                var patientRoleResult = await userManager.AddToRoleAsync(
+                    identityUser,
+                    "Patient");
+
+                if (!patientRoleResult.Succeeded)
+                    return;
             }
 
             if (identityUser == null)
