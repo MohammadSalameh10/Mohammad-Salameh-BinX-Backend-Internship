@@ -19,9 +19,9 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? name)
         {
-            var medications = await _medicationService.GetAllAsync();
+            var medications = await _medicationService.GetAllAsync(name);
 
             return Ok(medications);
         }

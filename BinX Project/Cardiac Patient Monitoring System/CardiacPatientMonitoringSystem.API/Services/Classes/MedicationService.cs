@@ -16,9 +16,16 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             _context = context;
         }
 
-        public async Task<List<MedicationResponse>> GetAllAsync()
+        public async Task<List<MedicationResponse>> GetAllAsync(string? name)
         {
-            return await _context.Medications
+            var query = _context.Medications.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                query = query.Where(m => m.Name.Contains(name));
+            }
+
+            return await query
                 .Select(m => new MedicationResponse
                 {
                     Id = m.Id,
