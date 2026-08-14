@@ -93,67 +93,87 @@ namespace CardiacPatientMonitoringSystem.API.Data
             var patient = await context.Patients
                 .FirstOrDefaultAsync(p => p.UserId == identityUser.Id);
 
-            if (patient != null)
-                return;
-
-            patient = new Patient
+            if (patient == null)
             {
-                UserId = identityUser.Id,
-                FullName = "Test Patient",
-                DateOfBirth = new DateTime(1995, 5, 15),
-                Gender = "Male",
-                PhoneNumber = "0599000000",
-                BloodType = "O+"
-            };
+                patient = new Patient
+                {
+                    UserId = identityUser.Id,
+                    FullName = "Test Patient",
+                    DateOfBirth = new DateTime(1995, 5, 15),
+                    Gender = "Male",
+                    PhoneNumber = "0599000000",
+                    BloodType = "O+"
+                };
 
-            context.Patients.Add(patient);
+                context.Patients.Add(patient);
 
-            await context.SaveChangesAsync();
+                await context.SaveChangesAsync();
+            }
 
-            var vitalSigns = new List<VitalSign>
+            var hasVitalSigns = await context.VitalSigns
+                .AnyAsync(v => v.PatientId == patient.Id);
+
+            if (!hasVitalSigns)
             {
-                new VitalSign
+                var vitalSigns = new List<VitalSign>
+                {
+                    new VitalSign
+                    {
+                        PatientId = patient.Id,
+                        HeartRate = 72,
+                        SystolicBloodPressure = 120,
+                        DiastolicBloodPressure = 80,
+                        OxygenSaturation = 98,
+                        RecordedAt = new DateTime(2026, 8, 10, 9, 0, 0)
+                    },
+
+                    new VitalSign
+                    {
+                        PatientId = patient.Id,
+                        HeartRate = 76,
+                        SystolicBloodPressure = 118,
+                        DiastolicBloodPressure = 78,
+                        OxygenSaturation = 97,
+                        RecordedAt = new DateTime(2026, 8, 11, 9, 0, 0)
+                    }
+                };
+
+                context.VitalSigns.AddRange(vitalSigns);
+            }
+
+            var hasMedication = await context.Medications
+                .AnyAsync(m => m.PatientId == patient.Id);
+
+            if (!hasMedication)
+            {
+                var medication = new Medication
                 {
                     PatientId = patient.Id,
-                    HeartRate = 72,
-                    SystolicBloodPressure = 120,
-                    DiastolicBloodPressure = 80,
-                    OxygenSaturation = 98,
-                    RecordedAt = new DateTime(2026, 8, 10, 9, 0, 0)
-                },
+                    Name = "Aspirin",
+                    Dosage = "81 mg",
+                    Frequency = "Once daily",
+                    StartDate = new DateTime(2026, 8, 1),
+                    EndDate = null
+                };
 
-                new VitalSign
+                context.Medications.Add(medication);
+            }
+
+            var hasAppointment = await context.Appointments
+                .AnyAsync(a => a.PatientId == patient.Id);
+
+            if (!hasAppointment)
+            {
+                var appointment = new Appointment
                 {
                     PatientId = patient.Id,
-                    HeartRate = 76,
-                    SystolicBloodPressure = 118,
-                    DiastolicBloodPressure = 78,
-                    OxygenSaturation = 97,
-                    RecordedAt = new DateTime(2026, 8, 11, 9, 0, 0)
-                }
-            };
+                    AppointmentDate = new DateTime(2026, 9, 1, 10, 0, 0),
+                    Reason = "Routine cardiac follow-up",
+                    Notes = "Synthetic test appointment"
+                };
 
-            var medication = new Medication
-            {
-                PatientId = patient.Id,
-                Name = "Aspirin",
-                Dosage = "81 mg",
-                Frequency = "Once daily",
-                StartDate = new DateTime(2026, 8, 1),
-                EndDate = null
-            };
-
-            var appointment = new Appointment
-            {
-                PatientId = patient.Id,
-                AppointmentDate = new DateTime(2026, 9, 1, 10, 0, 0),
-                Reason = "Routine cardiac follow-up",
-                Notes = "Synthetic test appointment"
-            };
-
-            context.VitalSigns.AddRange(vitalSigns);
-            context.Medications.Add(medication);
-            context.Appointments.Add(appointment);
+                context.Appointments.Add(appointment);
+            }
 
             await context.SaveChangesAsync();
         }
