@@ -52,7 +52,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
                 request);
 
             if (appointment == null)
-                return NotFound();
+                return BadRequest("Patient profile not found. Create a patient profile first.");
 
             return CreatedAtAction(
                 nameof(GetById),
