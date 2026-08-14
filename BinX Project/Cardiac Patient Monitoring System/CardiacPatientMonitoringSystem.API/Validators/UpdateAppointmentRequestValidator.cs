@@ -8,8 +8,7 @@ namespace CardiacPatientMonitoringSystem.API.Validators
         public UpdateAppointmentRequestValidator()
         {
             RuleFor(x => x.AppointmentDate)
-                .NotEmpty()
-                .GreaterThan(DateTime.Now);
+                .NotEmpty();
 
             RuleFor(x => x.Reason)
                 .NotEmpty()
