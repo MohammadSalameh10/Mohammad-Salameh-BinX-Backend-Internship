@@ -5,7 +5,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Interfaces
 {
     public interface IAppointmentService
     {
-        Task<List<AppointmentResponse>> GetAllAsync();
+        Task<List<AppointmentResponse>> GetAllAsync(string? reason);
         Task<AppointmentResponse?> GetByIdAsync(int id);
         Task<AppointmentResponse?> CreateAsync(string userId, CreateAppointmentRequest request);
         Task<bool> UpdateAsync(int id, UpdateAppointmentRequest request);
