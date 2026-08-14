@@ -24,7 +24,15 @@ namespace CardiacPatientMonitoringSystem.API.Validators
 
             RuleFor(x => x.BloodType)
                 .NotEmpty()
-                .MaximumLength(5);
+                .MaximumLength(5)
+                .Must(bloodType => new[]
+                {
+                    "A+", "A-",
+                    "B+", "B-",
+                    "AB+", "AB-",
+                    "O+", "O-"
+                }.Contains(bloodType))
+                .WithMessage("Blood type must be a valid blood type.");
         }
     }
 }
