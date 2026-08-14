@@ -81,7 +81,10 @@ namespace CardiacPatientMonitoringSystem.API.Data
 
                 if (!result.Succeeded)
                     return;
+            }
 
+            if (!await userManager.IsInRoleAsync(identityUser, "Patient"))
+            {
                 var patientRoleResult = await userManager.AddToRoleAsync(
                     identityUser,
                     "Patient");
@@ -89,9 +92,6 @@ namespace CardiacPatientMonitoringSystem.API.Data
                 if (!patientRoleResult.Succeeded)
                     return;
             }
-
-            if (identityUser == null)
-                return;
 
             var patient = await context.Patients
                 .FirstOrDefaultAsync(p => p.UserId == identityUser.Id);
