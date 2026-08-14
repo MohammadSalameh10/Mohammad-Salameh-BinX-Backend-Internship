@@ -48,15 +48,15 @@ namespace CardiacPatientMonitoringSystem.API.Data
                     adminUser,
                     adminPassword);
 
-                if (adminResult.Succeeded)
-                {
-                    var adminRoleResult = await userManager.AddToRoleAsync(
-                        adminUser,
-                        "Admin");
+                if (!adminResult.Succeeded)
+                    return;
 
-                    if (!adminRoleResult.Succeeded)
-                        return;
-                }
+                var adminRoleResult = await userManager.AddToRoleAsync(
+                    adminUser,
+                    "Admin");
+
+                if (!adminRoleResult.Succeeded)
+                    return;
             }
 
             var patientEmail = "patient@cardiac.com";
