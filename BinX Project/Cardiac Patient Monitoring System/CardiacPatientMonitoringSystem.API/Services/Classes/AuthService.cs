@@ -14,7 +14,9 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AuthService(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public AuthService(
+            UserManager<IdentityUser> userManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -40,7 +42,11 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 "Patient");
 
             if (!roleResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
+
                 return roleResult;
+            }
 
             return result;
         }
@@ -62,10 +68,10 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             var roles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        new Claim(ClaimTypes.Email, user.Email!)
-    };
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email!)
+            };
 
             foreach (var role in roles)
             {
@@ -73,7 +79,8 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             }
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+                Encoding.UTF8.GetBytes(
+                    _configuration["Jwt:Key"]!));
 
             var credentials = new SigningCredentials(
                 key,
@@ -84,12 +91,14 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(
-                    double.Parse(_configuration["Jwt:DurationInMinutes"]!)),
+                    double.Parse(
+                        _configuration["Jwt:DurationInMinutes"]!)),
                 signingCredentials: credentials);
 
             return new LoginResponse
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(token)
+                Token = new JwtSecurityTokenHandler()
+                    .WriteToken(token)
             };
         }
     }
