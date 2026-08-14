@@ -20,7 +20,8 @@ namespace CardiacPatientMonitoringSystem.API.Validators
                 .InclusiveBetween(0, 100);
 
             RuleFor(x => x.RecordedAt)
-                .NotEmpty();
+                .NotEmpty()
+                .LessThanOrEqualTo(DateTime.Now);
         }
     }
 }
