@@ -50,7 +50,10 @@ namespace CardiacPatientMonitoringSystem.API.Data
 
                 if (!adminResult.Succeeded)
                     return;
+            }
 
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
                 var adminRoleResult = await userManager.AddToRoleAsync(
                     adminUser,
                     "Admin");
