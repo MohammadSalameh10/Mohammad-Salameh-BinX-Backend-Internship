@@ -10,7 +10,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                                                                                                                                                                                                                                                                | [View Week 2](./BinX%20Internship/Week%202) |
 | Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                                                                                                                                                                                               | [View Week 3](./BinX%20Internship/Week%203) |
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
-| Week&nbsp;5 | Phase 3 capstone project selection, E-Commerce Backend scope, xUnit unit testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
+| Week&nbsp;5 | xUnit unit testing, creating a dedicated test project, service-layer unit testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 
 ## Repository Structure
 
@@ -273,24 +273,19 @@ Each week contains a summary README, and each completed day contains its own tas
 * Disabling automatic redirect following to test HTTPS redirection
 * Verifying `307 Temporary Redirect` and the HTTPS `Location` header
 
-### Phase 3 Capstone Project
-
-* Selected an E-Commerce Backend as the Phase 3 capstone project
-* Scoped the project around product catalog management, shopping cart operations, and order processing
-* Defined a realistic scope for completion by Week 9
-* Reviewed the required professional baseline for the final backend project
-* Planned to reuse authentication, authorization, validation, database, security, testing, deployment, and documentation patterns from previous weeks
-
 ### Unit Testing with xUnit
 
 * Unit testing small units of application logic independently
+* Applying unit testing concepts to the Cardiac Patient Monitoring System API
 * Creating a dedicated xUnit test project
 * Referencing the main ASP.NET Core API project from the test project
+* Testing service-layer business logic using `VitalSignService`
+* Adding and testing `GetHeartRateStatus(int heartRate)` in `IVitalSignService` and `VitalSignService`
 * Writing tests using `[Fact]`
 * Writing parameterized tests using `[Theory]`
 * Providing multiple test cases using `[InlineData]`
 * Organizing tests using the Arrange-Act-Assert pattern
-* Testing pure service methods without external dependencies
+* Testing service methods without external dependencies
 * Using descriptive test naming based on method, scenario, and expected result
 * Running tests using Visual Studio Test Explorer
 * Running individual tests and all tests
