@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="TaskTrackerApi.Tests/TaskTrackerApi.Tests.csproj" Id="a75d3f4f-14a8-4f17-88d4-8cf311fc88a3" />
-  <Project Path="TaskTrackerApi/TaskTrackerApi.csproj" />
-</Solution>

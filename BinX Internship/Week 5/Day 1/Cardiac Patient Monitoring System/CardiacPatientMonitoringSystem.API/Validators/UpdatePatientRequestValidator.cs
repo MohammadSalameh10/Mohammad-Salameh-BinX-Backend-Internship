@@ -1,0 +1,38 @@
+﻿using CardiacPatientMonitoringSystem.API.DTOs.Requests;
+using FluentValidation;
+
+namespace CardiacPatientMonitoringSystem.API.Validators
+{
+    public class UpdatePatientRequestValidator : AbstractValidator<UpdatePatientRequest>
+    {
+        public UpdatePatientRequestValidator()
+        {
+            RuleFor(x => x.FullName)
+                .NotEmpty()
+                .MaximumLength(100);
+
+            RuleFor(x => x.DateOfBirth)
+                .NotEmpty()
+                .LessThan(DateTime.Today);
+
+            RuleFor(x => x.Gender)
+                .NotEmpty();
+
+            RuleFor(x => x.PhoneNumber)
+                .NotEmpty()
+                .MaximumLength(20);
+
+            RuleFor(x => x.BloodType)
+                .NotEmpty()
+                .MaximumLength(5)
+                .Must(bloodType => new[]
+                {
+                    "A+", "A-",
+                    "B+", "B-",
+                    "AB+", "AB-",
+                    "O+", "O-"
+                }.Contains(bloodType))
+                .WithMessage("Blood type must be a valid blood type.");
+        }
+    }
+}

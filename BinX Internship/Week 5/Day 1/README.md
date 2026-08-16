@@ -1,12 +1,12 @@
-# Week 5 — Day 1: Choosing the Phase 3 Project & Unit Testing with xUnit
+# Week 5 — Day 1: Unit Testing with xUnit
 
 ## Overview
 
-Day 1 focused on selecting the Phase 3 capstone project and introducing unit testing with xUnit.
+Day 1 focused on introducing unit testing with xUnit using the existing **Cardiac Patient Monitoring System API** project.
 
-The selected capstone project is an **E-Commerce Backend**, which will be developed throughout Phase 3 using the backend concepts and patterns practiced during the previous weeks.
+The hands-on work applied unit testing concepts to the service layer by creating a separate xUnit test project and connecting it to the API project through a project reference.
 
-The hands-on work also introduced xUnit unit testing, including `[Fact]`, `[Theory]`, `[InlineData]`, and the Arrange-Act-Assert pattern.
+The exercise introduced xUnit unit testing concepts, including `[Fact]`, `[Theory]`, `[InlineData]`, and the Arrange-Act-Assert pattern.
 
 ---
 
@@ -14,70 +14,14 @@ The hands-on work also introduced xUnit unit testing, including `[Fact]`, `[Theo
 
 The objectives of this exercise were to:
 
-- Select a Phase 3 capstone project based on current interests and backend development experience.
-- Define a realistic project scope that can meet the required professional baseline by Week 9.
 - Understand the purpose of unit testing.
 - Create an xUnit test project.
 - Reference the existing ASP.NET Core API project from the test project.
+- Test service-layer business logic independently.
 - Write unit tests using `[Fact]`.
 - Write parameterized tests using `[Theory]` and `[InlineData]`.
 - Structure unit tests using the Arrange-Act-Assert pattern.
 - Run tests using Visual Studio Test Explorer and verify the results.
-
----
-
-## Phase 3 Project Selection
-
-The selected Phase 3 capstone project is:
-
-```text
-E-Commerce Backend
-```
-
-The project will focus on core e-commerce backend functionality such as:
-
-```text
-Product Catalog
-Shopping Cart
-Order Processing
-```
-
-The project will build on the ASP.NET Core, Entity Framework Core, authentication, authorization, validation, security, and testing concepts practiced during the internship.
-
-The goal is to keep the project scope realistic while still delivering the professional backend requirements expected by Week 9.
-
----
-
-## E-Commerce Backend Scope
-
-The Phase 3 capstone will be an **E-Commerce Backend API** focused on core workflows including product catalog management, shopping cart operations, and order processing.
-
-The project will apply the backend concepts practiced during the previous weeks, including REST API design, Entity Framework Core, authentication, authorization, validation, security, and automated testing.
-
-The scope is designed to remain achievable by Week 9 while meeting the required professional baseline for a complete backend project.
-
----
-
-## Professional Baseline
-
-Regardless of the selected Phase 3 project, the final project is expected to meet a common professional baseline by Week 9.
-
-The E-Commerce Backend will work toward including:
-
-- A fully documented REST API.
-- A complete Postman collection.
-- A normalized relational database.
-- Entity Framework Core migrations.
-- A documented Entity Relationship Diagram (ERD).
-- JWT-based authentication.
-- Role-based access control.
-- Unit tests for critical application logic.
-- Integration tests for critical API routes.
-- Deployment using Azure App Service or Railway.
-- A passing CI/CD pipeline.
-- Complete project documentation in the README.
-
-The concepts practiced during Weeks 1–4 will therefore be reused and applied to the selected capstone project rather than starting with completely new backend patterns.
 
 ---
 
@@ -90,25 +34,20 @@ For this exercise, **xUnit** was used as the .NET testing framework.
 A separate test project was created:
 
 ```text
-TaskTrackerApi.Tests
+CardiacPatientMonitoringSystem.Tests
 ```
 
 The test project references the existing API project:
 
 ```text
-TaskTrackerApi.Tests
+CardiacPatientMonitoringSystem.Tests
         ↓
 Project Reference
         ↓
-TaskTrackerApi
+CardiacPatientMonitoringSystem.API
 ```
 
 This allows the test project to access and test classes from the main application while keeping production code and test code separated.
-
-The first unit tests focus on a simple `OrderCalculator` service. The service contains pure calculation logic and does not depend on a database, HTTP requests, or other external resources.
-
-This makes it suitable for demonstrating the fundamentals of isolated unit testing.
-
 
 ### xUnit Test Project Setup
 
@@ -129,9 +68,8 @@ xUnit provides attributes that identify methods as tests.
 For example:
 
 ```text
-Unit Price = 25
-Quantity = 4
-Expected Total = 100
+Heart Rate = 50
+Expected Status = Low
 ```
 
 A `[Fact]` test runs once and verifies that specific scenario.
@@ -144,9 +82,9 @@ Test data can be supplied using `[InlineData]`:
 
 ```csharp
 [Theory]
-[InlineData(10, 2, 20)]
-[InlineData(15, 3, 45)]
-[InlineData(25, 0, 0)]
+[InlineData(40, "Low")]
+[InlineData(80, "Normal")]
+[InlineData(150, "High")]
 ```
 
 In this example, xUnit executes the same test method three times, once for each `[InlineData]` set.
@@ -173,162 +111,181 @@ Assert
 For example:
 
 ```csharp
-// Arrange
-var calculator = new OrderCalculator();
-decimal unitPrice = 25m;
-int quantity = 4;
+[Fact]
+public void GetHeartRateStatus_WithLowHeartRate_ReturnsLow()
+{
+    // Arrange
+    var service = new VitalSignService(null!);
+    int heartRate = 50;
 
-// Act
-decimal result =
-    calculator.CalculateTotal(unitPrice, quantity);
+    // Act
+    string result =
+        service.GetHeartRateStatus(heartRate);
 
-// Assert
-Assert.Equal(100m, result);
+    // Assert
+    Assert.Equal("Low", result);
+}
 ```
 
 Using these three sections keeps each test easy to read and makes it clear what behavior is being verified.
 
 ---
 
-## OrderCalculator Implementation
+## VitalSignService Implementation
 
-A simple `OrderCalculator` class was added to provide pure calculation logic that can be tested without external dependencies.
+The unit tests focus on testing business logic added to the vital sign service.
+
+The interface was updated in:
+
+```text
+IVitalSignService.cs
+```
+
+with:
 
 ```csharp
-namespace TaskTrackerApi.Services.Classes
+string GetHeartRateStatus(int heartRate);
+```
+
+The implementation was added inside:
+
+```text
+VitalSignService.cs
+```
+
+```csharp
+public string GetHeartRateStatus(int heartRate)
 {
-    public class OrderCalculator
-    {
-        public decimal CalculateTotal(decimal unitPrice, int quantity)
-        {
-            return unitPrice * quantity;
-        }
-    }
+    if (heartRate < 60)
+        return "Low";
+
+    if (heartRate > 100)
+        return "High";
+
+    return "Normal";
 }
 ```
 
-The `CalculateTotal` method receives:
+The `GetHeartRateStatus` method receives:
 
 ```text
-unitPrice
-→ The price of one item.
-
-quantity
-→ The number of items.
+heartRate
+→ The patient's measured heart rate value.
 ```
 
-It calculates the order total using:
+It evaluates the heart rate using the following rules:
 
 ```text
-Total = Unit Price × Quantity
+Below 60
+→ Low
+
+60 - 100
+→ Normal
+
+Above 100
+→ High
 ```
 
-The method is suitable for a basic unit-testing exercise because its result depends only on its input values and it does not interact with a database, HTTP request, file system, or external service.
+The method is suitable for unit testing because its result depends only on the input value and it does not interact with the database, Entity Framework Core, HTTP requests, or external services.
 
 ---
 
 ## Fact Tests
 
-Three `[Fact]` tests were created for `CalculateTotal`.
+Three `[Fact]` tests were created for `GetHeartRateStatus`.
 
 Each test covers one specific scenario and follows the Arrange-Act-Assert pattern.
 
-### Valid Price and Quantity
+---
 
-The first test verifies a normal calculation:
+### Low Heart Rate
+
+The first test verifies that a heart rate below 60 returns the expected status:
 
 ```csharp
 [Fact]
-public void CalculateTotal_WithValidPriceAndQuantity_ReturnsCorrectTotal()
+public void GetHeartRateStatus_WithLowHeartRate_ReturnsLow()
 {
     // Arrange
-    var calculator = new OrderCalculator();
-    decimal unitPrice = 25m;
-    int quantity = 4;
+    var service = new VitalSignService(null!);
+    int heartRate = 50;
 
     // Act
-    decimal result =
-        calculator.CalculateTotal(unitPrice, quantity);
+    string result =
+        service.GetHeartRateStatus(heartRate);
 
     // Assert
-    Assert.Equal(100m, result);
+    Assert.Equal("Low", result);
 }
 ```
 
-The expected calculation is:
+The expected result is:
 
 ```text
-25 × 4 = 100
+50 → Low
 ```
-
 
 ![First Fact Test Passed](./fact-test-1-passed.png)
 
-### Zero Quantity
+---
 
-The second test verifies the behavior when the quantity is zero:
+### Normal Heart Rate
+
+The second test verifies that a normal heart rate returns the expected status:
 
 ```csharp
 [Fact]
-public void CalculateTotal_WithZeroQuantity_ReturnsZero()
+public void GetHeartRateStatus_WithNormalHeartRate_ReturnsNormal()
 {
     // Arrange
-    var calculator = new OrderCalculator();
-    decimal unitPrice = 25m;
-    int quantity = 0;
+    var service = new VitalSignService(null!);
+    int heartRate = 75;
 
     // Act
-    decimal result =
-        calculator.CalculateTotal(unitPrice, quantity);
+    string result =
+        service.GetHeartRateStatus(heartRate);
 
     // Assert
-    Assert.Equal(0m, result);
+    Assert.Equal("Normal", result);
 }
 ```
 
-The expected calculation is:
+The expected result is:
 
 ```text
-25 × 0 = 0
+75 → Normal
 ```
-
 
 ![Two Fact Tests Passed](./fact-tests-2-passed.png)
 
-This provides an additional edge case instead of testing only normal input values.
+---
 
-### Decimal Price
+### High Heart Rate
 
-The third test verifies that the calculation works correctly with a decimal product price:
+The third test verifies that a heart rate above 100 returns the expected status:
 
 ```csharp
 [Fact]
-public void CalculateTotal_WithDecimalPrice_ReturnsCorrectTotal()
+public void GetHeartRateStatus_WithHighHeartRate_ReturnsHigh()
 {
     // Arrange
-    var calculator = new OrderCalculator();
-    decimal unitPrice = 19.99m;
-    int quantity = 3;
+    var service = new VitalSignService(null!);
+    int heartRate = 120;
 
     // Act
-    decimal result =
-        calculator.CalculateTotal(unitPrice, quantity);
+    string result =
+        service.GetHeartRateStatus(heartRate);
 
     // Assert
-    Assert.Equal(59.97m, result);
+    Assert.Equal("High", result);
 }
 ```
 
-The expected calculation is:
+The expected result is:
 
 ```text
-19.99 × 3 = 59.97
+120 → High
 ```
-
-This scenario is relevant to an E-Commerce Backend because product prices commonly contain decimal values.
-
-
-### Fact Test Results
 
 ![Three Fact Tests Passed](./fact-tests-3-passed.png)
 
@@ -336,36 +293,37 @@ This scenario is relevant to an E-Commerce Backend because product prices common
 
 ## Theory Test
 
-A `[Theory]` test was added to verify the same `CalculateTotal` logic using multiple sets of input values.
+A `[Theory]` test was added to verify the same `GetHeartRateStatus` logic using multiple sets of input values.
 
 ```csharp
 [Theory]
-[InlineData(10, 2, 20)]
-[InlineData(15, 3, 45)]
-[InlineData(25, 0, 0)]
-public void CalculateTotal_WithDifferentInputs_ReturnsCorrectTotal(
-    int unitPrice,
-    int quantity,
-    int expected)
+[InlineData(40, "Low")]
+[InlineData(80, "Normal")]
+[InlineData(150, "High")]
+public void GetHeartRateStatus_WithDifferentInputs_ReturnsCorrectStatus(
+    int heartRate,
+    string expectedStatus)
 {
     // Arrange
-    var calculator = new OrderCalculator();
+    var service = new VitalSignService(null!);
 
     // Act
-    decimal result =
-        calculator.CalculateTotal(unitPrice, quantity);
+    string result =
+        service.GetHeartRateStatus(heartRate);
 
     // Assert
-    Assert.Equal(expected, result);
+    Assert.Equal(expectedStatus, result);
 }
 ```
 
 Each `[InlineData]` attribute supplies a different set of values to the same test method:
 
 ```text
-10 × 2 → Expected 20
-15 × 3 → Expected 45
-25 × 0 → Expected 0
+40 → Expected Low
+
+80 → Expected Normal
+
+150 → Expected High
 ```
 
 Instead of creating three separate test methods with nearly identical logic, `[Theory]` allows the same test to be executed repeatedly with different inputs.
@@ -384,13 +342,14 @@ The exercise demonstrated the main difference between `[Fact]` and `[Theory]`:
 → Uses fixed values inside the test.
 → Runs once.
 
+
 [Theory]
 → Tests the same behavior with multiple input sets.
 → Receives test data through parameters.
 → Runs once for each supplied data set.
 ```
 
-`[InlineData]` provides the individual input sets used by the `[Theory]`.
+`[InlineData]` provides the individual input values used by the `[Theory]`.
 
 ---
 
@@ -403,7 +362,7 @@ To run the tests:
 1. Open **Test Explorer** from Visual Studio.
 2. Build the solution if needed.
 3. Select the test project or individual tests.
-4. Click **Run All Tests** or run the selected test.
+4. Click **Run All Tests**.
 5. Review the results in Test Explorer.
 
 Test Explorer displays the total number of tests together with the number of passed, failed, and skipped tests.
@@ -414,14 +373,17 @@ During the exercise, the tests were added and executed progressively:
 First Fact Test
 → 1 Passed
 
+
 Second Fact Test
 → 2 Passed
+
 
 Third Fact Test
 → 3 Passed
 
+
 Theory with 3 InlineData cases
-→ 6 Passed
+→ Total 6 Passed
 ```
 
 This made it possible to verify each stage of the implementation before moving to the next test.
@@ -465,18 +427,16 @@ All six test executions passed successfully.
 
 The following tasks were completed:
 
-1. Reviewed the available Phase 3 capstone project options.
-2. Selected **E-Commerce Backend** as the Phase 3 project.
-3. Defined a three-sentence scope statement for the selected project.
-4. Created an xUnit test project.
-5. Added a project reference from the test project to the existing API project.
-6. Created a simple `OrderCalculator` class with pure calculation logic.
-7. Wrote three `[Fact]` unit tests.
-8. Organized the tests using the Arrange-Act-Assert pattern.
-9. Wrote one `[Theory]` test.
-10. Added three test cases using `[InlineData]`.
-11. Executed the tests using Visual Studio Test Explorer.
-12. Confirmed that all six test executions passed successfully.
+1. Created an xUnit test project.
+2. Added a project reference from the test project to the existing API project.
+3. Updated `IVitalSignService` by adding `GetHeartRateStatus(int heartRate)`.
+4. Implemented `GetHeartRateStatus` inside `VitalSignService`.
+5. Created three `[Fact]` unit tests.
+6. Organized the tests using the Arrange-Act-Assert pattern.
+7. Created one `[Theory]` test.
+8. Added three test cases using `[InlineData]`.
+9. Executed the tests using Visual Studio Test Explorer.
+10. Confirmed that all six test executions passed successfully.
 
 ---
 
@@ -485,24 +445,29 @@ The following tasks were completed:
 The main files involved in this exercise were:
 
 ```text
-TaskTrackerApi
+CardiacPatientMonitoringSystem.API
 └── Services
+    ├── Interfaces
+    │   └── IVitalSignService.cs
+    │
     └── Classes
-        └── OrderCalculator.cs
+        └── VitalSignService.cs
 
-TaskTrackerApi.Tests
-└── OrderCalculatorTests.cs
+
+CardiacPatientMonitoringSystem.Tests
+└── VitalSignServiceTests.cs
 ```
 
 The solution now contains both the application project and a dedicated unit test project:
 
 ```text
-TaskTrackerApi
+CardiacPatientMonitoringSystem.API
 → Application code
 
-TaskTrackerApi.Tests
+
+CardiacPatientMonitoringSystem.Tests
 → Unit test code
-→ References TaskTrackerApi
+→ References CardiacPatientMonitoringSystem.API
 ```
 
 This separation allows application logic to be tested independently while keeping test code outside the production API project.
