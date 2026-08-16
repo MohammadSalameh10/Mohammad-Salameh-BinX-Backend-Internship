@@ -1,44 +1,58 @@
-# Week 5 — Phase 3 Project & Unit Testing
+# Week 5 — Unit Testing with xUnit
 
 ## Overview
 
-Week 5 started the transition into Phase 3 by selecting the capstone project and introducing automated testing with xUnit.
+Week 5 started the introduction of automated testing by applying unit testing concepts to the existing **Cardiac Patient Monitoring System API** project.
 
-The selected project is an E-Commerce Backend, and the first day focused on defining a realistic project scope, reviewing the professional baseline required by Week 9, and implementing unit tests using `[Fact]`, `[Theory]`, `[InlineData]`, and the Arrange-Act-Assert pattern.
+The first day focused on creating a separate xUnit test project, connecting it to the API project through a project reference, and testing service-layer business logic using `[Fact]`, `[Theory]`, `[InlineData]`, and the Arrange-Act-Assert pattern.
 
 ## Daily Work
 
 | Day | Topic | Project / Documentation |
 |---|---|---|
-| Day 1 | Choosing the Phase 3 Project & Unit Testing with xUnit | [View Day 1](./Day%201) |
+| Day 1 | Unit Testing with xUnit | [View Day 1](./Day%201) |
 
 ## Week 5 Highlights
-
-### Phase 3 Project Selection
-
-- Selected an E-Commerce Backend as the Phase 3 capstone project.
-- Defined the core project scope around product catalog management, shopping cart operations, and order processing.
-- Reviewed the professional baseline required for completion by Week 9.
 
 ### xUnit Testing
 
 - Created a dedicated xUnit test project.
 - Added a project reference to the existing API project.
-- Created a simple `OrderCalculator` service with pure calculation logic.
+- Created unit tests for the `VitalSignService`.
+- Added `GetHeartRateStatus(int heartRate)` to `IVitalSignService`.
+- Implemented heart rate status evaluation logic inside `VitalSignService`.
 - Wrote three `[Fact]` unit tests.
 - Wrote one `[Theory]` test with three `[InlineData]` cases.
 
 ### Arrange-Act-Assert
 
 - Structured unit tests using the Arrange-Act-Assert pattern.
-- Used clear test naming based on method, scenario, and expected result.
-- Tested normal values, zero quantity, and decimal prices.
+- Prepared test data during the Arrange phase.
+- Executed the service method during the Act phase.
+- Verified expected results during the Assert phase.
+
+### Test Scenarios
+
+The tests covered different heart rate scenarios:
+
+- Low heart rate.
+- Normal heart rate.
+- High heart rate.
+
+The parameterized `[Theory]` test verified multiple heart rate values using `[InlineData]`.
 
 ### Test Execution
 
 - Ran unit tests using Visual Studio Test Explorer.
-- Added and executed the tests progressively.
-- Verified a final result of 6 passed tests with 0 failures and 0 skipped tests.
+- Added and executed tests progressively.
+- Verified the final result:
+
+```text
+Tests:   6
+Passed:  6
+Failed:  0
+Skipped: 0
+```
 
 ## Tools Used
 
