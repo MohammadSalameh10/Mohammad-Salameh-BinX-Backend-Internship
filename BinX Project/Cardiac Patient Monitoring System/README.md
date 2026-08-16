@@ -27,6 +27,7 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Appointment filtering by reason.
 - Swagger/OpenAPI documentation.
 - Postman collection for API testing.
+- Recorded API demo with database evidence.
 
 ---
 
@@ -65,7 +66,9 @@ Before running the project, make sure the following are installed:
 ```text
 Cardiac Patient Monitoring System/
 │
-├── docs/
+├── demo/
+│   └── Cardiac API Demo.zip
+│
 ├── postman/
 │   └── Cardiac Patient Monitoring System API.postman_collection.json
 │
@@ -539,6 +542,29 @@ depending on the account role.
 
 ---
 
+## Demo
+
+A compressed recorded API demonstration is included in:
+
+```text
+demo/Cardiac API Demo.zip
+```
+
+The demo shows:
+
+- API testing using Postman.
+- JWT authentication.
+- Admin and Patient role authorization.
+- `401 Unauthorized` and `403 Forbidden` scenarios.
+- Patient registration and patient-profile creation.
+- Duplicate patient-profile prevention.
+- Vital-sign creation and request validation.
+- Medication and appointment filtering.
+- CRUD operations.
+- Database evidence showing that API operations are reflected in SQL Server.
+
+---
+
 ## Running the Project
 
 ### 1. Open the Project
@@ -715,3 +741,4 @@ Reason: Routine cardiac follow-up
 - The project uses synthetic data only and does not contain real patient information.
 - JWT tokens are not stored in the Postman collection.
 - Delete requests in the Postman collection use non-seeded IDs by default to avoid accidentally deleting the provided seed data.
+- The recorded API demo is included in the `demo` folder.
