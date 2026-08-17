@@ -10,7 +10,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                                                                                                                                                                                                                                                                | [View Week 2](./BinX%20Internship/Week%202) |
 | Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                                                                                                                                                                                               | [View Week 3](./BinX%20Internship/Week%203) |
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
-| Week&nbsp;5 | xUnit unit testing, creating a dedicated test project, service-layer unit testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
+| Week&nbsp;5 | xUnit unit testing, creating a dedicated test project, service-layer unit testing, mocking dependencies with Moq, repository abstraction, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 
 ## Repository Structure
 
@@ -46,7 +46,8 @@ BinX Internship/
 │   └── Day 5/
 └── Week 5/
     ├── README.md
-    └── Day 1/
+    ├── Day 1/
+    └── Day 2/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -290,6 +291,12 @@ Each week contains a summary README, and each completed day contains its own tas
 * Running tests using Visual Studio Test Explorer
 * Running individual tests and all tests
 * Reviewing passed, failed, and skipped test results
+* Mocking service dependencies using Moq
+* Creating mocked implementations of repository interfaces
+* Configuring mocked return values using `Setup` and `ReturnsAsync`
+* Simulating dependency failures using `ThrowsAsync`
+* Verifying mocked method calls using `Verify` and `Times.Once`
+* Testing service-layer logic without accessing the real database
 
 ### Development Tools and Workflow
 
