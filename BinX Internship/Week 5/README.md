@@ -6,11 +6,14 @@ Week 5 started the introduction of automated testing by applying unit testing co
 
 The first day focused on creating a separate xUnit test project, connecting it to the API project through a project reference, and testing service-layer business logic using `[Fact]`, `[Theory]`, `[InlineData]`, and the Arrange-Act-Assert pattern.
 
+The second day focused on mocking dependencies with Moq, introducing a repository abstraction for vital sign data access, isolating `VitalSignService` from real database dependencies, configuring mocked return values and exceptions, and verifying repository interactions.
+
 ## Daily Work
 
 | Day | Topic | Project / Documentation |
 |---|---|---|
 | Day 1 | Unit Testing with xUnit | [View Day 1](./Day%201) |
+| Day 2 | Mocking Dependencies with Moq | [View Day 2](./Day%202) |
 
 ## Week 5 Highlights
 
@@ -23,6 +26,7 @@ The first day focused on creating a separate xUnit test project, connecting it t
 - Implemented heart rate status evaluation logic inside `VitalSignService`.
 - Wrote three `[Fact]` unit tests.
 - Wrote one `[Theory]` test with three `[InlineData]` cases.
+- Extended the test suite with Moq-based dependency tests.
 
 ### Arrange-Act-Assert
 
@@ -30,6 +34,19 @@ The first day focused on creating a separate xUnit test project, connecting it t
 - Prepared test data during the Arrange phase.
 - Executed the service method during the Act phase.
 - Verified expected results during the Assert phase.
+
+### Mocking Dependencies with Moq
+
+- Added Moq to the xUnit test project.
+- Introduced `IVitalSignRepository` as a repository abstraction.
+- Implemented `VitalSignRepository` using `ApplicationDbContext`.
+- Updated `VitalSignService` to depend on `IVitalSignRepository`.
+- Registered `IVitalSignRepository` and `VitalSignRepository` using Dependency Injection.
+- Created `Mock<IVitalSignRepository>` for isolated service testing.
+- Configured mocked return values using `Setup` and `ReturnsAsync`.
+- Simulated repository failures using `ThrowsAsync`.
+- Verified repository interactions using `Verify` and `Times.Once`.
+- Tested `VitalSignService.GetByIdAsync` without connecting to the real database.
 
 ### Test Scenarios
 
@@ -41,15 +58,22 @@ The tests covered different heart rate scenarios:
 
 The parameterized `[Theory]` test verified multiple heart rate values using `[InlineData]`.
 
+The Moq-based tests also covered:
+
+- Returning a predefined `VitalSign` from a mocked repository.
+- Processing mocked repository data inside `VitalSignService`.
+- Simulating an `InvalidOperationException`.
+- Verifying that `GetByIdAsync(1)` was called exactly once.
+
 ### Test Execution
 
 - Ran unit tests using Visual Studio Test Explorer.
 - Added and executed tests progressively.
-- Verified the final result:
+- Verified the final result after Day 2:
 
 ```text
-Tests:   6
-Passed:  6
+Tests:   8
+Passed:  8
 Failed:  0
 Skipped: 0
 ```
@@ -60,6 +84,13 @@ Skipped: 0
 - .NET
 - ASP.NET Core Web API
 - xUnit
+- Moq
+- `[Fact]`
+- `[Theory]`
+- `[InlineData]`
+- Arrange-Act-Assert
+- Repository Pattern
+- Dependency Injection
 - Visual Studio
 - Visual Studio Test Explorer
 - Git
