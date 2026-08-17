@@ -69,6 +69,9 @@ Cardiac Patient Monitoring System/
 ├── demo/
 │   └── Cardiac API Demo.zip
 │
+├── docs/
+│   └── Cardiac PatientMonitoringSystem_ERD.png
+│
 ├── postman/
 │   └── Cardiac Patient Monitoring System API.postman_collection.json
 │
