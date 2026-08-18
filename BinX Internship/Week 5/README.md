@@ -8,12 +8,15 @@ The first day focused on creating a separate xUnit test project, connecting it t
 
 The second day focused on mocking dependencies with Moq, introducing a repository abstraction for vital sign data access, isolating `VitalSignService` from real database dependencies, configuring mocked return values and exceptions, and verifying repository interactions.
 
+The third day focused on integration testing with `WebApplicationFactory`, hosting the API in-memory, using an Entity Framework Core InMemory test database, sending real HTTP requests with `HttpClient`, and testing protected endpoints using JWT authentication.
+
 ## Daily Work
 
 | Day | Topic | Project / Documentation |
 |---|---|---|
 | Day 1 | Unit Testing with xUnit | [View Day 1](./Day%201) |
 | Day 2 | Mocking Dependencies with Moq | [View Day 2](./Day%202) |
+| Day 3 | Integration Testing with WebApplicationFactory | [View Day 3](./Day%203) |
 
 ## Week 5 Highlights
 
@@ -27,6 +30,7 @@ The second day focused on mocking dependencies with Moq, introducing a repositor
 - Wrote three `[Fact]` unit tests.
 - Wrote one `[Theory]` test with three `[InlineData]` cases.
 - Extended the test suite with Moq-based dependency tests.
+- Added integration tests for real HTTP endpoints.
 
 ### Arrange-Act-Assert
 
@@ -48,6 +52,20 @@ The second day focused on mocking dependencies with Moq, introducing a repositor
 - Verified repository interactions using `Verify` and `Times.Once`.
 - Tested `VitalSignService.GetByIdAsync` without connecting to the real database.
 
+### Integration Testing with WebApplicationFactory
+
+- Added `Microsoft.AspNetCore.Mvc.Testing` to the test project.
+- Created `CustomWebApplicationFactory` using `WebApplicationFactory<Program>`.
+- Hosted the ASP.NET Core API in-memory during integration testing.
+- Configured a dedicated `Testing` environment.
+- Replaced the development SQL Server database configuration with Entity Framework Core InMemory.
+- Disabled normal database seeding while running integration tests.
+- Created an `HttpClient` using `factory.CreateClient()`.
+- Seeded controlled `VitalSign` test data into the InMemory database.
+- Generated a valid test JWT containing the `Admin` role.
+- Attached JWTs using the Bearer authentication scheme.
+- Tested real HTTP requests against `VitalSignsController`.
+
 ### Test Scenarios
 
 The tests covered different heart rate scenarios:
@@ -65,15 +83,22 @@ The Moq-based tests also covered:
 - Simulating an `InvalidOperationException`.
 - Verifying that `GetByIdAsync(1)` was called exactly once.
 
+The integration tests covered:
+
+- `200 OK` for an existing `VitalSign` using a valid `Admin` JWT.
+- Verification of the complete `VitalSignResponse` body.
+- `404 Not Found` for a non-existing `VitalSign`.
+- `401 Unauthorized` when the protected endpoint was called without a JWT.
+
 ### Test Execution
 
-- Ran unit tests using Visual Studio Test Explorer.
+- Ran unit and integration tests using Visual Studio Test Explorer.
 - Added and executed tests progressively.
-- Verified the final result after Day 2:
+- Verified the final result after Day 3:
 
 ```text
-Tests:   8
-Passed:  8
+Tests:   11
+Passed:  11
 Failed:  0
 Skipped: 0
 ```
@@ -85,6 +110,13 @@ Skipped: 0
 - ASP.NET Core Web API
 - xUnit
 - Moq
+- `Microsoft.AspNetCore.Mvc.Testing`
+- `WebApplicationFactory<Program>`
+- `HttpClient`
+- Entity Framework Core InMemory
+- JWT Authentication
+- Bearer Tokens
+- Role-Based Authorization
 - `[Fact]`
 - `[Theory]`
 - `[InlineData]`
