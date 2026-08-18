@@ -10,7 +10,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                                                                                                                                                                                                                                                                | [View Week 2](./BinX%20Internship/Week%202) |
 | Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                                                                                                                                                                                               | [View Week 3](./BinX%20Internship/Week%203) |
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
-| Week&nbsp;5 | xUnit unit testing, creating a dedicated test project, service-layer unit testing, mocking dependencies with Moq, repository abstraction, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
+| Week&nbsp;5 | xUnit unit testing, creating a dedicated test project, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 
 ## Repository Structure
 
@@ -47,7 +47,8 @@ BinX Internship/
 └── Week 5/
     ├── README.md
     ├── Day 1/
-    └── Day 2/
+    ├── Day 2/
+    └── Day 3/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -297,6 +298,17 @@ Each week contains a summary README, and each completed day contains its own tas
 * Simulating dependency failures using `ThrowsAsync`
 * Verifying mocked method calls using `Verify` and `Times.Once`
 * Testing service-layer logic without accessing the real database
+* Integration testing ASP.NET Core endpoints using `WebApplicationFactory<Program>`
+* Hosting the API in-memory during integration tests
+* Sending real HTTP requests using `HttpClient`
+* Replacing the development SQL Server database with Entity Framework Core InMemory during testing
+* Preparing controlled and repeatable integration test data
+* Testing protected endpoints using valid JWT Bearer tokens
+* Testing role-based authorization with the `Admin` role
+* Verifying successful `200 OK` responses and complete response bodies
+* Verifying `404 Not Found` error paths
+* Verifying `401 Unauthorized` responses for missing authentication
+* Running unit and integration tests together using Visual Studio Test Explorer
 
 ### Development Tools and Workflow
 
