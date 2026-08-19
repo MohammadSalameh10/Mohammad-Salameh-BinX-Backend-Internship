@@ -10,13 +10,16 @@ The second day focused on mocking dependencies with Moq, introducing a repositor
 
 The third day focused on integration testing with `WebApplicationFactory`, hosting the API in-memory, using an Entity Framework Core InMemory test database, sending real HTTP requests with `HttpClient`, and testing protected endpoints using JWT authentication.
 
+The fourth day focused on centralized error handling using custom global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, safe handling of unhandled exceptions, and preventing internal exception details from being exposed to API clients.
+
 ## Daily Work
 
-| Day | Topic | Project / Documentation |
-|---|---|---|
-| Day 1 | Unit Testing with xUnit | [View Day 1](./Day%201) |
-| Day 2 | Mocking Dependencies with Moq | [View Day 2](./Day%202) |
+| Day   | Topic                                          | Project / Documentation |
+| ----- | ---------------------------------------------- | ----------------------- |
+| Day 1 | Unit Testing with xUnit                        | [View Day 1](./Day%201) |
+| Day 2 | Mocking Dependencies with Moq                  | [View Day 2](./Day%202) |
 | Day 3 | Integration Testing with WebApplicationFactory | [View Day 3](./Day%203) |
+| Day 4 | Centralized Error Handling & Global Exception Middleware | [View Day 4](./Day%204) |
 
 ## Week 5 Highlights
 
@@ -66,6 +69,22 @@ The third day focused on integration testing with `WebApplicationFactory`, hosti
 - Attached JWTs using the Bearer authentication scheme.
 - Tested real HTTP requests against `VitalSignsController`.
 
+### Centralized Error Handling
+
+- Implemented custom global exception-handling middleware.
+- Registered the middleware early in the ASP.NET Core request pipeline.
+- Centralized handling of unexpected exceptions across the API.
+- Returned standardized error responses using `ProblemDetails`.
+- Configured unhandled exceptions to return `500 Internal Server Error`.
+- Prevented exception messages and stack traces from being exposed to API clients.
+- Added structured logging using `ILogger`.
+- Logged the request path as structured logging context.
+- Logged complete exception details and stack traces on the server.
+- Created a dedicated endpoint to deliberately trigger an unhandled exception.
+- Verified centralized error handling using Postman.
+- Reviewed existing controllers for redundant `try/catch` blocks.
+- Confirmed that no redundant general-purpose `try/catch` blocks needed to be removed.
+
 ### Test Scenarios
 
 The tests covered different heart rate scenarios:
@@ -90,11 +109,21 @@ The integration tests covered:
 - `404 Not Found` for a non-existing `VitalSign`.
 - `401 Unauthorized` when the protected endpoint was called without a JWT.
 
+The global exception-handling test also verified:
+
+- `500 Internal Server Error` for a deliberately triggered unhandled exception.
+- A standardized `ProblemDetails` response.
+- The request path returned through the `instance` property.
+- No exception message exposed to the API client.
+- No stack trace exposed to the API client.
+- Full exception details logged on the server.
+- Structured logging of the request path.
+
 ### Test Execution
 
 - Ran unit and integration tests using Visual Studio Test Explorer.
 - Added and executed tests progressively.
-- Verified the final result after Day 3:
+- Verified the automated test suite remained successful after the Day 4 application changes:
 
 ```text
 Tests:   11
@@ -103,11 +132,14 @@ Failed:  0
 Skipped: 0
 ```
 
+The Day 4 global exception handler was also manually verified using Postman and server console logs.
+
 ## Tools Used
 
 - C#
 - .NET
 - ASP.NET Core Web API
+- ASP.NET Core Middleware
 - xUnit
 - Moq
 - `Microsoft.AspNetCore.Mvc.Testing`
@@ -117,12 +149,19 @@ Skipped: 0
 - JWT Authentication
 - Bearer Tokens
 - Role-Based Authorization
+- Global Exception Handling
+- `ProblemDetails`
+- `ILogger`
+- Structured Logging
+- `HttpContext`
+- `RequestDelegate`
 - `[Fact]`
 - `[Theory]`
 - `[InlineData]`
 - Arrange-Act-Assert
 - Repository Pattern
 - Dependency Injection
+- Postman
 - Visual Studio
 - Visual Studio Test Explorer
 - Git
