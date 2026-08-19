@@ -10,7 +10,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;2 | Generics, advanced collections, advanced LINQ, asynchronous programming, concurrency, ASP.NET Core Web APIs, routing, middleware, and dependency injection                                                                                                                                                                                                                                                                                                                                                | [View Week 2](./BinX%20Internship/Week%202) |
 | Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                                                                                                                                                                                               | [View Week 3](./BinX%20Internship/Week%203) |
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
-| Week&nbsp;5 | xUnit unit testing, creating a dedicated test project, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
+| Week&nbsp;5 | xUnit unit testing, creating a dedicated test project, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 
 ## Repository Structure
 
@@ -48,7 +48,8 @@ BinX Internship/
     ├── README.md
     ├── Day 1/
     ├── Day 2/
-    └── Day 3/
+    ├── Day 3/
+    └── Day 4/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -86,6 +87,12 @@ Each week contains a summary README, and each completed day contains its own tas
 * HTTPS redirection
 * HSTS configuration
 * Security hardening in the middleware pipeline
+* Centralized exception handling using custom middleware
+* Global handling of unhandled exceptions
+* Returning standardized API errors using `ProblemDetails`
+* Preventing exception messages and stack traces from being exposed to clients
+* Structured logging using `ILogger`
+* Logging request context such as the request path
 
 ### REST APIs
 
@@ -310,6 +317,24 @@ Each week contains a summary README, and each completed day contains its own tas
 * Verifying `401 Unauthorized` responses for missing authentication
 * Running unit and integration tests together using Visual Studio Test Explorer
 
+### Centralized Error Handling and Logging
+
+* Understanding the problems caused by repeated `try/catch` blocks across controllers
+* Implementing custom global exception-handling middleware
+* Registering exception middleware early in the ASP.NET Core request pipeline
+* Allowing unexpected exceptions to propagate to a centralized handler
+* Returning `500 Internal Server Error` for unhandled exceptions
+* Returning standardized error responses using `ProblemDetails`
+* Using `title`, `status`, and `instance` in error responses
+* Preventing internal exception messages from being exposed to API clients
+* Preventing stack traces from being exposed to API clients
+* Logging complete exception details on the server
+* Using `ILogger` for structured logging
+* Logging the request path as structured context
+* Testing global exception handling using a deliberately failing endpoint
+* Verifying safe error responses using Postman
+* Reviewing controllers for redundant general-purpose `try/catch` blocks
+
 ### Development Tools and Workflow
 
 * Swagger and OpenAPI documentation
@@ -321,6 +346,8 @@ Each week contains a summary README, and each completed day contains its own tas
 * jwt.io
 * xUnit
 * Git and GitHub workflows
+* ASP.NET Core `ILogger`
+* Structured logging
 
 ## Author
 
