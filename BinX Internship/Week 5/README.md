@@ -1,8 +1,8 @@
-# Week 5 — Unit Testing with xUnit
+# Week 5 — Testing with xUnit, Moq & Integration Testing
 
 ## Overview
 
-Week 5 started the introduction of automated testing by applying unit testing concepts to the existing **Cardiac Patient Monitoring System API** project.
+Week 5 introduced automated testing by applying unit testing and integration testing concepts to the existing **Cardiac Patient Monitoring System API** project.
 
 The first day focused on creating a separate xUnit test project, connecting it to the API project through a project reference, and testing service-layer business logic using `[Fact]`, `[Theory]`, `[InlineData]`, and the Arrange-Act-Assert pattern.
 
@@ -12,14 +12,26 @@ The third day focused on integration testing with `WebApplicationFactory`, hosti
 
 The fourth day focused on centralized error handling using custom global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, safe handling of unhandled exceptions, and preventing internal exception details from being exposed to API clients.
 
+The fifth day focused on applying testing practices based on risk and complexity. Three high-risk `VitalSignService` operations were selected for additional unit testing: `CreateAsync`, `UpdateAsync`, and `DeleteAsync`. Both successful and failure paths were tested. The existing integration tests for `GET /api/VitalSigns/{id}` were also reviewed, and the complete test suite was executed using both Visual Studio Test Explorer and `dotnet test`.
+
+The final test suite result was:
+
+```text
+Tests:   17
+Passed:  17
+Failed:  0
+Skipped: 0
+```
+
 ## Daily Work
 
-| Day   | Topic                                          | Project / Documentation |
-| ----- | ---------------------------------------------- | ----------------------- |
-| Day 1 | Unit Testing with xUnit                        | [View Day 1](./Day%201) |
-| Day 2 | Mocking Dependencies with Moq                  | [View Day 2](./Day%202) |
-| Day 3 | Integration Testing with WebApplicationFactory | [View Day 3](./Day%203) |
+| Day   | Topic                                                    | Project / Documentation |
+| ----- | -------------------------------------------------------- | ----------------------- |
+| Day 1 | Unit Testing with xUnit                                  | [View Day 1](./Day%201) |
+| Day 2 | Mocking Dependencies with Moq                            | [View Day 2](./Day%202) |
+| Day 3 | Integration Testing with WebApplicationFactory           | [View Day 3](./Day%203) |
 | Day 4 | Centralized Error Handling & Global Exception Middleware | [View Day 4](./Day%204) |
+| Day 5 | Applying Testing to the Cardiac Patient Monitoring System | [View Day 5](./Day%205) |
 
 ## Week 5 Highlights
 
@@ -85,6 +97,48 @@ The fourth day focused on centralized error handling using custom global excepti
 - Reviewed existing controllers for redundant `try/catch` blocks.
 - Confirmed that no redundant general-purpose `try/catch` blocks needed to be removed.
 
+### Risk-Based Testing
+
+- Prioritized testing based on business logic, conditional paths, and repository interactions.
+- Identified three high-risk `VitalSignService` operations:
+  - `CreateAsync`
+  - `UpdateAsync`
+  - `DeleteAsync`
+- Added two unit tests for `CreateAsync`.
+- Added two unit tests for `UpdateAsync`.
+- Added two unit tests for `DeleteAsync`.
+- Tested both successful and failure paths for each operation.
+- Verified repository interactions using Moq.
+- Verified that database save operations occur only when expected.
+- Verified that invalid or missing entities do not trigger unnecessary repository operations.
+
+### Integration Test Review
+
+- Reviewed the existing integration tests for `GET /api/VitalSigns/{id}`.
+- Confirmed three existing integration tests were available.
+- Verified the successful `200 OK` scenario.
+- Verified the `404 Not Found` scenario.
+- Verified the `401 Unauthorized` scenario.
+- Confirmed that the existing three tests exceeded the Day 5 requirement of at least two integration tests.
+- No additional integration tests were required on Day 5.
+
+### Full Test Suite Execution
+
+- Ran the complete test suite using Visual Studio Test Explorer.
+- Ran the complete test suite using `dotnet test`.
+- Confirmed that all existing and newly added tests passed successfully.
+- Final test result:
+
+```text
+Tests:   17
+Passed:  17
+Failed:  0
+Skipped: 0
+```
+
+- Confirmed that the new Day 5 tests did not introduce regressions.
+- Established a risk-based testing approach for the next phase of the project.
+
 ### Test Scenarios
 
 The tests covered different heart rate scenarios:
@@ -119,20 +173,16 @@ The global exception-handling test also verified:
 - Full exception details logged on the server.
 - Structured logging of the request path.
 
-### Test Execution
+The Day 5 unit tests also covered:
 
-- Ran unit and integration tests using Visual Studio Test Explorer.
-- Added and executed tests progressively.
-- Verified the automated test suite remained successful after the Day 4 application changes:
-
-```text
-Tests:   11
-Passed:  11
-Failed:  0
-Skipped: 0
-```
-
-The Day 4 global exception handler was also manually verified using Postman and server console logs.
+- Creating a VitalSign when the patient exists.
+- Preventing creation when the patient does not exist.
+- Updating an existing VitalSign successfully.
+- Returning `false` when the VitalSign does not exist during update.
+- Deleting an existing VitalSign successfully.
+- Returning `false` when the VitalSign does not exist during deletion.
+- Verifying `AddAsync`, `Remove`, and `SaveChangesAsync` repository interactions.
+- Verifying that unnecessary database operations are not performed for failure paths.
 
 ## Tools Used
 
@@ -161,8 +211,11 @@ The Day 4 global exception handler was also manually verified using Postman and 
 - Arrange-Act-Assert
 - Repository Pattern
 - Dependency Injection
+- Risk-Based Testing
 - Postman
 - Visual Studio
 - Visual Studio Test Explorer
+- Terminal
+- `dotnet test`
 - Git
 - GitHub
