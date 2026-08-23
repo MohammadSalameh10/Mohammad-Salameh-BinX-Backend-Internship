@@ -11,6 +11,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                                                                                                                                                                                               | [View Week 3](./BinX%20Internship/Week%203) |
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
+| Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, entity and relationship documentation, ERD finalization, EF Core configuration review, migration verification, core API route review, and sprint backlog organization | [View Week 6](./BinX%20Internship/Week%206) |
 
 ## Repository Structure
 
@@ -44,13 +45,16 @@ BinX Internship/
 │   ├── Day 3/
 │   ├── Day 4/
 │   └── Day 5/
-└── Week 5/
+├── Week 5/
+│   ├── README.md
+│   ├── Day 1/
+│   ├── Day 2/
+│   ├── Day 3/
+│   ├── Day 4/
+│   └── Day 5/
+└── Week 6/
     ├── README.md
-    ├── Day 1/
-    ├── Day 2/
-    ├── Day 3/
-    ├── Day 4/
-    └── Day 5/
+    └── Day 1/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -114,6 +118,25 @@ Each week contains a summary README, and each completed day contains its own tas
 * Entity Relationship Diagrams
 * Database design using `dbdiagram.io`
 * Database implementation using SQL Server Management Studio
+
+### Sprint Planning and Project Database Design
+
+* Starting Phase 3 Sprint 1 with the Cardiac Patient Monitoring System API
+* Defining a clear Sprint Goal
+* Organizing Sprint work using a structured backlog
+* Breaking sprint scope into clear and trackable tasks
+* Reviewing the complete project entity model
+* Documenting `Patient`, `VitalSign`, `Medication`, and `Appointment`
+* Reviewing the one-to-one relationship between `IdentityUser` and `Patient`
+* Reviewing one-to-many relationships from `Patient` to vital signs, medications, and appointments
+* Reviewing the existing normalized database schema
+* Finalizing and documenting the project ERD
+* Verifying that the ERD matches the implemented Entity Framework Core model
+* Reviewing `ApplicationDbContext` and Fluent API relationship configuration
+* Reviewing existing EF Core migrations and database schema
+* Reviewing existing core API routes
+* Confirming the existing Sprint 1 baseline
+* Using Notion to document the Sprint Goal and Sprint Backlog
 
 ### Entity Framework Core
 
