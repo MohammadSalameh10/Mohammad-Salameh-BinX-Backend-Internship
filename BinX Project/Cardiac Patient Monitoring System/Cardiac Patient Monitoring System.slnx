@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="CardiacPatientMonitoringSystem.API/CardiacPatientMonitoringSystem.API.csproj" />
+  <Project Path="CardiacPatientMonitoringSystem.Tests/CardiacPatientMonitoringSystem.Tests.csproj" Id="130893c7-6b6d-40bc-85ce-3dc9beeed52b" />
 </Solution>

@@ -1,24 +1,25 @@
-﻿using CardiacPatientMonitoringSystem.API.Data;
-using CardiacPatientMonitoringSystem.API.DTOs.Requests;
+﻿using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.DTOs.Responses;
 using CardiacPatientMonitoringSystem.API.Models;
+using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace CardiacPatientMonitoringSystem.API.Services.Classes
 {
     public class VitalSignService : IVitalSignService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IVitalSignRepository _vitalSignRepository;
 
-        public VitalSignService(ApplicationDbContext context)
+        public VitalSignService(IVitalSignRepository vitalSignRepository)
         {
-            _context = context;
+            _vitalSignRepository = vitalSignRepository;
         }
 
         public async Task<List<VitalSignResponse>> GetAllAsync()
         {
-            return await _context.VitalSigns
+            var vitalSigns = await _vitalSignRepository.GetAllAsync();
+
+            return vitalSigns
                 .Select(v => new VitalSignResponse
                 {
                     Id = v.Id,
@@ -29,13 +30,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                     OxygenSaturation = v.OxygenSaturation,
                     RecordedAt = v.RecordedAt
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<VitalSignResponse?> GetByIdAsync(int id)
         {
-            var vitalSign = await _context.VitalSigns
-                .FirstOrDefaultAsync(v => v.Id == id);
+            var vitalSign = await _vitalSignRepository.GetByIdAsync(id);
 
             if (vitalSign == null)
                 return null;
@@ -52,10 +52,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<VitalSignResponse?> CreateAsync(string userId, CreateVitalSignRequest request)
+        public async Task<VitalSignResponse?> CreateAsync(
+            string userId,
+            CreateVitalSignRequest request)
         {
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.UserId == userId);
+            var patient = await _vitalSignRepository
+                .GetPatientByUserIdAsync(userId);
 
             if (patient == null)
                 return null;
@@ -70,8 +72,8 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 RecordedAt = request.RecordedAt
             };
 
-            _context.VitalSigns.Add(vitalSign);
-            await _context.SaveChangesAsync();
+            await _vitalSignRepository.AddAsync(vitalSign);
+            await _vitalSignRepository.SaveChangesAsync();
 
             return new VitalSignResponse
             {
@@ -85,10 +87,11 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateVitalSignRequest request)
+        public async Task<bool> UpdateAsync(
+            int id,
+            UpdateVitalSignRequest request)
         {
-            var vitalSign = await _context.VitalSigns
-                .FirstOrDefaultAsync(v => v.Id == id);
+            var vitalSign = await _vitalSignRepository.GetByIdAsync(id);
 
             if (vitalSign == null)
                 return false;
@@ -99,21 +102,20 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             vitalSign.OxygenSaturation = request.OxygenSaturation;
             vitalSign.RecordedAt = request.RecordedAt;
 
-            await _context.SaveChangesAsync();
+            await _vitalSignRepository.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var vitalSign = await _context.VitalSigns
-                .FirstOrDefaultAsync(v => v.Id == id);
+            var vitalSign = await _vitalSignRepository.GetByIdAsync(id);
 
             if (vitalSign == null)
                 return false;
 
-            _context.VitalSigns.Remove(vitalSign);
-            await _context.SaveChangesAsync();
+            _vitalSignRepository.Remove(vitalSign);
+            await _vitalSignRepository.SaveChangesAsync();
 
             return true;
         }

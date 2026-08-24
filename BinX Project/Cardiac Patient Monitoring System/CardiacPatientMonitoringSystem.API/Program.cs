@@ -1,4 +1,6 @@
 using CardiacPatientMonitoringSystem.API.Data;
+using CardiacPatientMonitoringSystem.API.Repositories.Classes;
+using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Classes;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
 using CardiacPatientMonitoringSystem.API.Validators;
@@ -51,6 +53,7 @@ namespace CardiacPatientMonitoringSystem.API
                 });
 
             builder.Services.AddScoped<IPatientService, PatientService>();
+            builder.Services.AddScoped<IVitalSignRepository, VitalSignRepository>();
             builder.Services.AddScoped<IVitalSignService, VitalSignService>();
             builder.Services.AddScoped<IMedicationService, MedicationService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
