@@ -83,5 +83,12 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("test-error")]
+        [AllowAnonymous]
+        public IActionResult TestError()
+        {
+            throw new Exception("Test exception");
+        }
     }
 }

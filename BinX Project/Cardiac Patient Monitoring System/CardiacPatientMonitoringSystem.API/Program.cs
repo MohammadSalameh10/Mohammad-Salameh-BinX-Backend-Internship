@@ -1,4 +1,5 @@
 using CardiacPatientMonitoringSystem.API.Data;
+using CardiacPatientMonitoringSystem.API.Middleware;
 using CardiacPatientMonitoringSystem.API.Repositories.Classes;
 using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Classes;
@@ -75,6 +76,8 @@ namespace CardiacPatientMonitoringSystem.API
             {
                 await DbSeeder.SeedAsync(scope.ServiceProvider);
             }
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
