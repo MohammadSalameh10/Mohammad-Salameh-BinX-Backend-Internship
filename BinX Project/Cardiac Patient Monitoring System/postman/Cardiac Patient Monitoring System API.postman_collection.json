@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "0515e8c4-6e3a-47c7-ad50-673c347166ac",
+    "_postman_id": "fca8a416-cae7-4ebd-a48e-3243956f159c",
     "name": "Cardiac Patient Monitoring System API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "41096771",
-    "_collection_link": "https://go.postman.co/collection/41096771-0515e8c4-6e3a-47c7-ad50-673c347166ac?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/41096771-fca8a416-cae7-4ebd-a48e-3243956f159c?source=collection_link"
   },
   "item": [
     {
@@ -468,6 +468,25 @@
                   "key": "vitalSignId",
                   "value": "999"
                 }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Exception Handling",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/VitalSigns/test-error",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "VitalSigns",
+                "test-error"
               ]
             }
           },
