@@ -6,7 +6,7 @@ The Cardiac Patient Monitoring System API is a standalone ASP.NET Core REST API 
 
 The system provides backend functionality for managing cardiac patients, vital-sign measurements, medications, and appointments.
 
-The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based authorization, input validation, filtering/search, Swagger, and Postman.
+The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based authorization, input validation, filtering/search, repository abstraction, centralized exception handling, unit testing with xUnit and Moq, Swagger, and Postman.
 
 ---
 
@@ -25,6 +25,11 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Synthetic seed data for development and testing.
 - Medication filtering by name.
 - Appointment filtering by reason.
+- Repository abstraction for vital-sign data access.
+- Centralized exception handling using custom middleware.
+- Standardized `ProblemDetails` responses for unexpected server errors.
+- Structured error logging using `ILogger`.
+- Unit testing using xUnit and Moq.
 - Swagger/OpenAPI documentation.
 - Postman collection for API testing.
 - Recorded API demo with database evidence.
@@ -42,6 +47,8 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - JWT Authentication
 - FluentValidation
 - LINQ
+- xUnit
+- Moq
 - Swagger / OpenAPI
 - Postman
 - Git
@@ -68,28 +75,34 @@ Cardiac Patient Monitoring System/
 │
 ├── demo/
 │   └── Cardiac API Demo.zip
-│
 ├── docs/
 │   └── Cardiac PatientMonitoringSystem_ERD.png
-│
 ├── postman/
 │   └── Cardiac Patient Monitoring System API.postman_collection.json
-│
 ├── CardiacPatientMonitoringSystem.API/
 │   ├── Controllers/
 │   ├── Data/
 │   ├── DTOs/
 │   │   ├── Requests/
 │   │   └── Responses/
+│   ├── Middleware/
+│   │   └── ExceptionHandlingMiddleware.cs
 │   ├── Migrations/
 │   ├── Models/
+│   ├── Repositories/
+│   │   ├── Classes/
+│   │   │   └── VitalSignRepository.cs
+│   │   └── Interfaces/
+│   │       └── IVitalSignRepository.cs
 │   ├── Services/
 │   │   ├── Classes/
 │   │   └── Interfaces/
 │   ├── Validators/
 │   ├── appsettings.json
 │   └── Program.cs
-│
+├── CardiacPatientMonitoringSystem.Tests/
+│   └── Services/
+│       └── VitalSignServiceTests.cs
 └── Cardiac Patient Monitoring System.slnx
 ```
 
@@ -173,6 +186,36 @@ A patient can have multiple:
 - Appointments
 
 The database schema is created and updated using Entity Framework Core migrations.
+
+---
+
+## Repository Pattern
+
+Vital-sign data access is separated from `VitalSignService` through a repository abstraction.
+
+The main components are:
+
+```text
+IVitalSignRepository
+VitalSignRepository
+VitalSignService
+```
+
+The dependency flow is:
+
+```text
+VitalSignService
+        ↓
+IVitalSignRepository
+        ↓
+VitalSignRepository
+        ↓
+ApplicationDbContext
+        ↓
+SQL Server
+```
+
+`VitalSignService` depends on `IVitalSignRepository` instead of accessing `ApplicationDbContext` directly. This allows the service logic to be isolated from the database during unit testing.
 
 ---
 
@@ -350,52 +393,52 @@ A Patient must create a patient profile before creating related records.
 
 ### Authentication
 
-| Method | Endpoint | Authorization | Description |
-|---|---|---|---|
-| POST | `/api/Auths/register` | Public | Register a Patient account |
-| POST | `/api/Auths/login` | Public | Login and receive JWT token |
+| Method | Endpoint              | Authorization | Description                 |
+| ------ | --------------------- | ------------- | --------------------------- |
+| POST   | `/api/Auths/register` | Public        | Register a Patient account  |
+| POST   | `/api/Auths/login`    | Public        | Login and receive JWT token |
 
 ### Patients
 
-| Method | Endpoint | Authorization | Description |
-|---|---|---|---|
-| GET | `/api/Patients` | Admin | Get all patients |
-| GET | `/api/Patients/{id}` | Admin | Get patient by ID |
-| POST | `/api/Patients` | Patient | Create patient profile |
-| PUT | `/api/Patients/{id}` | Admin | Update patient |
-| DELETE | `/api/Patients/{id}` | Admin | Delete patient |
+| Method | Endpoint             | Authorization | Description            |
+| ------ | -------------------- | ------------- | ---------------------- |
+| GET    | `/api/Patients`      | Admin         | Get all patients       |
+| GET    | `/api/Patients/{id}` | Admin         | Get patient by ID      |
+| POST   | `/api/Patients`      | Patient       | Create patient profile |
+| PUT    | `/api/Patients/{id}` | Admin         | Update patient         |
+| DELETE | `/api/Patients/{id}` | Admin         | Delete patient         |
 
 ### Vital Signs
 
-| Method | Endpoint | Authorization | Description |
-|---|---|---|---|
-| GET | `/api/VitalSigns` | Admin | Get all vital signs |
-| GET | `/api/VitalSigns/{id}` | Admin | Get vital sign by ID |
-| POST | `/api/VitalSigns` | Patient | Create vital sign |
-| PUT | `/api/VitalSigns/{id}` | Admin | Update vital sign |
-| DELETE | `/api/VitalSigns/{id}` | Admin | Delete vital sign |
+| Method | Endpoint               | Authorization | Description          |
+| ------ | ---------------------- | ------------- | -------------------- |
+| GET    | `/api/VitalSigns`      | Admin         | Get all vital signs  |
+| GET    | `/api/VitalSigns/{id}` | Admin         | Get vital sign by ID |
+| POST   | `/api/VitalSigns`      | Patient       | Create vital sign    |
+| PUT    | `/api/VitalSigns/{id}` | Admin         | Update vital sign    |
+| DELETE | `/api/VitalSigns/{id}` | Admin         | Delete vital sign    |
 
 ### Medications
 
-| Method | Endpoint | Authorization | Description |
-|---|---|---|---|
-| GET | `/api/Medications` | Admin | Get all medications |
-| GET | `/api/Medications/{id}` | Admin | Get medication by ID |
-| GET | `/api/Medications?name={name}` | Admin | Filter medications by name |
-| POST | `/api/Medications` | Patient | Create medication |
-| PUT | `/api/Medications/{id}` | Admin | Update medication |
-| DELETE | `/api/Medications/{id}` | Admin | Delete medication |
+| Method | Endpoint                       | Authorization | Description                |
+| ------ | ------------------------------ | ------------- | -------------------------- |
+| GET    | `/api/Medications`             | Admin         | Get all medications        |
+| GET    | `/api/Medications/{id}`        | Admin         | Get medication by ID       |
+| GET    | `/api/Medications?name={name}` | Admin         | Filter medications by name |
+| POST   | `/api/Medications`             | Patient       | Create medication          |
+| PUT    | `/api/Medications/{id}`        | Admin         | Update medication          |
+| DELETE | `/api/Medications/{id}`        | Admin         | Delete medication          |
 
 ### Appointments
 
-| Method | Endpoint | Authorization | Description |
-|---|---|---|---|
-| GET | `/api/Appointments` | Admin | Get all appointments |
-| GET | `/api/Appointments/{id}` | Admin | Get appointment by ID |
-| GET | `/api/Appointments?reason={reason}` | Admin | Filter appointments by reason |
-| POST | `/api/Appointments` | Patient | Create appointment |
-| PUT | `/api/Appointments/{id}` | Admin | Update appointment |
-| DELETE | `/api/Appointments/{id}` | Admin | Delete appointment |
+| Method | Endpoint                            | Authorization | Description                   |
+| ------ | ----------------------------------- | ------------- | ----------------------------- |
+| GET    | `/api/Appointments`                 | Admin         | Get all appointments          |
+| GET    | `/api/Appointments/{id}`            | Admin         | Get appointment by ID         |
+| GET    | `/api/Appointments?reason={reason}` | Admin         | Filter appointments by reason |
+| POST   | `/api/Appointments`                 | Patient       | Create appointment            |
+| PUT    | `/api/Appointments/{id}`            | Admin         | Update appointment            |
+| DELETE | `/api/Appointments/{id}`            | Admin         | Delete appointment            |
 
 ---
 
@@ -477,19 +520,87 @@ with structured validation errors.
 
 ---
 
+## Centralized Exception Handling
+
+Unexpected exceptions are handled centrally using `ExceptionHandlingMiddleware`.
+
+The middleware:
+
+- Catches unhandled exceptions from the request pipeline.
+- Logs exception details using `ILogger<ExceptionHandlingMiddleware>`.
+- Uses structured logging with the request path.
+- Returns `500 Internal Server Error`.
+- Returns a standardized `ProblemDetails` response.
+- Does not expose exception messages, stack traces, or internal implementation details to the client.
+
+Example response:
+
+```json
+{
+  "title": "An unexpected error occurred.",
+  "status": 500
+}
+```
+
+---
+
+## Unit Testing
+
+Unit tests are implemented using xUnit and Moq.
+
+`VitalSignService` is tested in isolation by mocking `IVitalSignRepository`, so the tests do not require a real SQL Server database.
+
+The tests follow the Arrange-Act-Assert pattern and cover important success and failure paths.
+
+Implemented tests:
+
+```text
+CreateAsync
+├── Patient exists             → Success
+└── Patient does not exist     → Failure
+
+UpdateAsync
+├── VitalSign exists           → Success
+└── VitalSign does not exist   → Failure
+
+DeleteAsync
+├── VitalSign exists           → Success
+└── VitalSign does not exist   → Failure
+```
+
+The tests also use Moq verification to confirm expected repository interactions such as:
+
+```text
+AddAsync
+Remove
+SaveChangesAsync
+```
+
+and to verify that database-changing operations are not called in failure paths.
+
+Current test result:
+
+```text
+Passed: 6
+Failed: 0
+```
+
+---
+
 ## HTTP Status Codes
 
 The API uses appropriate HTTP response status codes, including:
 
-| Status Code | Meaning |
-|---|---|
-| `200 OK` | Successful GET or update operation |
-| `201 Created` | Resource created successfully |
-| `204 No Content` | Resource deleted successfully |
-| `400 Bad Request` | Invalid request or invalid application state |
-| `401 Unauthorized` | Authentication is required |
-| `403 Forbidden` | Authenticated user does not have the required role |
-| `404 Not Found` | Requested resource does not exist |
+| Status Code                 | Meaning                                            |
+| --------------------------- | -------------------------------------------------- |
+| `200 OK`                    | Successful GET or update operation                 |
+| `201 Created`               | Resource created successfully                      |
+| `204 No Content`            | Resource deleted successfully                      |
+| `400 Bad Request`           | Invalid request or invalid application state       |
+| `401 Unauthorized`          | Authentication is required                         |
+| `403 Forbidden`             | Authenticated user does not have the required role |
+| `404 Not Found`             | Requested resource does not exist                  |
+| `500 Internal Server Error` | Unexpected server error                            |
 
 ---
 
@@ -669,6 +780,16 @@ patientToken
 
 depending on the account role.
 
+### 6. Run Unit Tests
+
+Open Test Explorer in Visual Studio and run the tests in:
+
+```text
+CardiacPatientMonitoringSystem.Tests
+```
+
+The current unit test suite contains six tests for `VitalSignService`.
+
 ---
 
 ## Verification
@@ -694,6 +815,9 @@ The following scenarios were manually verified using Postman:
 - Empty filtering results returning `200 OK` with `[]`.
 - Database recreation using Entity Framework Core migrations.
 - Synthetic seed data creation.
+- Centralized exception handling.
+- `500 Internal Server Error` with a standardized `ProblemDetails` response.
+- Six unit tests passing using xUnit and Moq.
 
 ---
 
