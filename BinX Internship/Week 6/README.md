@@ -4,14 +4,15 @@
 
 Week 6 begins Phase 3 Sprint 1 for the **Cardiac Patient Monitoring System API**.
 
-The first two days focused on Sprint Planning, reviewing and finalizing the existing database design, validating the EF Core domain model, reviewing Fluent API relationship configuration, reviewing the existing migrations, and confirming that the applied SQL Server schema matches the Day 1 ERD.
+The first three days focused on Sprint Planning, reviewing and finalizing the existing database design, validating the EF Core domain model and migrations, and improving the Appointments read endpoint with pagination, filtering, sorting, DTO projection, and efficient query execution.
 
 ## Daily Work
 
-| Day   | Topic                                          | Project / Documentation |
-| ----- | ---------------------------------------------- | ----------------------- |
-| Day 1 | Sprint 1 Planning & Project Database Design    | [View Day 1](./Day%201) |
-| Day 2 | Building the EF Core Data Model & Migrations   | [View Day 2](./Day%202) |
+| Day   | Topic                                                     | Project / Documentation |
+| ----- | --------------------------------------------------------- | ----------------------- |
+| Day 1 | Sprint 1 Planning & Project Database Design               | [View Day 1](./Day%201) |
+| Day 2 | Building the EF Core Data Model & Migrations              | [View Day 2](./Day%202) |
+| Day 3 | Implementing Core Routes I — Catalog & Read Operations    | [View Day 3](./Day%203) |
 
 ## Week 6 Highlights
 
@@ -84,6 +85,22 @@ The first two days focused on Sprint Planning, reviewing and finalizing the exis
 - Confirmed the unique index on `Patients.UserId`.
 - Confirmed that the SQL Server schema matches the Day 1 ERD.
 
+### Core Read Operations
+
+- Reviewed the existing list endpoints before adding new functionality.
+- Selected the `Appointments` resource for the Day 3 implementation.
+- Added pagination using `page` and `pageSize`.
+- Created a reusable `PaginatedResponse<T>` response model.
+- Added `TotalCount` to support client-side pagination.
+- Preserved the existing `reason` filter.
+- Added a second optional filter using `patientId`.
+- Added sorting by `AppointmentDate`.
+- Supported `date_asc` and `date_desc` sort options.
+- Continued using `AppointmentResponse` instead of exposing EF Core entities.
+- Kept DTO projection inside the EF Core query using `Select`.
+- Reduced unnecessary over-fetching by selecting only the required response fields.
+- Tested pagination, filtering, sorting, and combined query parameters using Postman.
+
 ### Sprint 1 Backlog
 
 The Sprint 1 backlog currently includes:
@@ -109,5 +126,8 @@ The current backlog items were recorded as completed because the corresponding b
 - dbdiagram.io
 - Notion
 - Visual Studio
+- LINQ
+- DTOs
+- Postman
 - Git
 - GitHub
