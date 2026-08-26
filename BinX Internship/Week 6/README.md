@@ -4,7 +4,7 @@
 
 Week 6 begins Phase 3 Sprint 1 for the **Cardiac Patient Monitoring System API**.
 
-The first three days focused on Sprint Planning, reviewing and finalizing the existing database design, validating the EF Core domain model and migrations, and improving the Appointments read endpoint with pagination, filtering, sorting, DTO projection, and efficient query execution.
+The first four days focused on Sprint Planning, reviewing and validating the existing database design and EF Core model, improving read operations with pagination, filtering, sorting, and DTO projection, and strengthening the patient registration write flow with business logic and EF Core transaction handling.
 
 ## Daily Work
 
@@ -13,6 +13,7 @@ The first three days focused on Sprint Planning, reviewing and finalizing the ex
 | Day 1 | Sprint 1 Planning & Project Database Design               | [View Day 1](./Day%201) |
 | Day 2 | Building the EF Core Data Model & Migrations              | [View Day 2](./Day%202) |
 | Day 3 | Implementing Core Routes I — Catalog & Read Operations    | [View Day 3](./Day%203) |
+| Day 4 | Implementing Core Routes II — Write Operations & Business Logic; Mentor Code Review | [View Day 4](./Day%204) |
 
 ## Week 6 Highlights
 
@@ -100,6 +101,28 @@ The first three days focused on Sprint Planning, reviewing and finalizing the ex
 - Kept DTO projection inside the EF Core query using `Select`.
 - Reduced unnecessary over-fetching by selecting only the required response fields.
 - Tested pagination, filtering, sorting, and combined query parameters using Postman.
+
+### Write Operations, Business Logic & Transactions
+
+- Reviewed the difference between simple CRUD and business logic.
+- Selected patient registration as the Day 4 multi-step write operation.
+- Kept registration business logic inside `AuthService`.
+- Reviewed the existing user creation and Patient role assignment flow.
+- Replaced manual cleanup with an EF Core database transaction.
+- Injected `ApplicationDbContext` into `AuthService`.
+- Started the transaction using `BeginTransactionAsync`.
+- Wrapped user creation and Patient role assignment in a single transaction.
+- Committed the transaction only when both steps completed successfully.
+- Rolled back the transaction when registration or role assignment failed.
+- Verified all-or-nothing transaction behavior.
+- Tested successful registration and login using Postman.
+- Intentionally forced role assignment to fail to verify the rollback path.
+- Confirmed through `AspNetUsers` that the failed registration user was not persisted.
+- Restored the correct `Patient` role after rollback testing.
+- Built the project successfully in Visual Studio.
+- Prepared the work on the `feature/week6-day4-transactions` branch.
+- Opened a pull request into `main` for mentor review.
+- Merged the Day 4 pull request into `main`.
 
 ### Sprint 1 Backlog
 
