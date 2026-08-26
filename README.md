@@ -11,7 +11,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;3 | REST API design, SQL Server schema design, database normalization, Entity Framework Core Code-First development, migrations, asynchronous CRUD operations, request validation, service layers, Postman environments, automated API testing, and documentation                                                                                                                                                                                                                                               | [View Week 3](./BinX%20Internship/Week%203) |
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
-| Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, core API route review, and sprint backlog organization | [View Week 6](./BinX%20Internship/Week%206) |
+| Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, core API route review, and sprint backlog organization | [View Week 6](./BinX%20Internship/Week%206) |
 
 ## Repository Structure
 
@@ -56,7 +56,8 @@ BinX Internship/
     ├── README.md
     ├── Day 1/
     ├── Day 2/
-    └── Day 3/
+    ├── Day 3/
+    └── Day 4/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -195,6 +196,26 @@ Each week contains a summary README, and each completed day contains its own tas
 * Reducing unnecessary over-fetching
 * Testing pagination, filtering, and sorting using Postman
 * Testing multiple query parameters together in a single request
+
+### Write Operations, Business Logic, and Transactions
+
+* Understanding business logic beyond simple CRUD
+* Keeping business logic inside service classes
+* Identifying multi-step write operations
+* Using EF Core database transactions
+* Starting transactions with `BeginTransactionAsync`
+* Applying all-or-nothing behavior to related database writes
+* Committing successful transactions with `CommitAsync`
+* Rolling back failed transactions with `RollbackAsync`
+* Defining the correct transaction boundary
+* Wrapping user creation and role assignment in a single transaction
+* Replacing manual cleanup with transaction rollback
+* Preventing partially completed write operations
+* Testing successful transaction commit behavior
+* Testing rollback behavior by intentionally forcing a write step to fail
+* Verifying rollback results against the SQL Server database
+* Preparing focused feature branches for pull requests
+* Opening and merging pull requests into `main`
 
 ### API Architecture and Validation
 
@@ -345,6 +366,10 @@ Each week contains a summary README, and each completed day contains its own tas
 * Testing optional query-parameter filters
 * Testing ascending and descending sort options
 * Testing pagination, filtering, and sorting together
+* Testing successful multi-step write operations
+* Testing transaction failure and rollback scenarios
+* Verifying database state after rollback
+* Testing successful registration and login after transaction commit
 
 ### Unit Testing with xUnit
 
