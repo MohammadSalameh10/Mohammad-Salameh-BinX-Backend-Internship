@@ -373,6 +373,22 @@ The goal is to keep the pull request focused on the registration transaction cha
 
 ---
 
+## Pull Request
+
+The Day 4 implementation was pushed to the dedicated feature branch:
+
+`feature/week6-day4-transactions`
+
+A pull request was opened into `main` for mentor review.
+
+Pull Request:
+
+https://github.com/MohammadSalameh10/Mohammad-Salameh-BinX-Backend-Internship/pull/2
+
+The mentor review is pending.
+
+---
+
 ## Mentor Code Review Focus
 
 The main points prepared for mentor review are:
@@ -385,7 +401,7 @@ The main points prepared for mentor review are:
 
 ---
 
-## Hands-On Lab Progress
+## Hands-On Lab Completed
 
 The Day 4 hands-on work was completed as follows:
 
@@ -406,7 +422,11 @@ The Day 4 hands-on work was completed as follows:
 15. Verified the rollback path.
 16. Verified that the failed registration user was not stored in `AspNetUsers`.
 17. Restored the correct `Patient` role after testing.
-18. Prepared the work on a dedicated feature branch for pull request review.
+18. Prepared the work on a dedicated feature branch.
+19. Pushed the feature branch to GitHub.
+20. Opened a pull request into `main`.
+21. Added the pull request link for mentor review.
+22. Mentor review is pending.
 
 ---
 
