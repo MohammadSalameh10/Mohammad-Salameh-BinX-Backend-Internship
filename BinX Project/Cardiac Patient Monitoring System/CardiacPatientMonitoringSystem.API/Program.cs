@@ -75,9 +75,12 @@ namespace CardiacPatientMonitoringSystem.API
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
+            if (!app.Environment.IsEnvironment("Testing"))
             {
-                await DbSeeder.SeedAsync(scope.ServiceProvider);
+                using (var scope = app.Services.CreateScope())
+                {
+                    await DbSeeder.SeedAsync(scope.ServiceProvider);
+                }
             }
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();

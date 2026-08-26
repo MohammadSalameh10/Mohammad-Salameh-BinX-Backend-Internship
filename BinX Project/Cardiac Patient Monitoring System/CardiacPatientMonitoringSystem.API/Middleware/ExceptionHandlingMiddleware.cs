@@ -25,7 +25,7 @@ namespace CardiacPatientMonitoringSystem.API.Middleware
             {
                 _logger.LogError(
                     ex,
-                    "Unhandled exception occurred while processing {Path}",
+                    "Unhandled exception occurred while processing request {RequestPath}",
                     context.Request.Path);
 
                 context.Response.StatusCode =
@@ -37,7 +37,8 @@ namespace CardiacPatientMonitoringSystem.API.Middleware
                 var problemDetails = new ProblemDetails
                 {
                     Title = "An unexpected error occurred.",
-                    Status = StatusCodes.Status500InternalServerError
+                    Status = StatusCodes.Status500InternalServerError,
+                    Instance = context.Request.Path
                 };
 
                 await context.Response.WriteAsJsonAsync(problemDetails);

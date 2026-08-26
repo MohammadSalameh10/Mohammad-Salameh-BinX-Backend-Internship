@@ -8,227 +8,355 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
 {
     public class VitalSignServiceTests
     {
+        private readonly Mock<IVitalSignRepository> _mockRepository;
+        private readonly VitalSignService _service;
+
+        public VitalSignServiceTests()
+        {
+            _mockRepository = new Mock<IVitalSignRepository>();
+            _service = new VitalSignService(_mockRepository.Object);
+        }
         [Fact]
-        public async Task CreateAsync_ReturnsVitalSign_WhenPatientExists()
+        public void GetHeartRateStatus_ShouldReturnLow_WhenHeartRateIsBelow60()
         {
             // Arrange
-            var mockRepository = new Mock<IVitalSignRepository>();
-
-            var patient = new Patient
-            {
-                Id = 1,
-                UserId = "user-1"
-            };
-
-            var request = new CreateVitalSignRequest
-            {
-                HeartRate = 72,
-                SystolicBloodPressure = 120,
-                DiastolicBloodPressure = 80,
-                OxygenSaturation = 98,
-                RecordedAt = new DateTime(2026, 8, 10, 9, 0, 0)
-            };
-
-            mockRepository
-                .Setup(r => r.GetPatientByUserIdAsync("user-1"))
-                .ReturnsAsync(patient);
-
-            var service = new VitalSignService(mockRepository.Object);
+            int heartRate = 50;
 
             // Act
-            var result = await service.CreateAsync("user-1", request);
+            var result = _service.GetHeartRateStatus(heartRate);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(1, result.PatientId);
-            Assert.Equal(72, result.HeartRate);
-
-            mockRepository.Verify(
-                r => r.AddAsync(It.IsAny<VitalSign>()),
-                Times.Once);
-
-            mockRepository.Verify(
-                r => r.SaveChangesAsync(),
-                Times.Once);
+            Assert.Equal("Low", result);
         }
 
         [Fact]
-        public async Task CreateAsync_ReturnsNull_WhenPatientDoesNotExist()
+        public void GetHeartRateStatus_ShouldReturnNormal_WhenHeartRateIsBetween60And100()
         {
             // Arrange
-            var mockRepository = new Mock<IVitalSignRepository>();
-
-            var request = new CreateVitalSignRequest
-            {
-                HeartRate = 72,
-                SystolicBloodPressure = 120,
-                DiastolicBloodPressure = 80,
-                OxygenSaturation = 98,
-                RecordedAt = new DateTime(2026, 8, 10, 9, 0, 0)
-            };
-
-            mockRepository
-                .Setup(r => r.GetPatientByUserIdAsync("user-1"))
-                .ReturnsAsync((Patient?)null);
-
-            var service = new VitalSignService(mockRepository.Object);
+            int heartRate = 75;
 
             // Act
-            var result = await service.CreateAsync("user-1", request);
+            var result = _service.GetHeartRateStatus(heartRate);
 
             // Assert
-            Assert.Null(result);
-
-            mockRepository.Verify(
-                r => r.AddAsync(It.IsAny<VitalSign>()),
-                Times.Never);
-
-            mockRepository.Verify(
-                r => r.SaveChangesAsync(),
-                Times.Never);
+            Assert.Equal("Normal", result);
         }
 
         [Fact]
-        public async Task UpdateAsync_ReturnsTrue_WhenVitalSignExists()
+        public void GetHeartRateStatus_ShouldReturnHigh_WhenHeartRateIsAbove100()
         {
             // Arrange
-            var mockRepository = new Mock<IVitalSignRepository>();
+            int heartRate = 120;
 
+            // Act
+            var result = _service.GetHeartRateStatus(heartRate);
+
+            // Assert
+            Assert.Equal("High", result);
+        }
+
+        [Theory]
+        [InlineData(40, "Low")]
+        [InlineData(80, "Normal")]
+        [InlineData(150, "High")]
+        public void GetHeartRateStatus_ShouldReturnExpectedStatus(int heartRate, string expectedStatus)
+        {
+            // Act
+            var result = _service.GetHeartRateStatus(heartRate);
+
+            // Assert
+            Assert.Equal(expectedStatus, result);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_WhenVitalSignExists_ReturnsVitalSignResponse()
+        {
+            // Arrange
             var vitalSign = new VitalSign
             {
                 Id = 1,
                 PatientId = 1,
-                HeartRate = 72,
+                HeartRate = 75,
                 SystolicBloodPressure = 120,
                 DiastolicBloodPressure = 80,
                 OxygenSaturation = 98,
-                RecordedAt = new DateTime(2026, 8, 10, 9, 0, 0)
+                RecordedAt = DateTime.Now
+            };
+
+            _mockRepository
+                .Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(vitalSign);
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Id);
+            Assert.Equal(75, result.HeartRate);
+
+            _mockRepository.Verify(
+                r => r.GetByIdAsync(1),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_WhenRepositoryThrowsException_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            _mockRepository
+                .Setup(r => r.GetByIdAsync(1))
+                .ThrowsAsync(new InvalidOperationException("Database error"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _service.GetByIdAsync(1));
+
+            _mockRepository.Verify(
+                r => r.GetByIdAsync(1),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_WhenPatientExists_CreatesVitalSignAndReturnsResponse()
+        {
+            // Arrange
+            var userId = "user-123";
+
+            var patient = new Patient
+            {
+                Id = 1
+            };
+
+            var request = new CreateVitalSignRequest
+            {
+                HeartRate = 75,
+                SystolicBloodPressure = 120,
+                DiastolicBloodPressure = 80,
+                OxygenSaturation = 98,
+                RecordedAt = DateTime.Now
+            };
+
+            _mockRepository
+                .Setup(r => r.GetPatientByUserIdAsync(userId))
+                .ReturnsAsync(patient);
+
+            _mockRepository
+                .Setup(r => r.AddAsync(It.IsAny<VitalSign>()))
+                .Returns(Task.CompletedTask);
+
+            _mockRepository
+                .Setup(r => r.SaveChangesAsync())
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _service.CreateAsync(userId, request);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.PatientId);
+            Assert.Equal(75, result.HeartRate);
+            Assert.Equal(120, result.SystolicBloodPressure);
+            Assert.Equal(80, result.DiastolicBloodPressure);
+            Assert.Equal(98, result.OxygenSaturation);
+
+            _mockRepository.Verify(
+                r => r.AddAsync(It.Is<VitalSign>(v =>
+                    v.PatientId == 1 &&
+                    v.HeartRate == 75 &&
+                    v.SystolicBloodPressure == 120 &&
+                    v.DiastolicBloodPressure == 80 &&
+                    v.OxygenSaturation == 98)),
+                Times.Once);
+
+            _mockRepository.Verify(
+                r => r.SaveChangesAsync(),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_WhenPatientDoesNotExist_ReturnsNull()
+        {
+            // Arrange
+            var userId = "user-123";
+
+            var request = new CreateVitalSignRequest
+            {
+                HeartRate = 75,
+                SystolicBloodPressure = 120,
+                DiastolicBloodPressure = 80,
+                OxygenSaturation = 98,
+                RecordedAt = DateTime.Now
+            };
+
+            _mockRepository
+                .Setup(r => r.GetPatientByUserIdAsync(userId))
+                .ReturnsAsync((Patient?)null);
+
+            // Act
+            var result = await _service.CreateAsync(userId, request);
+
+            // Assert
+            Assert.Null(result);
+
+            _mockRepository.Verify(
+                r => r.AddAsync(It.IsAny<VitalSign>()),
+                Times.Never);
+
+            _mockRepository.Verify(
+                r => r.SaveChangesAsync(),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WhenVitalSignExists_UpdatesVitalSignAndReturnsTrue()
+        {
+            // Arrange
+            var vitalSign = new VitalSign
+            {
+                Id = 1,
+                PatientId = 1,
+                HeartRate = 70,
+                SystolicBloodPressure = 110,
+                DiastolicBloodPressure = 70,
+                OxygenSaturation = 95,
+                RecordedAt = DateTime.Now.AddMinutes(-10)
             };
 
             var request = new UpdateVitalSignRequest
             {
                 HeartRate = 80,
-                SystolicBloodPressure = 125,
-                DiastolicBloodPressure = 82,
-                OxygenSaturation = 97,
-                RecordedAt = new DateTime(2026, 8, 11, 9, 0, 0)
+                SystolicBloodPressure = 120,
+                DiastolicBloodPressure = 80,
+                OxygenSaturation = 98,
+                RecordedAt = DateTime.Now
             };
 
-            mockRepository
+            _mockRepository
                 .Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(vitalSign);
 
-            var service = new VitalSignService(mockRepository.Object);
+            _mockRepository
+                .Setup(r => r.SaveChangesAsync())
+                .Returns(Task.CompletedTask);
 
             // Act
-            var result = await service.UpdateAsync(1, request);
+            var result = await _service.UpdateAsync(1, request);
 
             // Assert
             Assert.True(result);
 
             Assert.Equal(80, vitalSign.HeartRate);
-            Assert.Equal(125, vitalSign.SystolicBloodPressure);
-            Assert.Equal(82, vitalSign.DiastolicBloodPressure);
-            Assert.Equal(97, vitalSign.OxygenSaturation);
+            Assert.Equal(120, vitalSign.SystolicBloodPressure);
+            Assert.Equal(80, vitalSign.DiastolicBloodPressure);
+            Assert.Equal(98, vitalSign.OxygenSaturation);
 
-            mockRepository.Verify(
+            _mockRepository.Verify(
+                r => r.GetByIdAsync(1),
+                Times.Once);
+
+            _mockRepository.Verify(
                 r => r.SaveChangesAsync(),
                 Times.Once);
         }
 
         [Fact]
-        public async Task UpdateAsync_ReturnsFalse_WhenVitalSignDoesNotExist()
+        public async Task UpdateAsync_WhenVitalSignDoesNotExist_ReturnsFalse()
         {
             // Arrange
-            var mockRepository = new Mock<IVitalSignRepository>();
-
             var request = new UpdateVitalSignRequest
             {
                 HeartRate = 80,
-                SystolicBloodPressure = 125,
-                DiastolicBloodPressure = 82,
-                OxygenSaturation = 97,
-                RecordedAt = new DateTime(2026, 8, 11, 9, 0, 0)
+                SystolicBloodPressure = 120,
+                DiastolicBloodPressure = 80,
+                OxygenSaturation = 98,
+                RecordedAt = DateTime.Now
             };
 
-            mockRepository
+            _mockRepository
                 .Setup(r => r.GetByIdAsync(999))
                 .ReturnsAsync((VitalSign?)null);
 
-            var service = new VitalSignService(mockRepository.Object);
-
             // Act
-            var result = await service.UpdateAsync(999, request);
+            var result = await _service.UpdateAsync(999, request);
 
             // Assert
             Assert.False(result);
 
-            mockRepository.Verify(
+            _mockRepository.Verify(
+                r => r.GetByIdAsync(999),
+                Times.Once);
+
+            _mockRepository.Verify(
                 r => r.SaveChangesAsync(),
                 Times.Never);
         }
 
         [Fact]
-        public async Task DeleteAsync_ReturnsTrue_WhenVitalSignExists()
+        public async Task DeleteAsync_WhenVitalSignExists_RemovesVitalSignAndReturnsTrue()
         {
             // Arrange
-            var mockRepository = new Mock<IVitalSignRepository>();
-
             var vitalSign = new VitalSign
             {
                 Id = 1,
                 PatientId = 1,
-                HeartRate = 72,
+                HeartRate = 75,
                 SystolicBloodPressure = 120,
                 DiastolicBloodPressure = 80,
                 OxygenSaturation = 98,
-                RecordedAt = new DateTime(2026, 8, 10, 9, 0, 0)
+                RecordedAt = DateTime.Now
             };
 
-            mockRepository
+            _mockRepository
                 .Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(vitalSign);
 
-            var service = new VitalSignService(mockRepository.Object);
+            _mockRepository
+                .Setup(r => r.SaveChangesAsync())
+                .Returns(Task.CompletedTask);
 
             // Act
-            var result = await service.DeleteAsync(1);
+            var result = await _service.DeleteAsync(1);
 
             // Assert
             Assert.True(result);
 
-            mockRepository.Verify(
+            _mockRepository.Verify(
+                r => r.GetByIdAsync(1),
+                Times.Once);
+
+            _mockRepository.Verify(
                 r => r.Remove(vitalSign),
                 Times.Once);
 
-            mockRepository.Verify(
+            _mockRepository.Verify(
                 r => r.SaveChangesAsync(),
                 Times.Once);
         }
 
         [Fact]
-        public async Task DeleteAsync_ReturnsFalse_WhenVitalSignDoesNotExist()
+        public async Task DeleteAsync_WhenVitalSignDoesNotExist_ReturnsFalse()
         {
             // Arrange
-            var mockRepository = new Mock<IVitalSignRepository>();
-
-            mockRepository
+            _mockRepository
                 .Setup(r => r.GetByIdAsync(999))
                 .ReturnsAsync((VitalSign?)null);
 
-            var service = new VitalSignService(mockRepository.Object);
-
             // Act
-            var result = await service.DeleteAsync(999);
+            var result = await _service.DeleteAsync(999);
 
             // Assert
             Assert.False(result);
 
-            mockRepository.Verify(
+            _mockRepository.Verify(
+                r => r.GetByIdAsync(999),
+                Times.Once);
+
+            _mockRepository.Verify(
                 r => r.Remove(It.IsAny<VitalSign>()),
                 Times.Never);
 
-            mockRepository.Verify(
+            _mockRepository.Verify(
                 r => r.SaveChangesAsync(),
                 Times.Never);
         }

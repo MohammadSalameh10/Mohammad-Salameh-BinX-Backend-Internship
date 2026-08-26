@@ -15,6 +15,17 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             _vitalSignRepository = vitalSignRepository;
         }
 
+        public string GetHeartRateStatus(int heartRate)
+        {
+            if (heartRate < 60)
+                return "Low";
+
+            if (heartRate <= 100)
+                return "Normal";
+
+            return "High";
+        }
+
         public async Task<List<VitalSignResponse>> GetAllAsync()
         {
             var vitalSigns = await _vitalSignRepository.GetAllAsync();
