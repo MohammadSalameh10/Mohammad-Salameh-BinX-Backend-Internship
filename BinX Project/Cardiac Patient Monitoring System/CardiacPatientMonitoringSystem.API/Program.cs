@@ -53,10 +53,13 @@ namespace CardiacPatientMonitoringSystem.API
                     };
                 });
 
+            builder.Services.AddScoped<IPatientRepository, PatientRepository>();
             builder.Services.AddScoped<IPatientService, PatientService>();
             builder.Services.AddScoped<IVitalSignRepository, VitalSignRepository>();
             builder.Services.AddScoped<IVitalSignService, VitalSignService>();
+            builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
             builder.Services.AddScoped<IMedicationService, MedicationService>();
+            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 

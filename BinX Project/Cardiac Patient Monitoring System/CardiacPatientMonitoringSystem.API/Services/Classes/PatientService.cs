@@ -2,6 +2,7 @@
 using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.DTOs.Responses;
 using CardiacPatientMonitoringSystem.API.Models;
+using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,16 +10,18 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
 {
     public class PatientService : IPatientService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPatientRepository _patientRepository;
 
-        public PatientService(ApplicationDbContext context)
+        public PatientService(IPatientRepository patientRepository)
         {
-            _context = context;
+            _patientRepository = patientRepository;
         }
 
         public async Task<List<PatientResponse>> GetAllAsync()
         {
-            return await _context.Patients
+            var patients = await _patientRepository.GetAllAsync();
+
+            return patients
                 .Select(p => new PatientResponse
                 {
                     Id = p.Id,
@@ -29,13 +32,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                     PhoneNumber = p.PhoneNumber,
                     BloodType = p.BloodType
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<PatientResponse?> GetByIdAsync(int id)
         {
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var patient = await _patientRepository.GetByIdAsync(id);
 
             if (patient == null)
                 return null;
@@ -52,10 +54,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<PatientResponse?> CreateAsync(string userId, CreatePatientRequest request)
+        public async Task<PatientResponse?> CreateAsync(
+            string userId,
+            CreatePatientRequest request)
         {
-            var existingPatient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.UserId == userId);
+            var existingPatient =
+                await _patientRepository.GetByUserIdAsync(userId);
 
             if (existingPatient != null)
                 return null;
@@ -70,8 +74,8 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 BloodType = request.BloodType
             };
 
-            _context.Patients.Add(patient);
-            await _context.SaveChangesAsync();
+            await _patientRepository.AddAsync(patient);
+            await _patientRepository.SaveChangesAsync();
 
             return new PatientResponse
             {
@@ -87,8 +91,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
 
         public async Task<bool> UpdateAsync(int id, UpdatePatientRequest request)
         {
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var patient = await _patientRepository.GetByIdAsync(id);
 
             if (patient == null)
                 return false;
@@ -99,21 +102,20 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             patient.PhoneNumber = request.PhoneNumber;
             patient.BloodType = request.BloodType;
 
-            await _context.SaveChangesAsync();
+            await _patientRepository.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var patient = await _patientRepository.GetByIdAsync(id);
 
             if (patient == null)
                 return false;
 
-            _context.Patients.Remove(patient);
-            await _context.SaveChangesAsync();
+            _patientRepository.Remove(patient);
+            await _patientRepository.SaveChangesAsync();
 
             return true;
         }

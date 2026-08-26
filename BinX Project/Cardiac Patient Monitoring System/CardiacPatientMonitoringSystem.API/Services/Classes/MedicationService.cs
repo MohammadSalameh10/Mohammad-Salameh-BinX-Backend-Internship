@@ -2,6 +2,7 @@
 using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.DTOs.Responses;
 using CardiacPatientMonitoringSystem.API.Models;
+using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,23 +10,18 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
 {
     public class MedicationService : IMedicationService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMedicationRepository _medicationRepository;
 
-        public MedicationService(ApplicationDbContext context)
+        public MedicationService(IMedicationRepository medicationRepository)
         {
-            _context = context;
+            _medicationRepository = medicationRepository;
         }
 
         public async Task<List<MedicationResponse>> GetAllAsync(string? name)
         {
-            var query = _context.Medications.AsQueryable();
+            var medications = await _medicationRepository.GetAllAsync(name);
 
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                query = query.Where(m => m.Name.Contains(name));
-            }
-
-            return await query
+            return medications
                 .Select(m => new MedicationResponse
                 {
                     Id = m.Id,
@@ -36,13 +32,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                     StartDate = m.StartDate,
                     EndDate = m.EndDate
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<MedicationResponse?> GetByIdAsync(int id)
         {
-            var medication = await _context.Medications
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var medication = await _medicationRepository.GetByIdAsync(id);
 
             if (medication == null)
                 return null;
@@ -59,10 +54,11 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<MedicationResponse?> CreateAsync(string userId, CreateMedicationRequest request)
+        public async Task<MedicationResponse?> CreateAsync(
+    string userId,
+    CreateMedicationRequest request)
         {
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.UserId == userId);
+            var patient = await _medicationRepository.GetPatientByUserIdAsync(userId);
 
             if (patient == null)
                 return null;
@@ -77,8 +73,8 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 EndDate = request.EndDate
             };
 
-            _context.Medications.Add(medication);
-            await _context.SaveChangesAsync();
+            await _medicationRepository.AddAsync(medication);
+            await _medicationRepository.SaveChangesAsync();
 
             return new MedicationResponse
             {
@@ -94,8 +90,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
 
         public async Task<bool> UpdateAsync(int id, UpdateMedicationRequest request)
         {
-            var medication = await _context.Medications
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var medication = await _medicationRepository.GetByIdAsync(id);
 
             if (medication == null)
                 return false;
@@ -106,21 +101,20 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             medication.StartDate = request.StartDate;
             medication.EndDate = request.EndDate;
 
-            await _context.SaveChangesAsync();
+            await _medicationRepository.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var medication = await _context.Medications
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var medication = await _medicationRepository.GetByIdAsync(id);
 
             if (medication == null)
                 return false;
 
-            _context.Medications.Remove(medication);
-            await _context.SaveChangesAsync();
+            _medicationRepository.Remove(medication);
+            await _medicationRepository.SaveChangesAsync();
 
             return true;
         }

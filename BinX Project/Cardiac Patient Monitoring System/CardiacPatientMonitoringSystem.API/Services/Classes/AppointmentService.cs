@@ -2,6 +2,7 @@
 using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.DTOs.Responses;
 using CardiacPatientMonitoringSystem.API.Models;
+using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,23 +10,18 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
 {
     public class AppointmentService : IAppointmentService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppointmentRepository _appointmentRepository;
 
-        public AppointmentService(ApplicationDbContext context)
+        public AppointmentService(IAppointmentRepository appointmentRepository)
         {
-            _context = context;
+            _appointmentRepository = appointmentRepository;
         }
 
         public async Task<List<AppointmentResponse>> GetAllAsync(string? reason)
         {
-            var query = _context.Appointments.AsQueryable();
+            var appointments = await _appointmentRepository.GetAllAsync(reason);
 
-            if (!string.IsNullOrWhiteSpace(reason))
-            {
-                query = query.Where(a => a.Reason.Contains(reason));
-            }
-
-            return await query
+            return appointments
                 .Select(a => new AppointmentResponse
                 {
                     Id = a.Id,
@@ -34,13 +30,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                     Reason = a.Reason,
                     Notes = a.Notes
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<AppointmentResponse?> GetByIdAsync(int id)
         {
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(a => a.Id == id);
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
 
             if (appointment == null)
                 return null;
@@ -55,10 +50,11 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
-        public async Task<AppointmentResponse?> CreateAsync(string userId, CreateAppointmentRequest request)
+        public async Task<AppointmentResponse?> CreateAsync(
+     string userId,
+     CreateAppointmentRequest request)
         {
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.UserId == userId);
+            var patient = await _appointmentRepository.GetPatientByUserIdAsync(userId);
 
             if (patient == null)
                 return null;
@@ -71,8 +67,8 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 Notes = request.Notes
             };
 
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
+            await _appointmentRepository.AddAsync(appointment);
+            await _appointmentRepository.SaveChangesAsync();
 
             return new AppointmentResponse
             {
@@ -86,8 +82,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
 
         public async Task<bool> UpdateAsync(int id, UpdateAppointmentRequest request)
         {
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(a => a.Id == id);
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
 
             if (appointment == null)
                 return false;
@@ -96,21 +91,20 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             appointment.Reason = request.Reason;
             appointment.Notes = request.Notes;
 
-            await _context.SaveChangesAsync();
+            await _appointmentRepository.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(a => a.Id == id);
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
 
             if (appointment == null)
                 return false;
 
-            _context.Appointments.Remove(appointment);
-            await _context.SaveChangesAsync();
+            _appointmentRepository.Remove(appointment);
+            await _appointmentRepository.SaveChangesAsync();
 
             return true;
         }
