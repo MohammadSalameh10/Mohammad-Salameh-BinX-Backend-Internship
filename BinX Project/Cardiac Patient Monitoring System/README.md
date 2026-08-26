@@ -25,11 +25,15 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Synthetic seed data for development and testing.
 - Medication filtering by name.
 - Appointment filtering by reason.
-- Repository abstraction for vital-sign data access.
+- Repository abstraction for patient, vital-sign, medication, and appointment data access.
 - Centralized exception handling using custom middleware.
 - Standardized `ProblemDetails` responses for unexpected server errors.
 - Structured error logging using `ILogger`.
 - Unit testing using xUnit and Moq.
+- Service unit testing with mocked repository dependencies.
+- Controller unit testing with mocked service dependencies.
+- Integration testing using `WebApplicationFactory` and an EF Core InMemory database.
+- Authentication and authorization testing for protected API endpoints.
 - Swagger/OpenAPI documentation.
 - Postman collection for API testing.
 - Recorded API demo with database evidence.
@@ -91,9 +95,7 @@ Cardiac Patient Monitoring System/
 │   ├── Models/
 │   ├── Repositories/
 │   │   ├── Classes/
-│   │   │   └── VitalSignRepository.cs
 │   │   └── Interfaces/
-│   │       └── IVitalSignRepository.cs
 │   ├── Services/
 │   │   ├── Classes/
 │   │   └── Interfaces/
@@ -101,7 +103,19 @@ Cardiac Patient Monitoring System/
 │   ├── appsettings.json
 │   └── Program.cs
 ├── CardiacPatientMonitoringSystem.Tests/
+│   ├── Controllers/
+│   │   ├── AppointmentsControllerTests.cs
+│   │   ├── AuthsControllerTests.cs
+│   │   ├── MedicationsControllerTests.cs
+│   │   ├── PatientsControllerTests.cs
+│   │   └── VitalSignsControllerTests.cs
+│   ├── Integration/
+│   │   ├── CustomWebApplicationFactory.cs
+│   │   └── VitalSignsApiTests.cs
 │   └── Services/
+│       ├── AppointmentServiceTests.cs
+│       ├── MedicationServiceTests.cs
+│       ├── PatientServiceTests.cs
 │       └── VitalSignServiceTests.cs
 └── Cardiac Patient Monitoring System.slnx
 ```
@@ -191,31 +205,59 @@ The database schema is created and updated using Entity Framework Core migration
 
 ## Repository Pattern
 
-Vital-sign data access is separated from `VitalSignService` through a repository abstraction.
+Repository abstractions are used for the main CRUD modules to separate service-layer business logic from direct Entity Framework Core data access.
 
-The main components are:
+The implemented repositories are:
 
 ```text
+IPatientRepository
+PatientRepository
+
 IVitalSignRepository
 VitalSignRepository
-VitalSignService
+
+IMedicationRepository
+MedicationRepository
+
+IAppointmentRepository
+AppointmentRepository
 ```
 
-The dependency flow is:
+The general dependency flow is:
 
 ```text
-VitalSignService
-        ↓
-IVitalSignRepository
-        ↓
-VitalSignRepository
-        ↓
+Controller
+    ↓
+Service
+    ↓
+Repository Interface
+    ↓
+Repository
+    ↓
 ApplicationDbContext
-        ↓
+    ↓
 SQL Server
 ```
 
-`VitalSignService` depends on `IVitalSignRepository` instead of accessing `ApplicationDbContext` directly. This allows the service logic to be isolated from the database during unit testing.
+The following services depend on repository interfaces instead of accessing `ApplicationDbContext` directly:
+
+```text
+PatientService
+→ IPatientRepository
+
+VitalSignService
+→ IVitalSignRepository
+
+MedicationService
+→ IMedicationRepository
+
+AppointmentService
+→ IAppointmentRepository
+```
+
+This separation improves maintainability and allows the service layer to be tested in isolation using mocked repository dependencies.
+
+`AuthService` does not use a custom repository because it works through ASP.NET Core Identity abstractions such as `UserManager<IdentityUser>`.
 
 ---
 
@@ -544,45 +586,135 @@ Example response:
 
 ---
 
-## Unit Testing
+## Testing
 
-Unit tests are implemented using xUnit and Moq.
+The project includes unit tests and integration tests using xUnit and Moq.
 
-`VitalSignService` is tested in isolation by mocking `IVitalSignRepository`, so the tests do not require a real SQL Server database.
+### Service Unit Tests
 
-The tests follow the Arrange-Act-Assert pattern and cover important success and failure paths.
+The service layer is tested in isolation using mocked repository dependencies.
 
-Implemented tests:
+The following services are covered:
+
+```text
+PatientService
+VitalSignService
+MedicationService
+AppointmentService
+```
+
+The tests cover important success and failure paths, including:
 
 ```text
 CreateAsync
-├── Patient exists             → Success
-└── Patient does not exist     → Failure
+├── Success
+└── Failure
 
 UpdateAsync
-├── VitalSign exists           → Success
-└── VitalSign does not exist   → Failure
+├── Success
+└── Failure
 
 DeleteAsync
-├── VitalSign exists           → Success
-└── VitalSign does not exist   → Failure
+├── Success
+└── Failure
 ```
 
-The tests also use Moq verification to confirm expected repository interactions such as:
+`VitalSignService` also includes tests for:
 
 ```text
+GetHeartRateStatus
+├── Low
+├── Normal
+└── High
+
+GetByIdAsync
+├── Success
+└── Exception propagation
+```
+
+The tests use Moq verification to confirm expected repository interactions such as:
+
+```text
+GetByIdAsync
+GetPatientByUserIdAsync
 AddAsync
 Remove
 SaveChangesAsync
 ```
 
-and to verify that database-changing operations are not called in failure paths.
+and to verify that write operations are not performed during failure paths.
 
-Current test result:
+### Controller Unit Tests
+
+Controller behavior is tested by mocking the service layer.
+
+The following controllers are covered:
 
 ```text
-Passed: 6
+PatientsController
+VitalSignsController
+MedicationsController
+AppointmentsController
+AuthsController
+```
+
+The tests verify important HTTP responses including:
+
+```text
+200 OK
+201 Created
+204 No Content
+400 Bad Request
+401 Unauthorized
+404 Not Found
+```
+
+Controller tests also verify that:
+
+- Authenticated user IDs are read correctly from claims.
+- Service methods are called when expected.
+- Service methods are not called when authentication information is missing.
+- Correct response types are returned for success and failure cases.
+
+### Integration Testing
+
+Integration tests are implemented using:
+
+```text
+WebApplicationFactory<Program>
+Entity Framework Core InMemory Database
+HttpClient
+JWT Authentication
+```
+
+`CustomWebApplicationFactory` starts the API in a `Testing` environment and replaces the SQL Server database with an EF Core InMemory database.
+
+The integration tests currently verify:
+
+```text
+GET /api/VitalSigns/{id}
+
+Existing VitalSign
+→ 200 OK
+
+Missing VitalSign
+→ 404 Not Found
+
+Missing JWT Token
+→ 401 Unauthorized
+```
+
+The production seed process is skipped while the application is running in the `Testing` environment.
+
+### Test Result
+
+The full test suite was executed successfully:
+
+```text
+Total: 75
+Passed: 75
 Failed: 0
+Skipped: 0
 ```
 
 ---
@@ -780,7 +912,7 @@ patientToken
 
 depending on the account role.
 
-### 6. Run Unit Tests
+### 6. Run Tests
 
 Open Test Explorer in Visual Studio and run the tests in:
 
@@ -788,7 +920,16 @@ Open Test Explorer in Visual Studio and run the tests in:
 CardiacPatientMonitoringSystem.Tests
 ```
 
-The current unit test suite contains six tests for `VitalSignService`.
+The test project includes service unit tests, controller unit tests, and integration tests.
+
+The current test suite contains:
+
+```text
+Total: 75
+Passed: 75
+Failed: 0
+Skipped: 0
+```
 
 ---
 
@@ -817,7 +958,10 @@ The following scenarios were manually verified using Postman:
 - Synthetic seed data creation.
 - Centralized exception handling.
 - `500 Internal Server Error` with a standardized `ProblemDetails` response.
-- Six unit tests passing using xUnit and Moq.
+- Service unit tests using xUnit and Moq.
+- Controller unit tests using mocked service dependencies.
+- Integration tests using WebApplicationFactory and an EF Core InMemory database.
+- Full test suite completed successfully with 75 passed tests and 0 failures.
 
 ---
 
