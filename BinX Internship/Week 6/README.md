@@ -2,9 +2,9 @@
 
 ## Overview
 
-Week 6 begins Phase 3 Sprint 1 for the **Cardiac Patient Monitoring System API**.
+Week 6 marked the beginning and completion of Phase 3 Sprint 1 for the **Cardiac Patient Monitoring System API**.
 
-The first four days focused on Sprint Planning, reviewing and validating the existing database design and EF Core model, improving read operations with pagination, filtering, sorting, and DTO projection, and strengthening the patient registration write flow with business logic and EF Core transaction handling.
+The week focused on Sprint planning, reviewing and validating the existing database design and EF Core model, improving read operations with pagination, filtering, sorting, and DTO projection, strengthening the patient registration flow with business logic and EF Core transaction handling, and closing Sprint 1 through a Postman demo, backlog review, and Sprint Retrospective.
 
 ## Daily Work
 
@@ -14,6 +14,7 @@ The first four days focused on Sprint Planning, reviewing and validating the exi
 | Day 2 | Building the EF Core Data Model & Migrations              | [View Day 2](./Day%202) |
 | Day 3 | Implementing Core Routes I — Catalog & Read Operations    | [View Day 3](./Day%203) |
 | Day 4 | Implementing Core Routes II — Write Operations & Business Logic; Mentor Code Review | [View Day 4](./Day%204) |
+| Day 5 | Sprint Review, Postman Demo & Retrospective | [View Day 5](./Day%205) |
 
 ## Week 6 Highlights
 
@@ -124,6 +125,23 @@ The first four days focused on Sprint Planning, reviewing and validating the exi
 - Opened a pull request into `main` for mentor review.
 - Merged the Day 4 pull request into `main`.
 
+### Sprint Review, Postman Demo & Retrospective
+
+- Demonstrated the completed Sprint 1 API features using Postman against the running API.
+- Verified the `Appointments` endpoint using pagination, filtering, and sorting together.
+- Verified successful patient registration with `201 Created`.
+- Verified successful login with `200 OK` and JWT token generation.
+- Intentionally forced the registration role-assignment step to fail.
+- Verified the rollback path using the returned error response.
+- Confirmed through `AspNetUsers` that the failed registration user was not persisted.
+- Reviewed all Sprint 1 backlog items during the close-out process.
+- Confirmed that the current Sprint 1 backlog items were completed.
+- Confirmed that no backlog item required moving to Sprint 2 during this review.
+- Wrote a Sprint 1 Retrospective covering what went well and what could be improved.
+- Defined a concrete Sprint 2 action: complete pull request review before merging Sprint 2 features into `main`.
+- Prepared a Sprint 1 summary including ERD review, migration history, API improvements, transaction handling, backlog status, and Pull Request #2.
+- Included the Postman collection and demo screenshots with the Day 5 documentation.
+
 ### Sprint 1 Backlog
 
 The Sprint 1 backlog currently includes:
@@ -154,3 +172,15 @@ The current backlog items were recorded as completed because the corresponding b
 - Postman
 - Git
 - GitHub
+
+## Week 6 Summary
+
+Week 6 completed Phase 3 Sprint 1 for the **Cardiac Patient Monitoring System API**.
+
+During the week, the existing project baseline was reviewed and strengthened through database design validation, ERD finalization, EF Core model and migration verification, SQL Server schema review, paginated and filtered read operations, DTO projection, and transaction-based write logic.
+
+The sprint was closed with a Postman demo covering the main implemented API features, a review of the Sprint 1 backlog, verification of transaction rollback behavior, and a Sprint Retrospective with a concrete action for Sprint 2.
+
+All current Sprint 1 backlog items were reviewed and confirmed as completed.
+
+The main improvement action carried into Sprint 2 is to complete pull request review before merging Sprint 2 features into `main`.
