@@ -75,49 +75,40 @@ Before running the project, make sure the following are installed:
 ## Project Structure
 
 ```text
-Cardiac Patient Monitoring System/
+BinX Project/
 │
+├── README.md
 ├── demo/
 │   └── Cardiac API Demo.zip
 ├── docs/
 │   └── Cardiac PatientMonitoringSystem_ERD.png
 ├── postman/
 │   └── Cardiac Patient Monitoring System API.postman_collection.json
-├── CardiacPatientMonitoringSystem.API/
-│   ├── Controllers/
-│   ├── Data/
-│   ├── DTOs/
-│   │   ├── Requests/
-│   │   └── Responses/
-│   ├── Middleware/
-│   │   └── ExceptionHandlingMiddleware.cs
-│   ├── Migrations/
-│   ├── Models/
-│   ├── Repositories/
-│   │   ├── Classes/
-│   │   └── Interfaces/
-│   ├── Services/
-│   │   ├── Classes/
-│   │   └── Interfaces/
-│   ├── Validators/
-│   ├── appsettings.json
-│   └── Program.cs
-├── CardiacPatientMonitoringSystem.Tests/
-│   ├── Controllers/
-│   │   ├── AppointmentsControllerTests.cs
-│   │   ├── AuthsControllerTests.cs
-│   │   ├── MedicationsControllerTests.cs
-│   │   ├── PatientsControllerTests.cs
-│   │   └── VitalSignsControllerTests.cs
-│   ├── Integration/
-│   │   ├── CustomWebApplicationFactory.cs
-│   │   └── VitalSignsApiTests.cs
-│   └── Services/
-│       ├── AppointmentServiceTests.cs
-│       ├── MedicationServiceTests.cs
-│       ├── PatientServiceTests.cs
-│       └── VitalSignServiceTests.cs
-└── Cardiac Patient Monitoring System.slnx
+└── Cardiac Patient Monitoring System/
+    ├── CardiacPatientMonitoringSystem.API/
+    │   ├── Controllers/
+    │   ├── Data/
+    │   ├── DTOs/
+    │   │   ├── Requests/
+    │   │   └── Responses/
+    │   ├── Middleware/
+    │   │   └── ExceptionHandlingMiddleware.cs
+    │   ├── Migrations/
+    │   ├── Models/
+    │   ├── Repositories/
+    │   │   ├── Classes/
+    │   │   └── Interfaces/
+    │   ├── Services/
+    │   │   ├── Classes/
+    │   │   └── Interfaces/
+    │   ├── Validators/
+    │   ├── appsettings.json
+    │   └── Program.cs
+    ├── CardiacPatientMonitoringSystem.Tests/
+    │   ├── Controllers/
+    │   ├── Integration/
+    │   └── Services/
+    └── Cardiac Patient Monitoring System.slnx
 ```
 
 ---
@@ -266,7 +257,7 @@ This separation improves maintainability and allows the service layer to be test
 Update the connection string in:
 
 ```text
-CardiacPatientMonitoringSystem.API/appsettings.json
+Cardiac Patient Monitoring System/CardiacPatientMonitoringSystem.API/appsettings.json
 ```
 
 Example:
@@ -834,7 +825,7 @@ using Visual Studio.
 Update the `DefaultConnection` connection string in:
 
 ```text
-CardiacPatientMonitoringSystem.API/appsettings.json
+Cardiac Patient Monitoring System/CardiacPatientMonitoringSystem.API/appsettings.json
 ```
 
 if necessary.
