@@ -12,6 +12,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out | [View Week 6](./BinX%20Internship/Week%206) |
+| Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, Identity migration verification, SQL Server Identity-table validation, Admin and Patient role planning, endpoint authorization mapping, JWT authentication wiring review, role seeding verification, and carrying forward the Sprint 1 retrospective action | [View Week 7](./BinX%20Internship/Week%207) |
 ## Repository Structure
 
 ```text
@@ -51,13 +52,16 @@ BinX Internship/
 │   ├── Day 3/
 │   ├── Day 4/
 │   └── Day 5/
-└── Week 6/
+├── Week 6/
+│   ├── README.md
+│   ├── Day 1/
+│   ├── Day 2/
+│   ├── Day 3/
+│   ├── Day 4/
+│   └── Day 5/
+└── Week 7/
     ├── README.md
-    ├── Day 1/
-    ├── Day 2/
-    ├── Day 3/
-    ├── Day 4/
-    └── Day 5/
+    └── Day 1/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -234,6 +238,28 @@ Each week contains a summary README, and each completed day contains its own tas
 * Including Postman demo evidence in project documentation
 * Including the Sprint 1 Postman collection with the repository
 * Reviewing and documenting pull request history
+
+### Sprint 2 Planning and Identity Integration Review
+
+* Starting Phase 3 Sprint 2 for the Cardiac Patient Monitoring System API
+* Defining the Sprint 2 goal
+* Carrying forward the Sprint 1 retrospective improvement action
+* Creating and organizing the Sprint 2 backlog
+* Reviewing existing ASP.NET Core Identity integration
+* Verifying `ApplicationDbContext` inheritance from `IdentityDbContext<IdentityUser>`
+* Reviewing existing Identity-related migrations
+* Reviewing the `AddIdentity` migration
+* Reviewing the `AddPatientIdentityRelationship` migration
+* Verifying that Identity migrations do not introduce destructive schema changes
+* Verifying ASP.NET Core Identity tables in SQL Server
+* Confirming that application tables remain intact after Identity integration
+* Planning domain roles using `Admin` and `Patient`
+* Mapping project endpoints to the required roles
+* Reviewing existing `[Authorize]` attributes
+* Reviewing JWT authentication wiring in `Program.cs`
+* Verifying `UseAuthentication` and `UseAuthorization` middleware ordering
+* Reviewing role creation and assignment in `DbSeeder`
+* Verifying `Admin` and `Patient` role seeding
 
 ### API Architecture and Validation
 
