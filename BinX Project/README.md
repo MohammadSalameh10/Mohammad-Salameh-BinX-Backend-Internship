@@ -6,7 +6,7 @@ The Cardiac Patient Monitoring System API is a standalone ASP.NET Core REST API 
 
 The system provides backend functionality for managing cardiac patients, vital-sign measurements, medications, and appointments.
 
-The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based authorization, input validation, filtering/search, repository abstraction, centralized exception handling, unit testing with xUnit and Moq, Swagger, and Postman.
+The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based authorization, input validation, filtering, sorting, pagination, DTO projection, repository abstraction, transactional write operations, centralized exception handling, unit testing with xUnit and Moq, Swagger, and Postman.
 
 ---
 
@@ -24,8 +24,13 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - SQL Server database with Entity Framework Core migrations.
 - Synthetic seed data for development and testing.
 - Medication filtering by name.
-- Appointment filtering by reason.
-- Repository abstraction for patient, vital-sign, medication, and appointment data access.
+- Appointment filtering by reason and patient ID.
+- Appointment sorting by appointment date.
+- Appointment pagination using `page` and `pageSize`.
+- Reusable generic `PaginatedResponse<T>` for paginated API responses.
+- Query-level DTO projection for appointment list operations.
+- Repository abstraction for patient, vital-sign, medication, appointment, and authentication transaction data access.
+- Transactional patient registration using commit and rollback behavior.
 - Centralized exception handling using custom middleware.
 - Standardized `ProblemDetails` responses for unexpected server errors.
 - Structured error logging using `ILogger`.
@@ -116,44 +121,16 @@ BinX Project/
 ## Core Modules
 
 ### Patients
-
-Stores patient profile information including:
-
-- Full name
-- Date of birth
-- Gender
-- Phone number
-- Blood type
-
-Each patient profile is linked to an ASP.NET Core Identity user.
+Stores patient profile information including full name, date of birth, gender, phone number, and blood type. Each patient profile is linked to an ASP.NET Core Identity user.
 
 ### Vital Signs
-
-Stores cardiac-related measurements including:
-
-- Heart rate
-- Systolic blood pressure
-- Diastolic blood pressure
-- Oxygen saturation
-- Recorded date and time
+Stores heart rate, systolic and diastolic blood pressure, oxygen saturation, and recorded date/time.
 
 ### Medications
-
-Stores medication information including:
-
-- Name
-- Dosage
-- Frequency
-- Start date
-- Optional end date
+Stores medication name, dosage, frequency, start date, and optional end date.
 
 ### Appointments
-
-Stores appointment information including:
-
-- Appointment date
-- Reason
-- Optional notes
+Stores appointment date, reason, and optional notes.
 
 ---
 
@@ -161,7 +138,7 @@ Stores appointment information including:
 
 The application uses SQL Server with Entity Framework Core.
 
-The main application entities are:
+Main entities:
 
 ```text
 Patient
@@ -182,13 +159,7 @@ IdentityUser
           └── Appointments
 ```
 
-Each patient is linked to one Identity user.
-
-A patient can have multiple:
-
-- Vital signs
-- Medications
-- Appointments
+Each patient is linked to one Identity user. A patient can have multiple vital signs, medications, and appointments.
 
 The database schema is created and updated using Entity Framework Core migrations.
 
@@ -196,9 +167,9 @@ The database schema is created and updated using Entity Framework Core migration
 
 ## Repository Pattern
 
-Repository abstractions are used for the main CRUD modules to separate service-layer business logic from direct Entity Framework Core data access.
+Repository abstractions separate service-layer business logic from direct Entity Framework Core data access and transaction management.
 
-The implemented repositories are:
+Implemented repositories:
 
 ```text
 IPatientRepository
@@ -212,9 +183,12 @@ MedicationRepository
 
 IAppointmentRepository
 AppointmentRepository
+
+IAuthRepository
+AuthRepository
 ```
 
-The general dependency flow is:
+General dependency flow:
 
 ```text
 Controller
@@ -230,7 +204,7 @@ ApplicationDbContext
 SQL Server
 ```
 
-The following services depend on repository interfaces instead of accessing `ApplicationDbContext` directly:
+Service dependencies:
 
 ```text
 PatientService
@@ -244,11 +218,14 @@ MedicationService
 
 AppointmentService
 → IAppointmentRepository
+
+AuthService
+→ IAuthRepository
 ```
 
-This separation improves maintainability and allows the service layer to be tested in isolation using mocked repository dependencies.
+`AuthService` continues to use ASP.NET Core Identity abstractions such as `UserManager<IdentityUser>` for user management, while transaction operations are abstracted through `IAuthRepository`.
 
-`AuthService` does not use a custom repository because it works through ASP.NET Core Identity abstractions such as `UserManager<IdentityUser>`.
+`AuthRepository` uses `ApplicationDbContext` to manage EF Core database transactions, keeping direct `ApplicationDbContext` access out of `AuthService`.
 
 ---
 
@@ -268,7 +245,7 @@ Example:
 }
 ```
 
-Open Visual Studio and then open:
+In Visual Studio open:
 
 ```text
 Tools
@@ -276,7 +253,7 @@ Tools
 → Package Manager Console
 ```
 
-Make sure the default project is:
+Set the default project to:
 
 ```text
 CardiacPatientMonitoringSystem.API
@@ -288,24 +265,13 @@ Then run:
 Update-Database
 ```
 
-This creates the SQL Server database and applies all Entity Framework Core migrations.
-
 ---
 
 ## Seed Data
 
 The application automatically adds synthetic development data when the project starts.
 
-The seed process creates:
-
-- `Admin` role
-- `Patient` role
-- Admin Identity user
-- Patient Identity user
-- Test patient profile
-- Vital-sign records
-- Medication record
-- Appointment record
+The seed process creates the `Admin` and `Patient` roles, Admin and Patient Identity users, a test patient profile, vital-sign records, a medication record, and an appointment record.
 
 ### Seed Admin Account
 
@@ -321,23 +287,17 @@ Email: patient@cardiac.com
 Password: Patient@123
 ```
 
-The seeded records use synthetic data only.
-
 ---
 
 ## Authentication
 
-The API uses ASP.NET Core Identity for user management and password handling.
-
-JWT Bearer tokens are used to authenticate protected API requests.
+The API uses ASP.NET Core Identity for user management and password handling. JWT Bearer tokens authenticate protected requests.
 
 ### Register
 
 ```http
 POST /api/Auths/register
 ```
-
-Example request:
 
 ```json
 {
@@ -354,8 +314,6 @@ New registered users receive the `Patient` role.
 POST /api/Auths/login
 ```
 
-Example:
-
 ```json
 {
   "email": "admin@cardiac.com",
@@ -363,15 +321,7 @@ Example:
 }
 ```
 
-Successful login returns a JWT token:
-
-```json
-{
-  "token": "..."
-}
-```
-
-The token must be sent in protected requests using:
+Successful login returns a JWT token, which is sent using:
 
 ```http
 Authorization: Bearer <token>
@@ -379,46 +329,57 @@ Authorization: Bearer <token>
 
 ---
 
-## Authorization
+## Transactional Registration
 
-The API uses two roles:
+Patient registration is a multi-step write operation.
 
 ```text
-Admin
-Patient
+Begin Transaction
+        ↓
+Create Identity User
+        ↓
+Assign Patient Role
+        ↓
+Commit
 ```
+
+If user creation or role assignment fails:
+
+```text
+Failure
+    ↓
+Rollback
+```
+
+This provides all-or-nothing behavior and prevents partially completed registrations from remaining in the database.
+
+Transaction management is abstracted through:
+
+```text
+AuthService
+    ↓
+IAuthRepository
+    ↓
+AuthRepository
+    ↓
+ApplicationDbContext
+```
+
+Rollback behavior was manually verified by intentionally forcing role assignment to fail and confirming that the created user was not persisted in `AspNetUsers`.
+
+---
+
+## Authorization
+
+The API uses `Admin` and `Patient` roles.
 
 ### Admin Permissions
 
-The Admin role can:
-
-- View all patients.
-- View a patient by ID.
-- Update patients.
-- Delete patients.
-- View all vital signs.
-- View a vital sign by ID.
-- Update vital signs.
-- Delete vital signs.
-- View medications.
-- Search medications.
-- Update medications.
-- Delete medications.
-- View appointments.
-- Search appointments.
-- Update appointments.
-- Delete appointments.
+The Admin can view, update, and delete patients, vital signs, medications, and appointments. The Admin can also filter medications and filter, sort, and paginate appointments.
 
 ### Patient Permissions
 
-The Patient role can:
-
-- Create a patient profile.
-- Create vital-sign records.
-- Create medication records.
-- Create appointment records.
-
-A Patient must create a patient profile before creating related records.
+The Patient can create a patient profile, vital-sign records, medication records, and appointment records. A Patient must create a patient profile before creating related records.
 
 ---
 
@@ -426,56 +387,59 @@ A Patient must create a patient profile before creating related records.
 
 ### Authentication
 
-| Method | Endpoint              | Authorization | Description                 |
-| ------ | --------------------- | ------------- | --------------------------- |
-| POST   | `/api/Auths/register` | Public        | Register a Patient account  |
-| POST   | `/api/Auths/login`    | Public        | Login and receive JWT token |
+| Method | Endpoint | Authorization | Description |
+| --- | --- | --- | --- |
+| POST | `/api/Auths/register` | Public | Register a Patient account |
+| POST | `/api/Auths/login` | Public | Login and receive JWT token |
 
 ### Patients
 
-| Method | Endpoint             | Authorization | Description            |
-| ------ | -------------------- | ------------- | ---------------------- |
-| GET    | `/api/Patients`      | Admin         | Get all patients       |
-| GET    | `/api/Patients/{id}` | Admin         | Get patient by ID      |
-| POST   | `/api/Patients`      | Patient       | Create patient profile |
-| PUT    | `/api/Patients/{id}` | Admin         | Update patient         |
-| DELETE | `/api/Patients/{id}` | Admin         | Delete patient         |
+| Method | Endpoint | Authorization | Description |
+| --- | --- | --- | --- |
+| GET | `/api/Patients` | Admin | Get all patients |
+| GET | `/api/Patients/{id}` | Admin | Get patient by ID |
+| POST | `/api/Patients` | Patient | Create patient profile |
+| PUT | `/api/Patients/{id}` | Admin | Update patient |
+| DELETE | `/api/Patients/{id}` | Admin | Delete patient |
 
 ### Vital Signs
 
-| Method | Endpoint               | Authorization | Description          |
-| ------ | ---------------------- | ------------- | -------------------- |
-| GET    | `/api/VitalSigns`      | Admin         | Get all vital signs  |
-| GET    | `/api/VitalSigns/{id}` | Admin         | Get vital sign by ID |
-| POST   | `/api/VitalSigns`      | Patient       | Create vital sign    |
-| PUT    | `/api/VitalSigns/{id}` | Admin         | Update vital sign    |
-| DELETE | `/api/VitalSigns/{id}` | Admin         | Delete vital sign    |
+| Method | Endpoint | Authorization | Description |
+| --- | --- | --- | --- |
+| GET | `/api/VitalSigns` | Admin | Get all vital signs |
+| GET | `/api/VitalSigns/{id}` | Admin | Get vital sign by ID |
+| POST | `/api/VitalSigns` | Patient | Create vital sign |
+| PUT | `/api/VitalSigns/{id}` | Admin | Update vital sign |
+| DELETE | `/api/VitalSigns/{id}` | Admin | Delete vital sign |
 
 ### Medications
 
-| Method | Endpoint                       | Authorization | Description                |
-| ------ | ------------------------------ | ------------- | -------------------------- |
-| GET    | `/api/Medications`             | Admin         | Get all medications        |
-| GET    | `/api/Medications/{id}`        | Admin         | Get medication by ID       |
-| GET    | `/api/Medications?name={name}` | Admin         | Filter medications by name |
-| POST   | `/api/Medications`             | Patient       | Create medication          |
-| PUT    | `/api/Medications/{id}`        | Admin         | Update medication          |
-| DELETE | `/api/Medications/{id}`        | Admin         | Delete medication          |
+| Method | Endpoint | Authorization | Description |
+| --- | --- | --- | --- |
+| GET | `/api/Medications` | Admin | Get all medications |
+| GET | `/api/Medications/{id}` | Admin | Get medication by ID |
+| GET | `/api/Medications?name={name}` | Admin | Filter medications by name |
+| POST | `/api/Medications` | Patient | Create medication |
+| PUT | `/api/Medications/{id}` | Admin | Update medication |
+| DELETE | `/api/Medications/{id}` | Admin | Delete medication |
 
 ### Appointments
 
-| Method | Endpoint                            | Authorization | Description                   |
-| ------ | ----------------------------------- | ------------- | ----------------------------- |
-| GET    | `/api/Appointments`                 | Admin         | Get all appointments          |
-| GET    | `/api/Appointments/{id}`            | Admin         | Get appointment by ID         |
-| GET    | `/api/Appointments?reason={reason}` | Admin         | Filter appointments by reason |
-| POST   | `/api/Appointments`                 | Patient       | Create appointment            |
-| PUT    | `/api/Appointments/{id}`            | Admin         | Update appointment            |
-| DELETE | `/api/Appointments/{id}`            | Admin         | Delete appointment            |
+| Method | Endpoint | Authorization | Description |
+| --- | --- | --- | --- |
+| GET | `/api/Appointments` | Admin | Get paginated appointments |
+| GET | `/api/Appointments/{id}` | Admin | Get appointment by ID |
+| GET | `/api/Appointments?reason={reason}` | Admin | Filter appointments by reason |
+| GET | `/api/Appointments?patientId={id}` | Admin | Filter appointments by patient ID |
+| GET | `/api/Appointments?sort=date_asc` | Admin | Sort appointments by date ascending |
+| GET | `/api/Appointments?sort=date_desc` | Admin | Sort appointments by date descending |
+| POST | `/api/Appointments` | Patient | Create appointment |
+| PUT | `/api/Appointments/{id}` | Admin | Update appointment |
+| DELETE | `/api/Appointments/{id}` | Admin | Delete appointment |
 
 ---
 
-## Filtering and Search
+## Filtering, Sorting, and Pagination
 
 ### Medication Name Filter
 
@@ -483,73 +447,87 @@ A Patient must create a patient profile before creating related records.
 GET /api/Medications?name=Aspirin
 ```
 
-Returns medications whose names contain the provided value.
-
-If no matching medications are found, the API returns:
-
-```http
-200 OK
-```
-
-with:
+If no matching medications are found, the API returns `200 OK` with:
 
 ```json
 []
 ```
 
-### Appointment Reason Filter
+### Appointment Filtering
 
 ```http
 GET /api/Appointments?reason=Routine
 ```
 
-Returns appointments whose reason contains the provided value.
+```http
+GET /api/Appointments?patientId=1
+```
 
-If no matching appointments are found, the API returns:
+### Appointment Sorting
 
 ```http
-200 OK
+GET /api/Appointments?sort=date_asc
 ```
 
-with:
+```http
+GET /api/Appointments?sort=date_desc
+```
+
+The default ordering is ascending by appointment date.
+
+### Appointment Pagination
+
+```http
+GET /api/Appointments?page=1&pageSize=10
+```
+
+The response uses the reusable `PaginatedResponse<T>` model:
 
 ```json
-[]
+{
+  "page": 1,
+  "pageSize": 10,
+  "totalCount": 2,
+  "items": [
+    {
+      "id": 1,
+      "patientId": 1,
+      "appointmentDate": "2026-09-01T10:00:00",
+      "reason": "Routine cardiac follow-up",
+      "notes": "Synthetic test appointment"
+    }
+  ]
+}
 ```
+
+If no matching appointments exist:
+
+```json
+{
+  "page": 1,
+  "pageSize": 10,
+  "totalCount": 0,
+  "items": []
+}
+```
+
+### Combined Appointment Query
+
+```http
+GET /api/Appointments?patientId=1&sort=date_desc&page=1&pageSize=1
+```
+
+Appointment list queries project directly to `AppointmentResponse` DTOs using `Select` before query execution, reducing unnecessary data over-fetching.
 
 ---
 
 ## Validation
 
-Request validation is implemented using FluentValidation.
+Request validation is implemented using FluentValidation for patient, vital-sign, medication, appointment, registration, and login requests.
 
-Validation is applied to:
+Examples include required fields, valid email, past date of birth, valid blood type, oxygen saturation between `0` and `100`, non-future vital-sign recording time, valid medication date ranges, and future appointment dates.
 
-- Patient create/update requests.
-- Vital-sign create/update requests.
-- Medication create/update requests.
-- Appointment create/update requests.
-- Registration requests.
-- Login requests.
-
-Examples of validation rules include:
-
-- Required fields cannot be empty.
-- Email must be valid.
-- Date of birth must be in the past.
-- Blood type must be valid.
-- Oxygen saturation must be between `0` and `100`.
-- Vital-sign recording time cannot be in the future.
-- Medication end date cannot be before its start date.
-- New appointments must use a future appointment date.
-
-Invalid input returns:
-
-```http
-400 Bad Request
-```
-
-with structured validation errors.
+Invalid input returns `400 Bad Request` with structured validation errors.
 
 ---
 
@@ -557,21 +535,15 @@ with structured validation errors.
 
 Unexpected exceptions are handled centrally using `ExceptionHandlingMiddleware`.
 
-The middleware:
+The middleware catches unhandled exceptions, logs them using `ILogger<ExceptionHandlingMiddleware>`, uses structured request-path logging, returns `500 Internal Server Error`, and returns standardized `ProblemDetails` without exposing internal exception details.
 
-- Catches unhandled exceptions from the request pipeline.
-- Logs exception details using `ILogger<ExceptionHandlingMiddleware>`.
-- Uses structured logging with the request path.
-- Returns `500 Internal Server Error`.
-- Returns a standardized `ProblemDetails` response.
-- Does not expose exception messages, stack traces, or internal implementation details to the client.
-
-Example response:
+Example:
 
 ```json
 {
   "title": "An unexpected error occurred.",
-  "status": 500
+  "status": 500,
+  "instance": "/api/Auths/register"
 }
 ```
 
@@ -579,13 +551,11 @@ Example response:
 
 ## Testing
 
-The project includes unit tests and integration tests using xUnit and Moq.
+The project includes unit and integration tests using xUnit and Moq.
 
 ### Service Unit Tests
 
-The service layer is tested in isolation using mocked repository dependencies.
-
-The following services are covered:
+The service layer is tested in isolation with mocked repository dependencies for:
 
 ```text
 PatientService
@@ -594,52 +564,11 @@ MedicationService
 AppointmentService
 ```
 
-The tests cover important success and failure paths, including:
-
-```text
-CreateAsync
-├── Success
-└── Failure
-
-UpdateAsync
-├── Success
-└── Failure
-
-DeleteAsync
-├── Success
-└── Failure
-```
-
-`VitalSignService` also includes tests for:
-
-```text
-GetHeartRateStatus
-├── Low
-├── Normal
-└── High
-
-GetByIdAsync
-├── Success
-└── Exception propagation
-```
-
-The tests use Moq verification to confirm expected repository interactions such as:
-
-```text
-GetByIdAsync
-GetPatientByUserIdAsync
-AddAsync
-Remove
-SaveChangesAsync
-```
-
-and to verify that write operations are not performed during failure paths.
+Tests cover important success and failure paths for create, update, and delete operations. `VitalSignService` also includes heart-rate status and GetById tests.
 
 ### Controller Unit Tests
 
-Controller behavior is tested by mocking the service layer.
-
-The following controllers are covered:
+Controller tests cover:
 
 ```text
 PatientsController
@@ -649,27 +578,11 @@ AppointmentsController
 AuthsController
 ```
 
-The tests verify important HTTP responses including:
-
-```text
-200 OK
-201 Created
-204 No Content
-400 Bad Request
-401 Unauthorized
-404 Not Found
-```
-
-Controller tests also verify that:
-
-- Authenticated user IDs are read correctly from claims.
-- Service methods are called when expected.
-- Service methods are not called when authentication information is missing.
-- Correct response types are returned for success and failure cases.
+They verify responses including `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, and `404 Not Found`.
 
 ### Integration Testing
 
-Integration tests are implemented using:
+Integration tests use:
 
 ```text
 WebApplicationFactory<Program>
@@ -678,28 +591,19 @@ HttpClient
 JWT Authentication
 ```
 
-`CustomWebApplicationFactory` starts the API in a `Testing` environment and replaces the SQL Server database with an EF Core InMemory database.
-
-The integration tests currently verify:
+Current integration scenarios verify:
 
 ```text
 GET /api/VitalSigns/{id}
 
-Existing VitalSign
-→ 200 OK
-
-Missing VitalSign
-→ 404 Not Found
-
-Missing JWT Token
-→ 401 Unauthorized
+Existing VitalSign → 200 OK
+Missing VitalSign → 404 Not Found
+Missing JWT Token → 401 Unauthorized
 ```
 
-The production seed process is skipped while the application is running in the `Testing` environment.
+Production seed data is skipped in the `Testing` environment.
 
 ### Test Result
-
-The full test suite was executed successfully:
 
 ```text
 Total: 75
@@ -712,28 +616,22 @@ Skipped: 0
 
 ## HTTP Status Codes
 
-The API uses appropriate HTTP response status codes, including:
-
-| Status Code                 | Meaning                                            |
-| --------------------------- | -------------------------------------------------- |
-| `200 OK`                    | Successful GET or update operation                 |
-| `201 Created`               | Resource created successfully                      |
-| `204 No Content`            | Resource deleted successfully                      |
-| `400 Bad Request`           | Invalid request or invalid application state       |
-| `401 Unauthorized`          | Authentication is required                         |
-| `403 Forbidden`             | Authenticated user does not have the required role |
-| `404 Not Found`             | Requested resource does not exist                  |
-| `500 Internal Server Error` | Unexpected server error                            |
+| Status Code | Meaning |
+| --- | --- |
+| `200 OK` | Successful GET or update operation |
+| `201 Created` | Resource created successfully |
+| `204 No Content` | Resource deleted successfully |
+| `400 Bad Request` | Invalid request or invalid application state |
+| `401 Unauthorized` | Authentication is required |
+| `403 Forbidden` | Authenticated user does not have the required role |
+| `404 Not Found` | Requested resource does not exist |
+| `500 Internal Server Error` | Unexpected server error |
 
 ---
 
 ## Swagger
 
-Swagger/OpenAPI is available while running the application in the Development environment.
-
-Start the API and open the Swagger page from the URL configured by the application launch profile.
-
-Swagger can be used to inspect the API endpoints and request/response models.
+Swagger/OpenAPI is available while running the application in the Development environment and can be used to inspect endpoints and request/response models.
 
 ---
 
@@ -745,17 +643,7 @@ A Postman collection is included in:
 postman/Cardiac Patient Monitoring System API.postman_collection.json
 ```
 
-The collection contains requests for:
-
-- Authentication
-- Patients
-- Vital signs
-- Medications
-- Appointments
-- Medication filtering
-- Appointment filtering
-
-The collection uses the following variables:
+The collection uses:
 
 ```text
 baseUrl
@@ -763,19 +651,7 @@ adminToken
 patientToken
 ```
 
-After logging in, copy the returned JWT token into either:
-
-```text
-adminToken
-```
-
-or:
-
-```text
-patientToken
-```
-
-depending on the account role.
+Store the returned JWT token in the appropriate collection variable after login.
 
 ---
 
@@ -787,18 +663,7 @@ A compressed recorded API demonstration is included in:
 demo/Cardiac API Demo.zip
 ```
 
-The demo shows:
-
-- API testing using Postman.
-- JWT authentication.
-- Admin and Patient role authorization.
-- `401 Unauthorized` and `403 Forbidden` scenarios.
-- Patient registration and patient-profile creation.
-- Duplicate patient-profile prevention.
-- Vital-sign creation and request validation.
-- Medication and appointment filtering.
-- CRUD operations.
-- Database evidence showing that API operations are reflected in SQL Server.
+The demo shows API testing, JWT authentication, role authorization, patient registration/profile creation, validation, filtering, CRUD operations, and SQL Server database evidence.
 
 ---
 
@@ -806,23 +671,17 @@ The demo shows:
 
 ### 1. Open the Project
 
-Navigate to:
+Open:
 
 ```text
-BinX Project/Cardiac Patient Monitoring System
-```
-
-Then open:
-
-```text
-Cardiac Patient Monitoring System.slnx
+BinX Project/Cardiac Patient Monitoring System/Cardiac Patient Monitoring System.slnx
 ```
 
 using Visual Studio.
 
 ### 2. Configure SQL Server
 
-Update the `DefaultConnection` connection string in:
+Update `DefaultConnection` in:
 
 ```text
 Cardiac Patient Monitoring System/CardiacPatientMonitoringSystem.API/appsettings.json
@@ -832,48 +691,19 @@ if necessary.
 
 ### 3. Create the Database
 
-Open Visual Studio and go to:
-
-```text
-Tools
-→ NuGet Package Manager
-→ Package Manager Console
-```
-
-Make sure the default project is:
-
-```text
-CardiacPatientMonitoringSystem.API
-```
-
-Then run:
+In Package Manager Console, with `CardiacPatientMonitoringSystem.API` selected:
 
 ```powershell
 Update-Database
 ```
 
-This creates the SQL Server database and applies all Entity Framework Core migrations.
-
 ### 4. Run the Application
 
-Run:
-
-```text
-CardiacPatientMonitoringSystem.API
-```
-
-from Visual Studio.
-
-The synthetic seed data is added automatically when the application starts.
+Run `CardiacPatientMonitoringSystem.API` from Visual Studio.
 
 ### 5. Test the API
 
-The API can be tested independently using:
-
-- Swagger
-- Postman
-
-Import:
+Use Swagger or import:
 
 ```text
 postman/Cardiac Patient Monitoring System API.postman_collection.json
@@ -881,39 +711,11 @@ postman/Cardiac Patient Monitoring System API.postman_collection.json
 
 into Postman.
 
-Set the collection variable:
-
-```text
-baseUrl
-```
-
-to the URL used by the running API.
-
-Then log in and store the returned JWT token in:
-
-```text
-adminToken
-```
-
-or:
-
-```text
-patientToken
-```
-
-depending on the account role.
-
 ### 6. Run Tests
 
-Open Test Explorer in Visual Studio and run the tests in:
+Run `CardiacPatientMonitoringSystem.Tests` from Visual Studio Test Explorer.
 
-```text
-CardiacPatientMonitoringSystem.Tests
-```
-
-The test project includes service unit tests, controller unit tests, and integration tests.
-
-The current test suite contains:
+Current result:
 
 ```text
 Total: 75
@@ -926,14 +728,13 @@ Skipped: 0
 
 ## Verification
 
-The following scenarios were manually verified using Postman:
+The following scenarios were verified:
 
 - Admin login.
 - Patient registration and login.
 - JWT authentication.
 - Admin and Patient role authorization.
-- `401 Unauthorized` responses.
-- `403 Forbidden` responses.
+- `401 Unauthorized` and `403 Forbidden`.
 - Patient CRUD.
 - Vital-sign CRUD.
 - Medication CRUD.
@@ -941,24 +742,30 @@ The following scenarios were manually verified using Postman:
 - Request validation failures.
 - Duplicate patient-profile prevention.
 - Missing patient-profile handling.
-- `404 Not Found` responses.
+- `404 Not Found`.
 - Medication filtering.
-- Appointment filtering.
-- Empty filtering results returning `200 OK` with `[]`.
+- Appointment filtering by reason.
+- Appointment filtering by patient ID.
+- Appointment pagination using `page` and `pageSize`.
+- Appointment sorting by date ascending and descending.
+- Combined appointment filtering, sorting, and pagination.
+- Empty medication filtering results returning `200 OK` with `[]`.
+- Empty paginated appointment results returning `200 OK` with an empty `items` collection.
 - Database recreation using Entity Framework Core migrations.
 - Synthetic seed data creation.
+- Transactional patient registration.
+- Successful transaction commit verified through registration and login.
+- Transaction rollback verified using a forced role-assignment failure.
+- Failed registration confirmed as not persisted in `AspNetUsers`.
 - Centralized exception handling.
-- `500 Internal Server Error` with a standardized `ProblemDetails` response.
-- Service unit tests using xUnit and Moq.
-- Controller unit tests using mocked service dependencies.
-- Integration tests using WebApplicationFactory and an EF Core InMemory database.
-- Full test suite completed successfully with 75 passed tests and 0 failures.
+- Standardized `ProblemDetails` response for unexpected errors.
+- Service and controller unit tests.
+- Integration tests using `WebApplicationFactory` and EF Core InMemory.
+- Full automated test suite completed successfully with 75 passed tests and 0 failures.
 
 ---
 
 ## Sample Seed Data
-
-After creating a fresh database and running the application, the seeded application data includes:
 
 ```text
 Patient ID: 1
@@ -1002,5 +809,5 @@ Reason: Routine cardiac follow-up
 
 - The project uses synthetic data only and does not contain real patient information.
 - JWT tokens are not stored in the Postman collection.
-- Delete requests in the Postman collection use non-seeded IDs by default to avoid accidentally deleting the provided seed data.
+- Delete requests use non-seeded IDs by default to avoid accidentally deleting seed data.
 - The recorded API demo is included in the `demo` folder.

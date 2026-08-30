@@ -1,5 +1,6 @@
 ﻿using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.DTOs.Responses;
+using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -13,42 +14,62 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IAuthRepository _authRepository;
 
         public AuthService(
             UserManager<IdentityUser> userManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IAuthRepository authRepository)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _authRepository = authRepository;
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterRequest request)
         {
-            var user = new IdentityUser
+            await _authRepository.BeginTransactionAsync();
+
+            try
             {
-                UserName = request.Email,
-                Email = request.Email
-            };
+                var user = new IdentityUser
+                {
+                    UserName = request.Email,
+                    Email = request.Email
+                };
 
-            var result = await _userManager.CreateAsync(
-                user,
-                request.Password);
+                var result = await _userManager.CreateAsync(
+                    user,
+                    request.Password);
 
-            if (!result.Succeeded)
+                if (!result.Succeeded)
+                {
+                    await _authRepository.RollbackTransactionAsync();
+
+                    return result;
+                }
+
+                var roleResult = await _userManager.AddToRoleAsync(
+                    user,
+                    "Patient");
+
+                if (!roleResult.Succeeded)
+                {
+                    await _authRepository.RollbackTransactionAsync();
+
+                    return roleResult;
+                }
+
+                await _authRepository.CommitTransactionAsync();
+
                 return result;
-
-            var roleResult = await _userManager.AddToRoleAsync(
-                user,
-                "Patient");
-
-            if (!roleResult.Succeeded)
-            {
-                await _userManager.DeleteAsync(user);
-
-                return roleResult;
             }
+            catch
+            {
+                await _authRepository.RollbackTransactionAsync();
 
-            return result;
+                throw;
+            }
         }
 
         public async Task<LoginResponse?> LoginAsync(LoginRequest request)

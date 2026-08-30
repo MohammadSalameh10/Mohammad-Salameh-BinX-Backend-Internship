@@ -19,9 +19,19 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll([FromQuery] string? reason)
+        public async Task<IActionResult> GetAll(
+           [FromQuery] string? reason,
+           [FromQuery] int? patientId,
+           [FromQuery] string? sort,
+           [FromQuery] int page = 1,
+           [FromQuery] int pageSize = 10)
         {
-            var appointments = await _appointmentService.GetAllAsync(reason);
+            var appointments = await _appointmentService.GetAllAsync(
+                reason,
+                patientId,
+                sort,
+                page,
+                pageSize);
 
             return Ok(appointments);
         }

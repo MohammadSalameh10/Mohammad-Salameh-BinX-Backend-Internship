@@ -741,35 +741,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/Appointments",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "Appointments"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Search Appointments By Reason",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/Appointments?reason=Routine",
+              "raw": "{{baseUrl}}/api/Appointments?patientId=1&sort=date_desc&page=1&pageSize=1",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -779,8 +751,20 @@
               ],
               "query": [
                 {
-                  "key": "reason",
-                  "value": "Routine"
+                  "key": "patientId",
+                  "value": "1"
+                },
+                {
+                  "key": "sort",
+                  "value": "date_desc"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "1"
                 }
               ]
             }
@@ -957,10 +941,12 @@
       "value": "https://localhost:7112"
     },
     {
-      "key": "adminToken"
+      "key": "adminToken",
+      "secret": true
     },
     {
-      "key": "patientToken"
+      "key": "patientToken",
+      "value": ""
     }
   ]
 }

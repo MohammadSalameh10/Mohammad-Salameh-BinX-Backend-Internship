@@ -61,6 +61,7 @@ namespace CardiacPatientMonitoringSystem.API
             builder.Services.AddScoped<IMedicationService, MedicationService>();
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+            builder.Services.AddScoped<IAuthRepository, AuthRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddControllers();
