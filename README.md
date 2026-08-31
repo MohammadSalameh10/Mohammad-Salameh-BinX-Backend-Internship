@@ -12,7 +12,8 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out | [View Week 6](./BinX%20Internship/Week%206) |
-| Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, Identity migration verification, SQL Server Identity-table validation, Admin and Patient role planning, endpoint authorization mapping, JWT authentication wiring review, role seeding verification, and carrying forward the Sprint 1 retrospective action | [View Week 7](./BinX%20Internship/Week%207) |
+| Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, Identity migration verification, SQL Server Identity-table validation, Admin and Patient role planning, endpoint authorization mapping, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, registration-to-login flow testing, role seeding verification, and carrying forward the Sprint 1 retrospective action | [View Week 7](./BinX%20Internship/Week%207) |
+
 ## Repository Structure
 
 ```text
@@ -61,7 +62,8 @@ BinX Internship/
 │   └── Day 5/
 └── Week 7/
     ├── README.md
-    └── Day 1/
+    ├── Day 1/
+    └── Day 2/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -260,6 +262,20 @@ Each week contains a summary README, and each completed day contains its own tas
 * Verifying `UseAuthentication` and `UseAuthorization` middleware ordering
 * Reviewing role creation and assignment in `DbSeeder`
 * Verifying `Admin` and `Patient` role seeding
+* Extending patient registration to create both the `IdentityUser` and linked `Patient` record
+* Extending `RegisterRequest` with patient domain information
+* Linking the new Patient using `Patient.UserId` and `IdentityUser.Id`
+* Keeping Identity user creation, Patient role assignment, and Patient creation inside one EF Core transaction
+* Preventing incomplete registrations through transaction rollback
+* Retrieving the linked Patient during login
+* Adding the domain-specific `PatientId` claim to the generated JWT
+* Using `PatientId` to represent the authenticated user's domain record
+* Testing the complete registration-to-login flow using Postman
+* Verifying the new user in `AspNetUsers`
+* Verifying the linked Patient record in `Patients`
+* Confirming that `Patient.UserId` matches the Identity user's ID
+* Decoding the JWT and verifying the `PatientId` claim
+* Confirming that the JWT `PatientId` matches the Patient record stored in SQL Server
 
 ### API Architecture and Validation
 
@@ -326,6 +342,9 @@ Each week contains a summary README, and each completed day contains its own tas
 * Returning `401 Unauthorized` for invalid credentials
 * Rejecting missing or expired JWTs
 * Decoding JWTs and verifying claims
+* Domain-specific JWT claims
+* Adding the linked `PatientId` to JWT tokens
+* Resolving the authenticated Patient from the token
 
 ### Authorization
 
@@ -414,6 +433,9 @@ Each week contains a summary README, and each completed day contains its own tas
 * Testing transaction failure and rollback scenarios
 * Verifying database state after rollback
 * Testing successful registration and login after transaction commit
+* Testing complete registration-to-login flows
+* Verifying Identity and domain records after registration
+* Decoding JWTs and validating domain-specific claims
 
 ### Unit Testing with xUnit
 
