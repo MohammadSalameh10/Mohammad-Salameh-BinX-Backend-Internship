@@ -4,15 +4,18 @@
 
 Week 7 begins Phase 3 Sprint 2 for the **Cardiac Patient Monitoring System API**.
 
-The week starts with Sprint 2 planning and reviewing the existing ASP.NET Core Identity integration, Identity-related migrations, role structure, authorization requirements, and authentication wiring in the existing project.
+The week started with Sprint 2 planning and a review of the existing ASP.NET Core Identity integration, Identity-related migrations, role structure, authorization requirements, and authentication wiring.
 
 Because Identity and role-based authorization had already been implemented during previous training work, Day 1 focused on reviewing and verifying the existing implementation instead of recreating the same functionality.
+
+Day 2 extended the existing authentication flow by creating the linked `Patient` domain record during registration and adding a domain-specific `PatientId` claim to the JWT returned during login.
 
 ## Daily Work
 
 | Day | Topic | Project / Documentation |
 |---|---|---|
 | Day 1 | Sprint 2 Planning & Wiring Identity into the Capstone | [View Day 1](./Day%201) |
+| Day 2 | JWT Login & Registration for the Capstone Project | [View Day 2](./Day%202) |
 
 ## Week 7 Highlights
 
@@ -84,6 +87,36 @@ Because Identity and role-based authorization had already been implemented durin
 - Reviewed role checks using `IsInRoleAsync`.
 - Reviewed role assignment using `AddToRoleAsync`.
 
+### Patient Registration and Domain Linking
+
+- Extended the registration request to include the patient domain information required by the `Patient` entity.
+- Updated the registration flow to create both the `IdentityUser` and the linked `Patient` record.
+- Linked the new Patient record using `Patient.UserId` and `IdentityUser.Id`.
+- Kept Identity user creation, role assignment, and Patient creation inside the same EF Core transaction.
+- Saved the linked Patient record using Entity Framework Core.
+- Preserved rollback behavior to prevent partially completed registrations.
+
+### Domain-Specific JWT Claims
+
+- Extended the login flow to retrieve the Patient linked to the authenticated Identity user.
+- Added a domain-specific `PatientId` claim to the generated JWT.
+- Kept the existing Identity claims for user ID, email, and role.
+- Used the `Patient.UserId` relationship to resolve the linked Patient record.
+- Enabled authenticated requests to identify the related Patient directly from the JWT.
+
+### Registration-to-Login Flow Testing
+
+- Registered a new Patient account using Postman.
+- Confirmed `201 Created` from the registration endpoint.
+- Verified the new account in the `AspNetUsers` table.
+- Verified the linked Patient record in the `Patients` table.
+- Confirmed that `Patient.UserId` matches the corresponding Identity user's ID.
+- Logged in using the newly registered account.
+- Confirmed `200 OK` and successful JWT generation.
+- Decoded the JWT and verified the `PatientId` claim.
+- Confirmed that the `PatientId` claim matches the Patient record stored in SQL Server.
+- Verified the complete registration-to-login flow end-to-end.
+
 ## Sprint 2 Backlog
 
 The Sprint 2 backlog currently includes:
@@ -96,6 +129,9 @@ The Sprint 2 backlog currently includes:
 - Document role permissions for project endpoints
 - Review existing authorization attributes
 - Verify authentication and authorization wiring
+- Extend registration to create the linked `Patient` record
+- Add the domain-specific `PatientId` claim to JWT login
+- Test the complete registration-to-login flow
 - Apply the Sprint 1 retrospective action before merging Sprint 2 changes
 
 The existing Identity-related review tasks were completed during Day 1.
@@ -115,5 +151,7 @@ The Sprint 1 retrospective action remains active throughout Sprint 2:
 - JWT Authentication
 - Visual Studio
 - Notion
+- Postman
+- jwt.io
 - Git
 - GitHub
