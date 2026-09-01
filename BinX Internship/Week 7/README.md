@@ -10,12 +10,15 @@ Because Identity and role-based authorization had already been implemented durin
 
 Day 2 extended the existing authentication flow by creating the linked `Patient` domain record during registration and adding a domain-specific `PatientId` claim to the JWT returned during login.
 
+Day 3 focused on applying role-based access control across the API and adding resource ownership checks so that Patients can access only their own appointment data while Admin users retain broader access.
+
 ## Daily Work
 
 | Day | Topic | Project / Documentation |
 |---|---|---|
 | Day 1 | Sprint 2 Planning & Wiring Identity into the Capstone | [View Day 1](./Day%201) |
 | Day 2 | JWT Login & Registration for the Capstone Project | [View Day 2](./Day%202) |
+| Day 3 | Role-Based Access Control and Ownership Checks | [View Day 3](./Day%203) |
 
 ## Week 7 Highlights
 
@@ -117,6 +120,35 @@ Day 2 extended the existing authentication flow by creating the linked `Patient`
 - Confirmed that the `PatientId` claim matches the Patient record stored in SQL Server.
 - Verified the complete registration-to-login flow end-to-end.
 
+### Role-Based Access Control Review
+
+- Reviewed role assignment for `Admin` and `Patient`.
+- Confirmed that public registration assigns the `Patient` role only.
+- Confirmed that the initial Admin account is created through database seeding.
+- Reviewed the access requirement for every main API endpoint.
+- Confirmed which endpoints are public, Patient-only, Admin-only, or shared between Admin and Patient.
+
+### Appointment Ownership Checks
+
+- Updated `GET /api/Appointments/{id}` to allow both `Admin` and `Patient`.
+- Added an ownership check for Patient access to specific appointments.
+- Read the `PatientId` claim from the authenticated user's JWT.
+- Compared the JWT `PatientId` with the requested appointment's `PatientId`.
+- Allowed Patients to access their own appointments.
+- Returned `404 Not Found` when a Patient attempted to access another Patient's appointment.
+- Kept Admin access unrestricted for individual appointment retrieval.
+
+### RBAC and Ownership Testing
+
+- Tested a Patient token against `GET /api/Patients`.
+- Confirmed `403 Forbidden` for the Admin-only Patients endpoint.
+- Tested a Patient token against `GET /api/VitalSigns`.
+- Confirmed `403 Forbidden` for the Admin-only VitalSigns endpoint.
+- Verified appointment ownership test data in SQL Server.
+- Tested a Patient accessing their own appointment and confirmed `200 OK`.
+- Tested the same Patient accessing another Patient's appointment and confirmed `404 Not Found`.
+- Verified both role-based authorization and resource ownership protection.
+
 ## Sprint 2 Backlog
 
 The Sprint 2 backlog currently includes:
@@ -132,6 +164,11 @@ The Sprint 2 backlog currently includes:
 - Extend registration to create the linked `Patient` record
 - Add the domain-specific `PatientId` claim to JWT login
 - Test the complete registration-to-login flow
+- Review role assignment and endpoint access requirements
+- Apply RBAC across the main API endpoints
+- Add ownership protection for patient-specific appointment access
+- Test Patient access against at least two Admin-only endpoints
+- Test own-resource and cross-patient appointment access
 - Apply the Sprint 1 retrospective action before merging Sprint 2 changes
 
 The existing Identity-related review tasks were completed during Day 1.
