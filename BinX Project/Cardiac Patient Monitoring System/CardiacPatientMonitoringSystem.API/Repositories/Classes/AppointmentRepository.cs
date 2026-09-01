@@ -15,12 +15,7 @@ namespace CardiacPatientMonitoringSystem.API.Repositories.Classes
             _context = context;
         }
 
-        public async Task<PaginatedResponse<AppointmentResponse>> GetAllAsync(
-           string? reason,
-           int? patientId,
-           string? sort,
-           int page,
-           int pageSize)
+        public async Task<PaginatedResponse<AppointmentResponse>> GetAllAsync(string? reason, int? patientId, string? sort, int page,  int pageSize)
         {
             var query = _context.Appointments.AsQueryable();
 

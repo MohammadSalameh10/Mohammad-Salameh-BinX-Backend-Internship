@@ -17,19 +17,9 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             _appointmentRepository = appointmentRepository;
         }
 
-        public async Task<PaginatedResponse<AppointmentResponse>> GetAllAsync(
-         string? reason,
-         int? patientId,
-         string? sort,
-         int page,
-         int pageSize)
+        public async Task<PaginatedResponse<AppointmentResponse>> GetAllAsync(string? reason, int? patientId, string? sort, int page, int pageSize)
         {
-            return await _appointmentRepository.GetAllAsync(
-                reason,
-                patientId,
-                sort,
-                page,
-                pageSize);
+            return await _appointmentRepository.GetAllAsync(reason, patientId, sort, page, pageSize);
         }
 
         public async Task<AppointmentResponse?> GetByIdAsync(int id)
