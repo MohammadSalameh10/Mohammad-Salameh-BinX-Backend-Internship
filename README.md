@@ -12,7 +12,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices | [View Week 4](./BinX%20Internship/Week%204) |
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out | [View Week 6](./BinX%20Internship/Week%206) |
-| Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, Identity migration verification, SQL Server Identity-table validation, Admin and Patient role planning, endpoint authorization mapping, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, registration-to-login flow testing, role seeding verification, and carrying forward the Sprint 1 retrospective action | [View Week 7](./BinX%20Internship/Week%207) |
+| Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, Identity migration verification, SQL Server Identity-table validation, Admin and Patient role planning, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, registration-to-login flow testing, role seeding verification, and carrying forward the Sprint 1 retrospective action | [View Week 7](./BinX%20Internship/Week%207) |
 
 ## Repository Structure
 
@@ -63,7 +63,8 @@ BinX Internship/
 └── Week 7/
     ├── README.md
     ├── Day 1/
-    └── Day 2/
+    ├── Day 2/
+    └── Day 3/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -276,6 +277,22 @@ Each week contains a summary README, and each completed day contains its own tas
 * Confirming that `Patient.UserId` matches the Identity user's ID
 * Decoding the JWT and verifying the `PatientId` claim
 * Confirming that the JWT `PatientId` matches the Patient record stored in SQL Server
+* Reviewing role assignment for `Admin` and `Patient`
+* Confirming that public registration assigns the `Patient` role only
+* Confirming that the initial Admin account is created through secure database seeding
+* Reviewing access requirements endpoint by endpoint
+* Distinguishing public, Patient-only, Admin-only, and shared endpoints
+* Updating `GET /api/Appointments/{id}` to support both `Admin` and `Patient`
+* Implementing appointment ownership checks using the JWT `PatientId` claim
+* Comparing the authenticated Patient's `PatientId` with the requested appointment's `PatientId`
+* Allowing Patients to access their own appointments
+* Preventing Patients from accessing another Patient's appointments
+* Returning `404 Not Found` for unauthorized cross-patient resource access
+* Testing Patient access against Admin-only endpoints
+* Confirming `403 Forbidden` for `GET /api/Patients`
+* Confirming `403 Forbidden` for `GET /api/VitalSigns`
+* Confirming `200 OK` when a Patient accesses their own appointment
+* Confirming `404 Not Found` when a Patient requests another Patient's appointment
 
 ### API Architecture and Validation
 
@@ -360,6 +377,11 @@ Each week contains a summary README, and each completed day contains its own tas
 * Requiring claims using `RequireClaim`
 * Applying policies using `[Authorize(Policy = "...")]`
 * Combining JWT authentication with authorization rules
+* Endpoint-by-endpoint access-control review
+* Resource-based authorization
+* Ownership checks for patient-specific resources
+* Using domain claims for resource ownership validation
+* Preventing insecure direct object reference access
 
 ### FluentValidation
 
@@ -436,6 +458,11 @@ Each week contains a summary README, and each completed day contains its own tas
 * Testing complete registration-to-login flows
 * Verifying Identity and domain records after registration
 * Decoding JWTs and validating domain-specific claims
+* Negative testing for role-based authorization
+* Testing `403 Forbidden` on Admin-only endpoints with a Patient token
+* Testing own-resource access with a Patient token
+* Testing cross-patient resource access
+* Verifying ownership-based `404 Not Found` responses
 
 ### Unit Testing with xUnit
 
