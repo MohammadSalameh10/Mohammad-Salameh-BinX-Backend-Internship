@@ -12,6 +12,8 @@ Day 2 extended the existing authentication flow by creating the linked `Patient`
 
 Day 3 focused on applying role-based access control across the API and adding resource ownership checks so that Patients can access only their own appointment data while Admin users retain broader access.
 
+Day 4 focused on identifying a genuine cross-cutting concern and implementing a custom `RequestTimingMiddleware` to measure request execution time consistently across the API without duplicating logic inside individual controllers.
+
 ## Daily Work
 
 | Day | Topic | Project / Documentation |
@@ -19,6 +21,7 @@ Day 3 focused on applying role-based access control across the API and adding re
 | Day 1 | Sprint 2 Planning & Wiring Identity into the Capstone | [View Day 1](./Day%201) |
 | Day 2 | JWT Login & Registration for the Capstone Project | [View Day 2](./Day%202) |
 | Day 3 | Role-Based Access Control and Ownership Checks | [View Day 3](./Day%203) |
+| Day 4 | Custom Middleware & Cross-Cutting Concerns | [View Day 4](./Day%204) |
 
 ## Week 7 Highlights
 
@@ -149,6 +152,43 @@ Day 3 focused on applying role-based access control across the API and adding re
 - Tested the same Patient accessing another Patient's appointment and confirmed `404 Not Found`.
 - Verified both role-based authorization and resource ownership protection.
 
+### Cross-Cutting Concern Identification
+
+- Identified request timing as a genuine cross-cutting concern.
+- Confirmed that request timing applies broadly across multiple API endpoints.
+- Avoided duplicating timing logic inside individual controllers.
+- Selected custom middleware as the appropriate implementation approach.
+- Confirmed that the concern was separate from the existing global exception-handling middleware.
+
+### Request Timing Middleware
+
+- Implemented a custom `RequestTimingMiddleware`.
+- Used `Stopwatch` to measure HTTP request execution time.
+- Logged the HTTP method.
+- Logged the request path.
+- Logged the response status code.
+- Logged the elapsed execution time.
+- Used `RequestDelegate` to continue the ASP.NET Core request pipeline.
+- Used `ILogger<RequestTimingMiddleware>` for structured request timing logs.
+
+### Middleware Pipeline Integration
+
+- Registered `RequestTimingMiddleware` in `Program.cs`.
+- Positioned it after the existing `ExceptionHandlingMiddleware`.
+- Confirmed that the middleware runs centrally without modifying individual controllers.
+- Reviewed the difference between middleware and action filters.
+- Confirmed that middleware is appropriate for concerns that apply broadly across requests.
+
+### Request Timing Testing
+
+- Tested `GET /api/Patients`.
+- Confirmed `200 OK`.
+- Verified the request timing log for the Patients endpoint.
+- Tested `GET /api/Appointments/1`.
+- Confirmed `200 OK`.
+- Verified the request timing log for the Appointments endpoint.
+- Confirmed that the middleware applies consistently across multiple endpoints without per-endpoint changes.
+
 ## Sprint 2 Backlog
 
 The Sprint 2 backlog currently includes:
@@ -169,6 +209,10 @@ The Sprint 2 backlog currently includes:
 - Add ownership protection for patient-specific appointment access
 - Test Patient access against at least two Admin-only endpoints
 - Test own-resource and cross-patient appointment access
+- Identify a genuine cross-cutting concern
+- Implement custom request timing middleware
+- Register the custom middleware in the ASP.NET Core pipeline
+- Test middleware behavior across multiple endpoints
 - Apply the Sprint 1 retrospective action before merging Sprint 2 changes
 
 The existing Identity-related review tasks were completed during Day 1.
@@ -186,6 +230,11 @@ The Sprint 1 retrospective action remains active throughout Sprint 2:
 - SQL Server
 - SQL Server Object Explorer
 - JWT Authentication
+- Custom Middleware
+- `RequestDelegate`
+- `HttpContext`
+- `ILogger`
+- `Stopwatch`
 - Visual Studio
 - Notion
 - Postman
