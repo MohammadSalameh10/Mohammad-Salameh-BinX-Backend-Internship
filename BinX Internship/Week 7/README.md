@@ -14,14 +14,17 @@ Day 3 focused on applying role-based access control across the API and adding re
 
 Day 4 focused on identifying a genuine cross-cutting concern and implementing a custom `RequestTimingMiddleware` to measure request execution time consistently across the API without duplicating logic inside individual controllers.
 
+Day 5 focused on closing Sprint 2 through a complete Postman demonstration of authentication, role-based authorization, and resource ownership, followed by a Sprint 2 backlog review and retrospective with one concrete improvement action for Sprint 3.
+
 ## Daily Work
 
-| Day | Topic | Project / Documentation |
-|---|---|---|
+| Day   | Topic                                                 | Project / Documentation |
+| ----- | ----------------------------------------------------- | ----------------------- |
 | Day 1 | Sprint 2 Planning & Wiring Identity into the Capstone | [View Day 1](./Day%201) |
-| Day 2 | JWT Login & Registration for the Capstone Project | [View Day 2](./Day%202) |
-| Day 3 | Role-Based Access Control and Ownership Checks | [View Day 3](./Day%203) |
-| Day 4 | Custom Middleware & Cross-Cutting Concerns | [View Day 4](./Day%204) |
+| Day 2 | JWT Login & Registration for the Capstone Project     | [View Day 2](./Day%202) |
+| Day 3 | Role-Based Access Control and Ownership Checks        | [View Day 3](./Day%203) |
+| Day 4 | Custom Middleware & Cross-Cutting Concerns            | [View Day 4](./Day%204) |
+| Day 5 | Sprint Review, Postman Demo & Retrospective           | [View Day 5](./Day%205) |
 
 ## Week 7 Highlights
 
@@ -189,6 +192,68 @@ Day 4 focused on identifying a genuine cross-cutting concern and implementing a 
 - Verified the request timing log for the Appointments endpoint.
 - Confirmed that the middleware applies consistently across multiple endpoints without per-endpoint changes.
 
+### Sprint 2 Authentication and RBAC Demo
+
+- Demonstrated the complete Sprint 2 authentication and authorization flow using Postman.
+- Registered a new Patient account and confirmed `201 Created`.
+- Logged in with the new Patient account and confirmed `200 OK`.
+- Verified that the generated JWT contained the `Patient` role and domain-specific `PatientId`.
+- Created an appointment using the authenticated Patient account.
+- Confirmed successful access to the Patient's own appointment with `200 OK`.
+- Demonstrated cross-patient access rejection with `404 Not Found`.
+- Demonstrated Patient access rejection on the Admin-only `GET /api/Patients` endpoint with `403 Forbidden`.
+- Verified authentication, role-based access control, and ownership protection through both successful and rejected requests.
+
+### Sprint 2 Backlog Review
+
+The Sprint 2 backlog was reviewed during the close-out process.
+
+| Backlog Item                                                        | Status |
+| ------------------------------------------------------------------- | ------ |
+| Review existing ASP.NET Core Identity integration                   | Done   |
+| Verify `ApplicationDbContext` Identity configuration                | Done   |
+| Review existing Identity migrations                                 | Done   |
+| Verify Identity tables in SQL Server                                | Done   |
+| Verify `Admin` and `Patient` roles                                  | Done   |
+| Document role permissions for project endpoints                     | Done   |
+| Review existing authorization attributes                            | Done   |
+| Verify authentication and authorization wiring                      | Done   |
+| Apply Sprint 1 retrospective action before merging Sprint 2 changes | Done   |
+
+All current Sprint 2 backlog items were confirmed as completed.
+
+No backlog item required moving to Sprint 3 during this review.
+
+No unresolved authorization edge cases were identified during the Sprint 2 close-out.
+
+### Sprint 2 Retrospective
+
+#### What Went Well
+
+- ASP.NET Core Identity integration was reviewed and verified successfully.
+- Patient registration was extended to create both the `IdentityUser` and linked `Patient` record.
+- The JWT login flow was extended with the domain-specific `PatientId` claim.
+- Role-based access control was verified across the main API endpoints.
+- Appointment ownership protection was implemented and tested successfully.
+- Patient access to Admin-only endpoints was correctly rejected.
+- Cross-patient appointment access was correctly rejected.
+- A custom `RequestTimingMiddleware` was implemented and verified across multiple endpoints.
+- The complete authentication and authorization flow was demonstrated successfully using Postman.
+
+#### What Could Be Improved
+
+- Ownership and authorization checks should be covered more systematically with automated tests.
+- Future patient-specific endpoints should include explicit ownership tests from the beginning.
+- Security-related negative test cases should remain part of the regular testing workflow.
+
+#### Sprint 3 Action
+
+The following concrete improvement action will be carried into Sprint 3:
+
+```text
+Write an explicit ownership-check test for every new patient-specific resource endpoint.
+```
+
 ## Sprint 2 Backlog
 
 The Sprint 2 backlog currently includes:
@@ -230,6 +295,8 @@ The Sprint 1 retrospective action remains active throughout Sprint 2:
 - SQL Server
 - SQL Server Object Explorer
 - JWT Authentication
+- Role-Based Authorization
+- Resource Ownership Checks
 - Custom Middleware
 - `RequestDelegate`
 - `HttpContext`
@@ -241,3 +308,36 @@ The Sprint 1 retrospective action remains active throughout Sprint 2:
 - jwt.io
 - Git
 - GitHub
+
+## Summary
+
+Week 7 completed Phase 3 Sprint 2 for the Cardiac Patient Monitoring System API.
+
+The sprint focused on reviewing and strengthening the existing authentication and authorization model.
+
+ASP.NET Core Identity integration, Identity-related migrations, database tables, role configuration, authentication wiring, and role seeding were reviewed and verified.
+
+Patient registration was extended to create both the `IdentityUser` and the linked `Patient` record inside the same EF Core transaction.
+
+The login flow was extended with a domain-specific `PatientId` JWT claim.
+
+Role-based authorization was reviewed across the main API endpoints, and appointment ownership protection was implemented so that Patients can access only their own appointments.
+
+A custom `RequestTimingMiddleware` was implemented as a cross-cutting concern and verified across multiple API endpoints.
+
+Sprint 2 was closed with a complete Postman demonstration covering:
+
+- Patient registration
+- Patient login
+- JWT claim verification
+- Appointment creation
+- Own-resource access
+- Cross-patient access rejection
+- Admin-only endpoint rejection
+
+All documented Sprint 2 backlog items were confirmed as completed, and no unresolved authorization edge cases were identified.
+
+The following concrete improvement action will be carried into Sprint 3:
+
+```text
+Write an explicit ownership-check test for every new patient-specific resource endpoint.
