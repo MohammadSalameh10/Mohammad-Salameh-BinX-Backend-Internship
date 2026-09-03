@@ -12,7 +12,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;4 | ASP.NET Core Identity, user registration, password hashing and validation, JWT authentication, token issuance, protected routes, role-based access control, claims-based and policy-based authorization, Postman token reuse, FluentValidation, business validation rules, structured validation errors, rate limiting, CORS, HTTPS redirection, HSTS, and SQL injection prevention practices                                                                                                                                               | [View Week 4](./BinX%20Internship/Week%204) |
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
-| Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, registration-to-login flow testing, and role seeding verification                                                                                | [View Week 7](./BinX%20Internship/Week%207) |
+| Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
 
 ## Repository Structure
 
@@ -65,7 +65,8 @@ BinX Internship/
     ├── Day 1/
     ├── Day 2/
     ├── Day 3/
-    └── Day 4/
+    ├── Day 4/
+    └── Day 5/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -248,6 +249,17 @@ Each week contains a summary README, and each completed day contains its own tas
 - Including Postman demo evidence in project documentation
 - Including the Sprint 1 Postman collection with the repository
 - Reviewing and documenting pull request history
+- Demonstrating the complete Sprint 2 authentication and authorization flow using Postman
+- Including successful authentication and deliberate authorization rejection cases in the Sprint Review
+- Reviewing Sprint 2 backlog items during close-out
+- Confirming completed backlog items against the implemented work
+- Confirming that no incomplete Sprint 2 backlog items required moving to Sprint 3
+- Confirming that no unresolved authorization edge cases remained at close-out
+- Writing the Sprint 2 Retrospective
+- Recording what went well during Sprint 2
+- Identifying authorization and ownership testing improvements
+- Defining one concrete improvement action for Sprint 3
+- Carrying forward explicit ownership-check testing for future patient-specific resource endpoints
 
 ### Sprint 2 Planning and Identity Integration Review
 
@@ -312,6 +324,22 @@ Each week contains a summary README, and each completed day contains its own tas
 - Confirming request timing for `GET /api/Patients`
 - Confirming request timing for `GET /api/Appointments/1`
 - Verifying that the middleware applies without per-endpoint controller changes
+- Demonstrating the complete Sprint 2 authentication and authorization flow using Postman
+- Verifying successful Patient registration with `201 Created`
+- Verifying successful Patient login with `200 OK`
+- Verifying the `Patient` role and domain-specific `PatientId` claim inside the JWT
+- Demonstrating successful creation of a Patient-owned appointment
+- Confirming `200 OK` when a Patient accesses their own appointment
+- Confirming `404 Not Found` for cross-patient appointment access
+- Confirming `403 Forbidden` when a Patient accesses the Admin-only `GET /api/Patients` endpoint
+- Reviewing the Sprint 2 backlog during the close-out process
+- Confirming that all documented Sprint 2 backlog items were completed
+- Confirming that no backlog item required moving to Sprint 3
+- Confirming that no unresolved authorization edge cases were identified
+- Writing the Sprint 2 Retrospective
+- Identifying what went well and what could be improved
+- Defining one concrete improvement action for Sprint 3
+- Carrying forward explicit ownership-check testing for future patient-specific resource endpoints
 
 ### API Architecture and Validation
 
@@ -482,6 +510,15 @@ Each week contains a summary README, and each completed day contains its own tas
 - Testing own-resource access with a Patient token
 - Testing cross-patient resource access
 - Verifying ownership-based `404 Not Found` responses
+- Demonstrating the complete Sprint 2 authentication and authorization flow using Postman
+- Verifying successful Patient registration with `201 Created`
+- Verifying successful Patient login with `200 OK`
+- Verifying JWT role and domain-specific `PatientId` claims
+- Demonstrating successful Patient-owned appointment creation
+- Demonstrating successful own-resource access with `200 OK`
+- Demonstrating cross-patient access rejection with `404 Not Found`
+- Demonstrating Admin-only endpoint rejection with `403 Forbidden`
+- Including deliberate rejection cases as evidence that the authorization model works correctly
 
 ### Unit Testing with xUnit
 
