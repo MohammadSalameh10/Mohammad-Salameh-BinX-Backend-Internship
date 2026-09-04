@@ -25,7 +25,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"patient2@cardiac.com\",\n  \"password\": \"Patient@123\"\n}",
+              "raw": "{\n  \"email\": \"mohammad.patient@test.com\",\n  \"password\": \"Patient@123\",\n  \"fullName\": \"Mohammad Ahmad Salameh\",\n  \"dateOfBirth\": \"2001-03-18\",\n  \"gender\": \"Male\",\n  \"phoneNumber\": \"0599876543\",\n  \"bloodType\": \"A+\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -146,7 +146,7 @@
               "variable": [
                 {
                   "key": "patientId",
-                  "value": "1"
+                  "value": "4"
                 }
               ]
             }
@@ -285,6 +285,34 @@
       "name": "VitalSigns",
       "item": [
         {
+          "name": "Get All Vital Signs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/VitalSigns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "VitalSigns"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Get Vital Sign By Id",
           "request": {
             "auth": {
@@ -314,34 +342,6 @@
                   "key": "vitalSignId",
                   "value": "1"
                 }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get All Vital Signs",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/VitalSigns",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "VitalSigns"
               ]
             }
           },
@@ -779,7 +779,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{adminToken}}",
+                  "value": "{{patientToken}}",
                   "type": "string"
                 }
               ]
@@ -799,7 +799,7 @@
               "variable": [
                 {
                   "key": "appointmentId",
-                  "value": "1"
+                  "value": "5"
                 }
               ]
             }
@@ -828,7 +828,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"appointmentDate\": \"2026-08-20T10:00:00Z\",\r\n  \"reason\": \"Cardiology follow-up\",\r\n  \"notes\": \"Routine check-up\"\r\n}",
+              "raw": "{\r\n  \"appointmentDate\": \"2026-09-20T11:00:00\",\r\n  \"reason\": \"Cardiology follow-up consultation\",\r\n  \"notes\": \"Follow-up appointment to review recent cardiac readings and discuss current treatment plan.\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -946,7 +946,7 @@
     },
     {
       "key": "patientToken",
-      "value": ""
+      "secret": true
     }
   ]
 }

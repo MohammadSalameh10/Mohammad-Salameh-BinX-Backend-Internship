@@ -6,7 +6,7 @@ The Cardiac Patient Monitoring System API is a standalone ASP.NET Core REST API 
 
 The system provides backend functionality for managing cardiac patients, vital-sign measurements, medications, and appointments.
 
-The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based authorization, input validation, filtering, sorting, pagination, DTO projection, repository abstraction, transactional write operations, centralized exception handling, unit testing with xUnit and Moq, Swagger, and Postman.
+The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based and resource-based authorization, domain-specific JWT claims, input validation, filtering, sorting, pagination, DTO projection, repository abstraction, transactional write operations, centralized exception handling, custom request-timing middleware, unit testing with xUnit and Moq, Swagger, and Postman.
 
 ---
 
@@ -30,7 +30,7 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Reusable generic `PaginatedResponse<T>` for paginated API responses.
 - Query-level DTO projection for appointment list operations.
 - Repository abstraction for patient, vital-sign, medication, appointment, and authentication transaction data access.
-- Transactional patient registration using commit and rollback behavior.
+- Transactional Patient registration that creates the Identity user, assigns the Patient role, and creates the linked Patient record using commit and rollback behavior.
 - Centralized exception handling using custom middleware.
 - Standardized `ProblemDetails` responses for unexpected server errors.
 - Structured error logging using `ILogger`.
@@ -42,6 +42,12 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Swagger/OpenAPI documentation.
 - Postman collection for API testing.
 - Recorded API demo with database evidence.
+- Automatic Patient profile creation during public registration.
+- Domain-specific `PatientId` claim included in Patient JWT tokens.
+- Resource ownership protection for Patient appointment access.
+- Cross-patient appointment access protection using `404 Not Found`.
+- Custom request-timing middleware using `Stopwatch` and `ILogger`.
+- Centralized logging of HTTP method, request path, response status code, and elapsed execution time.
 
 ---
 
@@ -97,7 +103,8 @@ BinX Project/
     │   │   ├── Requests/
     │   │   └── Responses/
     │   ├── Middleware/
-    │   │   └── ExceptionHandlingMiddleware.cs
+    │   │   ├── ExceptionHandlingMiddleware.cs
+    │   │   └── RequestTimingMiddleware.cs
     │   ├── Migrations/
     │   ├── Models/
     │   ├── Repositories/
@@ -302,11 +309,18 @@ POST /api/Auths/register
 ```json
 {
   "email": "patient2@cardiac.com",
-  "password": "Patient@123"
+  "password": "Patient@123",
+  "fullName": "Test Patient Two",
+  "dateOfBirth": "2001-03-18",
+  "gender": "Male",
+  "phoneNumber": "0599876543",
+  "bloodType": "A+"
 }
 ```
 
-New registered users receive the `Patient` role.
+New registered users receive the `Patient` role, and a linked Patient profile is created automatically during registration.
+
+Successful Patient login returns a JWT containing the Identity user information, the `Patient` role, and the domain-specific `PatientId` claim.
 
 ### Login
 
@@ -331,29 +345,37 @@ Authorization: Bearer <token>
 
 ## Transactional Registration
 
-Patient registration is a multi-step write operation.
+Patient registration is implemented as a multi-step transactional operation.
 
 ```text
 Begin Transaction
         ↓
-Create Identity User
+Create IdentityUser
         ↓
 Assign Patient Role
         ↓
-Commit
+Create linked Patient Record
+        ↓
+Commit Transaction
 ```
 
-If user creation or role assignment fails:
+The created `Patient` record stores the new Identity user's ID in:
+
+```text
+Patient.UserId
+```
+
+If any step fails:
 
 ```text
 Failure
     ↓
-Rollback
+Rollback Transaction
 ```
 
-This provides all-or-nothing behavior and prevents partially completed registrations from remaining in the database.
+This provides all-or-nothing behavior and prevents partially completed registrations such as an Identity user without a corresponding Patient profile.
 
-Transaction management is abstracted through:
+Transaction and Patient data access are abstracted through:
 
 ```text
 AuthService
@@ -365,21 +387,64 @@ AuthRepository
 ApplicationDbContext
 ```
 
-Rollback behavior was manually verified by intentionally forcing role assignment to fail and confirming that the created user was not persisted in `AspNetUsers`.
+`AuthService` continues to use `UserManager<IdentityUser>` for ASP.NET Core Identity operations while avoiding direct `ApplicationDbContext` access.
+
+Successful transaction behavior was verified by registering a Patient and confirming the linked records in both `AspNetUsers` and `Patients`.
+
+Rollback behavior was also manually verified by intentionally forcing role assignment to fail and confirming that the created user was not persisted in `AspNetUsers`.
 
 ---
 
 ## Authorization
 
-The API uses `Admin` and `Patient` roles.
+The API uses both role-based authorization and resource ownership checks.
+
+The available roles are:
+```text
+Admin
+Patient
+```
+
+Public registration automatically assigns the `Patient` role.
 
 ### Admin Permissions
 
-The Admin can view, update, and delete patients, vital signs, medications, and appointments. The Admin can also filter medications and filter, sort, and paginate appointments.
+The Admin can view, update, and delete patients, vital signs, medications, and appointments.
+
+The Admin can also filter medications and filter, sort, and paginate appointments.
+
+An Admin can access any appointment by ID.
 
 ### Patient Permissions
 
-The Patient can create a patient profile, vital-sign records, medication records, and appointment records. A Patient must create a patient profile before creating related records.
+A registered Patient receives a linked Patient profile automatically during registration.
+
+Patients can create vital-sign records, medication records, and appointments associated with their account.
+
+Patients can also retrieve an individual appointment only when the appointment belongs to their own `PatientId`.
+
+### Appointment Ownership Protection
+
+The individual appointment endpoint allows both `Admin` and `Patient` roles.
+
+For a Patient request, the API reads the `PatientId` claim from the JWT and compares it with the `PatientId` of the requested appointment.
+
+```text
+Admin
+→ Can access any appointment
+
+Patient
+→ Can access own appointment
+→ Cannot access another Patient's appointment
+```
+
+If a Patient attempts to access an appointment belonging to another Patient, the API returns:
+
+```text
+404 Not Found
+```
+
+This prevents cross-patient resource access without exposing whether another Patient's appointment exists.
 
 ---
 
@@ -428,7 +493,7 @@ The Patient can create a patient profile, vital-sign records, medication records
 | Method | Endpoint | Authorization | Description |
 | --- | --- | --- | --- |
 | GET | `/api/Appointments` | Admin | Get paginated appointments |
-| GET | `/api/Appointments/{id}` | Admin | Get appointment by ID |
+| GET | `/api/Appointments/{id}` | Admin / Patient | Get appointment by ID with Patient ownership protection |
 | GET | `/api/Appointments?reason={reason}` | Admin | Filter appointments by reason |
 | GET | `/api/Appointments?patientId={id}` | Admin | Filter appointments by patient ID |
 | GET | `/api/Appointments?sort=date_asc` | Admin | Sort appointments by date ascending |
@@ -549,6 +614,45 @@ Example:
 
 ---
 
+## Request Timing Middleware
+
+The project includes a custom `RequestTimingMiddleware` for measuring HTTP request execution time as a cross-cutting concern.
+
+The middleware uses `Stopwatch` and `ILogger` to log:
+
+```text
+HTTP Method
+Request Path
+Response Status Code
+Elapsed Time
+```
+
+Example log:
+
+```text
+HTTP GET /api/Appointments/5 responded 200 in 180 ms
+```
+
+The middleware is registered in the ASP.NET Core request pipeline after `ExceptionHandlingMiddleware`.
+
+```text
+ExceptionHandlingMiddleware
+        ↓
+RequestTimingMiddleware
+        ↓
+HTTPS Redirection
+        ↓
+Authentication
+        ↓
+Authorization
+        ↓
+Controllers
+```
+
+This keeps request timing logic centralized instead of duplicating it across individual controllers.
+
+---
+
 ## Testing
 
 The project includes unit and integration tests using xUnit and Moq.
@@ -602,6 +706,42 @@ Missing JWT Token → 401 Unauthorized
 ```
 
 Production seed data is skipped in the `Testing` environment.
+
+ممتاز، بما إن النتائج ظلّت:
+
+```text
+Total: 75
+Passed: 75
+Failed: 0
+Skipped: 0
+```
+
+### Authorization and Ownership Verification
+
+Sprint 2 authorization behavior was also manually verified using Postman.
+
+The verified scenarios include:
+
+```text
+Patient registration → 201 Created
+
+Patient login → 200 OK + JWT
+
+JWT contains:
+Role = Patient
+PatientId = linked Patient ID
+
+Patient accesses own appointment
+→ 200 OK
+
+Patient accesses another Patient's appointment
+→ 404 Not Found
+
+Patient accesses Admin-only endpoint
+→ 403 Forbidden
+```
+
+These checks confirm both role-based authorization and Patient appointment ownership protection.
 
 ### Test Result
 
@@ -663,7 +803,7 @@ A compressed recorded API demonstration is included in:
 demo/Cardiac API Demo.zip
 ```
 
-The demo shows API testing, JWT authentication, role authorization, patient registration/profile creation, validation, filtering, CRUD operations, and SQL Server database evidence.
+The demo shows API testing, Patient registration with automatic profile creation, JWT authentication with the `PatientId` claim, role-based authorization, appointment ownership protection, validation, filtering, CRUD operations, and SQL Server database evidence.
 
 ---
 
@@ -762,6 +902,14 @@ The following scenarios were verified:
 - Service and controller unit tests.
 - Integration tests using `WebApplicationFactory` and EF Core InMemory.
 - Full automated test suite completed successfully with 75 passed tests and 0 failures.
+- Patient registration creating both the `IdentityUser` and linked `Patient` record.
+- `PatientId` JWT claim generation and verification.
+- Patient access to an Admin-only endpoint rejected with `403 Forbidden`.
+- Patient accessing their own appointment with `200 OK`.
+- Cross-patient appointment access rejected with `404 Not Found`.
+- Appointment resource ownership protection.
+- Custom request timing using `RequestTimingMiddleware`.
+- HTTP method, request path, response status code, and elapsed-time logging.
 
 ---
 
