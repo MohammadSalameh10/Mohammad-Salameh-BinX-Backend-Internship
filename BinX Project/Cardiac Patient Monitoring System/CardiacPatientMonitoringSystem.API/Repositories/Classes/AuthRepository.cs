@@ -1,5 +1,7 @@
 ﻿using CardiacPatientMonitoringSystem.API.Data;
+using CardiacPatientMonitoringSystem.API.Models;
 using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CardiacPatientMonitoringSystem.API.Repositories.Classes
@@ -39,6 +41,19 @@ namespace CardiacPatientMonitoringSystem.API.Repositories.Classes
             await _transaction.DisposeAsync();
 
             _transaction = null;
+        }
+
+        public async Task AddPatientAsync(Patient patient)
+        {
+            await _context.Patients.AddAsync(patient);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Patient?> GetPatientByUserIdAsync(string userId)
+        {
+            return await _context.Patients
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.UserId == userId);
         }
     }
 }

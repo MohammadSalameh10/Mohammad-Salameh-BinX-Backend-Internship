@@ -1,5 +1,6 @@
 ﻿using CardiacPatientMonitoringSystem.API.DTOs.Requests;
 using CardiacPatientMonitoringSystem.API.DTOs.Responses;
+using CardiacPatientMonitoringSystem.API.Models;
 using CardiacPatientMonitoringSystem.API.Repositories.Interfaces;
 using CardiacPatientMonitoringSystem.API.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -45,7 +46,6 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 if (!result.Succeeded)
                 {
                     await _authRepository.RollbackTransactionAsync();
-
                     return result;
                 }
 
@@ -56,9 +56,20 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
                 if (!roleResult.Succeeded)
                 {
                     await _authRepository.RollbackTransactionAsync();
-
                     return roleResult;
                 }
+
+                var patient = new Patient
+                {
+                    UserId = user.Id,
+                    FullName = request.FullName,
+                    DateOfBirth = request.DateOfBirth,
+                    Gender = request.Gender,
+                    PhoneNumber = request.PhoneNumber,
+                    BloodType = request.BloodType
+                };
+
+                await _authRepository.AddPatientAsync(patient);
 
                 await _authRepository.CommitTransactionAsync();
 
@@ -67,7 +78,6 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             catch
             {
                 await _authRepository.RollbackTransactionAsync();
-
                 throw;
             }
         }
@@ -88,11 +98,20 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
 
             var roles = await _userManager.GetRolesAsync(user);
 
+            var patient = await _authRepository
+                .GetPatientByUserIdAsync(user.Id);
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email!)
             };
+
+            if (patient != null)
+            {
+                claims.Add(
+                    new Claim("PatientId", patient.Id.ToString()));
+            }
 
             foreach (var role in roles)
             {

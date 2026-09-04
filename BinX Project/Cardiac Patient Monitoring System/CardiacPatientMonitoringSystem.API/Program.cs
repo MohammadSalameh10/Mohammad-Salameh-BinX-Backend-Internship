@@ -85,6 +85,7 @@ namespace CardiacPatientMonitoringSystem.API
             }
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseMiddleware<RequestTimingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

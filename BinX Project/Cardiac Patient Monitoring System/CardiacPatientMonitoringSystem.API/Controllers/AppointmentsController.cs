@@ -37,13 +37,24 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Patient")]
         public async Task<IActionResult> GetById(int id)
         {
             var appointment = await _appointmentService.GetByIdAsync(id);
 
             if (appointment == null)
                 return NotFound();
+
+            if (User.IsInRole("Patient"))
+            {
+                var patientIdClaim = User.FindFirstValue("PatientId");
+
+                if (!int.TryParse(patientIdClaim, out var patientId))
+                    return Forbid();
+
+                if (appointment.PatientId != patientId)
+                    return NotFound();
+            }
 
             return Ok(appointment);
         }
