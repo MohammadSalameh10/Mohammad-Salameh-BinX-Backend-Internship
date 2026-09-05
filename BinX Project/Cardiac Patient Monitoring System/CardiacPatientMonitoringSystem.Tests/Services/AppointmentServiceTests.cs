@@ -28,8 +28,14 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
                 Id = 1
             };
 
+            var doctor = new Doctor
+            {
+                Id = 1
+            };
+
             var request = new CreateAppointmentRequest
             {
+                DoctorId = 1,
                 AppointmentDate = new DateTime(2026, 9, 1, 10, 0, 0),
                 Reason = "Routine cardiac follow-up",
                 Notes = "Routine check-up"
@@ -38,6 +44,10 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
             _mockRepository
                 .Setup(r => r.GetPatientByUserIdAsync(userId))
                 .ReturnsAsync(patient);
+
+            _mockRepository
+                .Setup(r => r.GetDoctorByIdAsync(1))
+                .ReturnsAsync(doctor);
 
             _mockRepository
                 .Setup(r => r.AddAsync(It.IsAny<Appointment>()))
@@ -53,12 +63,14 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
             // Assert
             Assert.NotNull(result);
             Assert.Equal(1, result.PatientId);
+            Assert.Equal(1, result.DoctorId);
             Assert.Equal("Routine cardiac follow-up", result.Reason);
             Assert.Equal("Routine check-up", result.Notes);
 
             _mockRepository.Verify(
                 r => r.AddAsync(It.Is<Appointment>(a =>
                     a.PatientId == 1 &&
+                    a.DoctorId == 1 &&
                     a.Reason == "Routine cardiac follow-up" &&
                     a.Notes == "Routine check-up")),
                 Times.Once);
@@ -108,13 +120,20 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
             {
                 Id = 1,
                 PatientId = 1,
+                DoctorId = 1,
                 AppointmentDate = new DateTime(2026, 9, 1, 10, 0, 0),
                 Reason = "Old reason",
                 Notes = "Old notes"
             };
 
+            var doctor = new Doctor
+            {
+                Id = 2
+            };
+
             var request = new UpdateAppointmentRequest
             {
+                DoctorId = 2,
                 AppointmentDate = new DateTime(2026, 9, 10, 11, 0, 0),
                 Reason = "Cardiac follow-up",
                 Notes = "Updated notes"
@@ -123,6 +142,10 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
             _mockRepository
                 .Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(appointment);
+
+            _mockRepository
+                .Setup(r => r.GetDoctorByIdAsync(2))
+                .ReturnsAsync(doctor);
 
             _mockRepository
                 .Setup(r => r.SaveChangesAsync())
@@ -134,6 +157,8 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
             // Assert
             Assert.True(result);
 
+            Assert.Equal(2, appointment.DoctorId);
+
             Assert.Equal(
                 new DateTime(2026, 9, 10, 11, 0, 0),
                 appointment.AppointmentDate);
@@ -143,6 +168,10 @@ namespace CardiacPatientMonitoringSystem.Tests.Services
 
             _mockRepository.Verify(
                 r => r.GetByIdAsync(1),
+                Times.Once);
+
+            _mockRepository.Verify(
+                r => r.GetDoctorByIdAsync(2),
                 Times.Once);
 
             _mockRepository.Verify(

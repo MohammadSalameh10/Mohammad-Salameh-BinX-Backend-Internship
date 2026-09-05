@@ -28,9 +28,26 @@ namespace CardiacPatientMonitoringSystem.Tests.Controllers
             {
                 Id = 1,
                 PatientId = 1,
+                DoctorId = 1,
                 AppointmentDate = new DateTime(2026, 9, 1, 10, 0, 0),
                 Reason = "Routine cardiac follow-up",
                 Notes = "Routine check-up"
+            };
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new[]
+                    {
+                new Claim(ClaimTypes.Role, "Admin")
+                    },
+                    "TestAuth"));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
             };
 
             _mockService
@@ -170,6 +187,7 @@ namespace CardiacPatientMonitoringSystem.Tests.Controllers
 
             var request = new CreateAppointmentRequest
             {
+                DoctorId = 1,
                 AppointmentDate = new DateTime(2026, 9, 1, 10, 0, 0),
                 Reason = "Routine cardiac follow-up",
                 Notes = "Routine check-up"
@@ -203,7 +221,7 @@ namespace CardiacPatientMonitoringSystem.Tests.Controllers
                 Assert.IsType<BadRequestObjectResult>(result);
 
             Assert.Equal(
-                "Patient profile not found. Create a patient profile first.",
+                "Patient profile or doctor not found.",
                 badRequestResult.Value);
 
             _mockService.Verify(

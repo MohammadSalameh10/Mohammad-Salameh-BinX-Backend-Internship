@@ -45,6 +45,7 @@ namespace CardiacPatientMonitoringSystem.API.Repositories.Classes
                 {
                     Id = a.Id,
                     PatientId = a.PatientId,
+                    DoctorId = a.DoctorId,
                     AppointmentDate = a.AppointmentDate,
                     Reason = a.Reason,
                     Notes = a.Notes
@@ -78,10 +79,24 @@ namespace CardiacPatientMonitoringSystem.API.Repositories.Classes
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
+        public async Task<List<Appointment>> GetByDoctorIdAsync(int doctorId)
+        {
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .OrderBy(a => a.AppointmentDate)
+                .ToListAsync();
+        }
+
         public async Task<Patient?> GetPatientByUserIdAsync(string userId)
         {
             return await _context.Patients
                 .FirstOrDefaultAsync(p => p.UserId == userId);
+        }
+
+        public async Task<Doctor?> GetDoctorByIdAsync(int doctorId)
+        {
+            return await _context.Doctors
+                .FirstOrDefaultAsync(d => d.Id == doctorId);
         }
 
         public async Task AddAsync(Appointment appointment)

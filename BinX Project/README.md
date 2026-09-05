@@ -4,9 +4,9 @@
 
 The Cardiac Patient Monitoring System API is a standalone ASP.NET Core REST API developed as an individual backend project.
 
-The system provides backend functionality for managing cardiac patients, vital-sign measurements, medications, and appointments.
+The system provides backend functionality for managing cardiac patients, doctors, vital-sign measurements, medications, and appointments.
 
-The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based and resource-based authorization, domain-specific JWT claims, input validation, filtering, sorting, pagination, DTO projection, repository abstraction, transactional write operations, centralized exception handling, custom request-timing middleware, unit testing with xUnit and Moq, Swagger, and Postman.
+The project demonstrates ASP.NET Core Web API development, Entity Framework Core with SQL Server, asynchronous CRUD operations, LINQ, ASP.NET Core Identity, JWT authentication, role-based and resource-based authorization, domain-specific JWT claims, Doctor and Patient account linking, input validation, filtering, sorting, pagination, DTO projection, repository abstraction, transactional write operations, centralized exception handling, custom request-timing middleware, unit testing with xUnit and Moq, Swagger, and Postman.
 
 ---
 
@@ -18,7 +18,7 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Appointment management.
 - ASP.NET Core Identity registration and login.
 - JWT-based authentication.
-- Role-based authorization using `Admin` and `Patient` roles.
+- Role-based authorization using `Admin`, `Patient`, and `Doctor` roles.
 - FluentValidation request validation.
 - Asynchronous CRUD operations using Entity Framework Core.
 - SQL Server database with Entity Framework Core migrations.
@@ -29,7 +29,7 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Appointment pagination using `page` and `pageSize`.
 - Reusable generic `PaginatedResponse<T>` for paginated API responses.
 - Query-level DTO projection for appointment list operations.
-- Repository abstraction for patient, vital-sign, medication, appointment, and authentication transaction data access.
+- Repository abstraction for patient, doctor, vital-sign, medication, appointment, and authentication transaction data access.
 - Transactional Patient registration that creates the Identity user, assigns the Patient role, and creates the linked Patient record using commit and rollback behavior.
 - Centralized exception handling using custom middleware.
 - Standardized `ProblemDetails` responses for unexpected server errors.
@@ -48,6 +48,17 @@ The project demonstrates ASP.NET Core Web API development, Entity Framework Core
 - Cross-patient appointment access protection using `404 Not Found`.
 - Custom request-timing middleware using `Stopwatch` and `ILogger`.
 - Centralized logging of HTTP method, request path, response status code, and elapsed execution time.
+- Doctor profile management.
+- Admin-managed Doctor account creation.
+- Domain-specific `DoctorId` claim included in Doctor JWT tokens.
+- Doctor-to-Patient relationship established through appointments.
+- Doctor access to their own appointments.
+- Doctor access to Vital Signs for Patients linked through appointments.
+- Doctor access to Medications for Patients linked through appointments.
+- Doctor access protection using appointment-based relationship checks.
+- Safe Doctor deletion using `409 Conflict` when existing appointments are linked.
+- Transactional Doctor account creation with Identity user creation, Doctor role assignment, and linked Doctor profile creation.
+- Appointment creation and update validation using `DoctorId`.
 
 ---
 
@@ -130,6 +141,12 @@ BinX Project/
 ### Patients
 Stores patient profile information including full name, date of birth, gender, phone number, and blood type. Each patient profile is linked to an ASP.NET Core Identity user.
 
+### Doctors
+
+Stores doctor profile information including full name and phone number. Each doctor profile is linked to an ASP.NET Core Identity user with the `Doctor` role.
+
+Doctors are linked to Patients through Appointments and can access the Vital Signs and Medications of Patients associated with their appointments.
+
 ### Vital Signs
 Stores heart rate, systolic and diastolic blood pressure, oxygen saturation, and recorded date/time.
 
@@ -137,7 +154,10 @@ Stores heart rate, systolic and diastolic blood pressure, oxygen saturation, and
 Stores medication name, dosage, frequency, start date, and optional end date.
 
 ### Appointments
-Stores appointment date, reason, and optional notes.
+
+Stores appointment date, reason, optional notes, Patient ID, and Doctor ID.
+
+Each appointment links one Patient with one Doctor.
 
 ---
 
@@ -149,6 +169,7 @@ Main entities:
 
 ```text
 Patient
+Doctor
 VitalSign
 Medication
 Appointment
@@ -159,14 +180,22 @@ Relationships:
 ```text
 IdentityUser
     │
-    └── Patient
+    ├── Patient
+    │     │
+    │     ├── VitalSigns
+    │     ├── Medications
+    │     └── Appointments
+    │
+    └── Doctor
           │
-          ├── VitalSigns
-          ├── Medications
           └── Appointments
 ```
 
-Each patient is linked to one Identity user. A patient can have multiple vital signs, medications, and appointments.
+Each Patient is linked to one ASP.NET Core Identity user, and each Doctor is also linked to one Identity user.
+
+A Patient can have multiple Vital Signs, Medications, and Appointments. A Doctor can also have multiple Appointments.
+
+Each Appointment links one Patient with one Doctor.
 
 The database schema is created and updated using Entity Framework Core migrations.
 
@@ -190,6 +219,9 @@ MedicationRepository
 
 IAppointmentRepository
 AppointmentRepository
+
+IDoctorRepository
+DoctorRepository
 
 IAuthRepository
 AuthRepository
@@ -225,6 +257,9 @@ MedicationService
 
 AppointmentService
 → IAppointmentRepository
+
+DoctorService
+→ IDoctorRepository
 
 AuthService
 → IAuthRepository
@@ -278,7 +313,7 @@ Update-Database
 
 The application automatically adds synthetic development data when the project starts.
 
-The seed process creates the `Admin` and `Patient` roles, Admin and Patient Identity users, a test patient profile, vital-sign records, a medication record, and an appointment record.
+The seed process creates the `Admin`, `Patient`, and `Doctor` roles, Admin, Patient, and Doctor Identity users, a test patient profile, a test doctor profile, vital-sign records, a medication record, and an appointment linked to both the Patient and Doctor.
 
 ### Seed Admin Account
 
@@ -294,6 +329,12 @@ Email: patient@cardiac.com
 Password: Patient@123
 ```
 
+### Seed Doctor Account
+```text
+Email: doctor@cardiac.com
+Password: Doctor@123
+```
+
 ---
 
 ## Authentication
@@ -303,7 +344,7 @@ The API uses ASP.NET Core Identity for user management and password handling. JW
 ### Register
 
 ```http
-POST /api/Auths/register
+POST /api/Auth/register
 ```
 
 ```json
@@ -322,10 +363,12 @@ New registered users receive the `Patient` role, and a linked Patient profile is
 
 Successful Patient login returns a JWT containing the Identity user information, the `Patient` role, and the domain-specific `PatientId` claim.
 
+Successful Doctor login returns a JWT containing the Identity user information, the `Doctor` role, and the domain-specific `DoctorId` claim.
+
 ### Login
 
 ```http
-POST /api/Auths/login
+POST /api/Auth/login
 ```
 
 ```json
@@ -339,6 +382,21 @@ Successful login returns a JWT token, which is sent using:
 
 ```http
 Authorization: Bearer <token>
+```
+
+### Doctor Login
+```json
+{
+  "email": "doctor@cardiac.com",
+  "password": "Doctor@123"
+}
+```
+
+Successful Doctor login returns a JWT that includes:
+
+```text
+Role = Doctor
+DoctorId = linked Doctor ID
 ```
 
 ---
@@ -393,6 +451,48 @@ Successful transaction behavior was verified by registering a Patient and confir
 
 Rollback behavior was also manually verified by intentionally forcing role assignment to fail and confirming that the created user was not persisted in `AspNetUsers`.
 
+### Transactional Doctor Creation
+
+Doctor accounts are created by the Admin as a multi-step transactional operation.
+
+```text
+Begin Transaction
+        ↓
+Create IdentityUser
+        ↓
+Assign Doctor Role
+        ↓
+Create linked Doctor Record
+        ↓
+Commit Transaction
+```
+
+If any step fails:
+
+```text
+Failure
+    ↓
+Rollback Transaction
+```
+
+This prevents partially created Doctor accounts such as an Identity user without a linked Doctor profile.
+
+Doctor creation follows this dependency flow:
+
+```text
+DoctorsController
+        ↓
+DoctorService
+        ↓
+IDoctorRepository
+        ↓
+DoctorRepository
+        ↓
+ApplicationDbContext
+```
+
+`DoctorService` uses `UserManager<IdentityUser>` for Identity operations while database access and transaction management are handled through `IDoctorRepository`.
+
 ---
 
 ## Authorization
@@ -403,11 +503,16 @@ The available roles are:
 ```text
 Admin
 Patient
+Doctor
 ```
 
 Public registration automatically assigns the `Patient` role.
 
 ### Admin Permissions
+
+The Admin can also create, view, update, and delete Doctor profiles and accounts.
+
+Doctor deletion is blocked with `409 Conflict` when the Doctor has existing appointments.
 
 The Admin can view, update, and delete patients, vital signs, medications, and appointments.
 
@@ -422,6 +527,36 @@ A registered Patient receives a linked Patient profile automatically during regi
 Patients can create vital-sign records, medication records, and appointments associated with their account.
 
 Patients can also retrieve an individual appointment only when the appointment belongs to their own `PatientId`.
+
+### Doctor Permissions
+
+Doctors are created and managed by the Admin.
+
+A Doctor can:
+
+- Login using a Doctor account.
+- Receive a JWT containing the `Doctor` role and `DoctorId` claim.
+- View their own appointments.
+- View Vital Signs for Patients linked to them through appointments.
+- View Medications for Patients linked to them through appointments.
+
+Doctors cannot access Admin-only endpoints.
+
+### Doctor-Patient Access Protection
+
+Doctor access to Patient Vital Signs and Medications is based on the appointment relationship.
+
+The API reads the `DoctorId` claim from the JWT and checks whether an appointment exists between the Doctor and the requested Patient.
+
+```text
+Doctor linked to Patient through Appointment
+→ 200 OK
+
+Doctor not linked to Patient
+→ 403 Forbidden
+```
+
+This prevents Doctors from accessing data belonging to unrelated Patients.
 
 ### Appointment Ownership Protection
 
@@ -454,8 +589,8 @@ This prevents cross-patient resource access without exposing whether another Pat
 
 | Method | Endpoint | Authorization | Description |
 | --- | --- | --- | --- |
-| POST | `/api/Auths/register` | Public | Register a Patient account |
-| POST | `/api/Auths/login` | Public | Login and receive JWT token |
+| POST | `/api/Auth/register` | Public | Register a Patient account |
+| POST | `/api/Auth/login` | Public | Login and receive JWT token |
 
 ### Patients
 
@@ -467,12 +602,23 @@ This prevents cross-patient resource access without exposing whether another Pat
 | PUT | `/api/Patients/{id}` | Admin | Update patient |
 | DELETE | `/api/Patients/{id}` | Admin | Delete patient |
 
+### Doctors
+
+| Method | Endpoint            | Authorization | Description                          |
+| ------ | ------------------- | ------------- | ------------------------------------ |
+| GET    | `/api/Doctors`      | Admin         | Get all doctors                      |
+| GET    | `/api/Doctors/{id}` | Admin         | Get doctor by ID                     |
+| POST   | `/api/Doctors`      | Admin         | Create Doctor account and profile    |
+| PUT    | `/api/Doctors/{id}` | Admin         | Update doctor profile                |
+| DELETE | `/api/Doctors/{id}` | Admin         | Delete doctor if no appointments exist |
+
 ### Vital Signs
 
 | Method | Endpoint | Authorization | Description |
 | --- | --- | --- | --- |
 | GET | `/api/VitalSigns` | Admin | Get all vital signs |
 | GET | `/api/VitalSigns/{id}` | Admin | Get vital sign by ID |
+| GET | `/api/VitalSigns/patient/{patientId}/doctor` | Doctor | Get Vital Signs for a linked Patient |
 | POST | `/api/VitalSigns` | Patient | Create vital sign |
 | PUT | `/api/VitalSigns/{id}` | Admin | Update vital sign |
 | DELETE | `/api/VitalSigns/{id}` | Admin | Delete vital sign |
@@ -484,6 +630,7 @@ This prevents cross-patient resource access without exposing whether another Pat
 | GET | `/api/Medications` | Admin | Get all medications |
 | GET | `/api/Medications/{id}` | Admin | Get medication by ID |
 | GET | `/api/Medications?name={name}` | Admin | Filter medications by name |
+| GET | `/api/Medications/patient/{patientId}/doctor` | Doctor | Get Medications for a linked Patient |
 | POST | `/api/Medications` | Patient | Create medication |
 | PUT | `/api/Medications/{id}` | Admin | Update medication |
 | DELETE | `/api/Medications/{id}` | Admin | Delete medication |
@@ -498,7 +645,8 @@ This prevents cross-patient resource access without exposing whether another Pat
 | GET | `/api/Appointments?patientId={id}` | Admin | Filter appointments by patient ID |
 | GET | `/api/Appointments?sort=date_asc` | Admin | Sort appointments by date ascending |
 | GET | `/api/Appointments?sort=date_desc` | Admin | Sort appointments by date descending |
-| POST | `/api/Appointments` | Patient | Create appointment |
+| GET | `/api/Appointments/doctor` | Doctor | Get appointments for the authenticated Doctor |
+| POST | `/api/Appointments` | Patient | Create appointment with a selected Doctor |
 | PUT | `/api/Appointments/{id}` | Admin | Update appointment |
 | DELETE | `/api/Appointments/{id}` | Admin | Delete appointment |
 
@@ -557,6 +705,7 @@ The response uses the reusable `PaginatedResponse<T>` model:
     {
       "id": 1,
       "patientId": 1,
+      "doctorId": 1,
       "appointmentDate": "2026-09-01T10:00:00",
       "reason": "Routine cardiac follow-up",
       "notes": "Synthetic test appointment"
@@ -608,7 +757,7 @@ Example:
 {
   "title": "An unexpected error occurred.",
   "status": 500,
-  "instance": "/api/Auths/register"
+  "instance": "/api/Auth/register"
 }
 ```
 
@@ -679,7 +828,7 @@ PatientsController
 VitalSignsController
 MedicationsController
 AppointmentsController
-AuthsController
+AuthController
 ```
 
 They verify responses including `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, and `404 Not Found`.
@@ -707,18 +856,9 @@ Missing JWT Token → 401 Unauthorized
 
 Production seed data is skipped in the `Testing` environment.
 
-ممتاز، بما إن النتائج ظلّت:
-
-```text
-Total: 75
-Passed: 75
-Failed: 0
-Skipped: 0
-```
-
 ### Authorization and Ownership Verification
 
-Sprint 2 authorization behavior was also manually verified using Postman.
+Authorization and ownership behavior was manually verified using Postman.
 
 The verified scenarios include:
 
@@ -739,9 +879,30 @@ Patient accesses another Patient's appointment
 
 Patient accesses Admin-only endpoint
 → 403 Forbidden
+
+Doctor login → 200 OK + JWT
+
+JWT contains:
+Role = Doctor
+DoctorId = linked Doctor ID
+
+Doctor accesses own appointments
+→ 200 OK
+
+Doctor accesses linked Patient Vital Signs
+→ 200 OK
+
+Doctor accesses linked Patient Medications
+→ 200 OK
+
+Doctor accesses unrelated Patient data
+→ 403 Forbidden
+
+Doctor accesses Admin-only endpoint
+→ 403 Forbidden
 ```
 
-These checks confirm both role-based authorization and Patient appointment ownership protection.
+These checks confirm role-based authorization, Patient appointment ownership protection, and Doctor access control based on appointment-linked Patient relationships.
 
 ### Test Result
 
@@ -765,6 +926,7 @@ Skipped: 0
 | `401 Unauthorized` | Authentication is required |
 | `403 Forbidden` | Authenticated user does not have the required role |
 | `404 Not Found` | Requested resource does not exist |
+| `409 Conflict` | Request conflicts with the current resource state |
 | `500 Internal Server Error` | Unexpected server error |
 
 ---
@@ -789,9 +951,12 @@ The collection uses:
 baseUrl
 adminToken
 patientToken
+doctorToken
 ```
 
 Store the returned JWT token in the appropriate collection variable after login.
+
+Use `adminToken` for Admin requests, `patientToken` for Patient requests, and `doctorToken` for Doctor requests.
 
 ---
 
@@ -803,7 +968,7 @@ A compressed recorded API demonstration is included in:
 demo/Cardiac API Demo.zip
 ```
 
-The demo shows API testing, Patient registration with automatic profile creation, JWT authentication with the `PatientId` claim, role-based authorization, appointment ownership protection, validation, filtering, CRUD operations, and SQL Server database evidence.
+The demo shows API testing, Patient registration with automatic profile creation, JWT authentication, role-based authorization, appointment ownership protection, validation, filtering, CRUD operations, and SQL Server database evidence.
 
 ---
 
@@ -873,7 +1038,7 @@ The following scenarios were verified:
 - Admin login.
 - Patient registration and login.
 - JWT authentication.
-- Admin and Patient role authorization.
+- Admin, Patient, and Doctor role authorization.
 - `401 Unauthorized` and `403 Forbidden`.
 - Patient CRUD.
 - Vital-sign CRUD.
@@ -910,6 +1075,20 @@ The following scenarios were verified:
 - Appointment resource ownership protection.
 - Custom request timing using `RequestTimingMiddleware`.
 - HTTP method, request path, response status code, and elapsed-time logging.
+- Doctor role creation and seeding.
+- Doctor Identity account linked to a Doctor profile.
+- Doctor login with `DoctorId` claim in the JWT.
+- Doctor CRUD using Admin authorization.
+- Doctor access to their own appointments.
+- Doctor access to linked Patient Vital Signs.
+- Doctor access to linked Patient Medications.
+- Doctor access to an unrelated Patient rejected with `403 Forbidden`.
+- Doctor token rejected from Admin-only Doctor endpoints with `403 Forbidden`.
+- Patient appointment creation with a valid `DoctorId`.
+- Appointment creation rejected when the selected Doctor does not exist.
+- Doctor deletion blocked with `409 Conflict` when existing appointments are linked.
+- Doctor profile and linked Identity user deleted together when no appointments exist.
+- Full automated test suite completed successfully after Doctor-related changes with 75 passed tests and 0 failures.
 
 ---
 
@@ -919,6 +1098,13 @@ The following scenarios were verified:
 Patient ID: 1
 Patient Name: Test Patient
 Blood Type: O+
+```
+
+Doctor:
+```text
+Doctor ID: 1
+Doctor Name: Test Doctor
+Phone Number: 0599111111
 ```
 
 Vital signs:
@@ -948,6 +1134,8 @@ Appointment:
 
 ```text
 ID: 1
+Patient ID: 1
+Doctor ID: 1
 Reason: Routine cardiac follow-up
 ```
 
@@ -959,3 +1147,5 @@ Reason: Routine cardiac follow-up
 - JWT tokens are not stored in the Postman collection.
 - Delete requests use non-seeded IDs by default to avoid accidentally deleting seed data.
 - The recorded API demo is included in the `demo` folder.
+- Doctor accounts are created and managed by the Admin; public registration remains available only for Patients.
+- Doctors can access only the Vital Signs and Medications of Patients linked to them through appointments.

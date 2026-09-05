@@ -11,12 +11,12 @@ namespace CardiacPatientMonitoringSystem.Tests.Controllers
     public class AuthsControllerTests
     {
         private readonly Mock<IAuthService> _mockService;
-        private readonly AuthsController _controller;
+        private readonly AuthController _controller;
 
         public AuthsControllerTests()
         {
             _mockService = new Mock<IAuthService>();
-            _controller = new AuthsController(_mockService.Object);
+            _controller = new AuthController(_mockService.Object);
         }
 
         [Fact]

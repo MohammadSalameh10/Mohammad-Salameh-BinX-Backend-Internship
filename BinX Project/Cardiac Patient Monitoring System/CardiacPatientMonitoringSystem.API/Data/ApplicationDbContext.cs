@@ -15,6 +15,7 @@ namespace CardiacPatientMonitoringSystem.API.Data
         public DbSet<VitalSign> VitalSigns { get; set; }
         public DbSet<Medication> Medications { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +45,22 @@ namespace CardiacPatientMonitoringSystem.API.Data
             modelBuilder.Entity<Patient>()
                 .HasIndex(p => p.UserId)
                 .IsUnique();
+
+            modelBuilder.Entity<Doctor>()
+                .HasOne(d => d.User)
+                .WithOne()
+                .HasForeignKey<Doctor>(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Doctor>()
+                .HasIndex(d => d.UserId)
+                .IsUnique();
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Doctor)
+                .WithMany(d => d.Appointments)
+                .HasForeignKey(a => a.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

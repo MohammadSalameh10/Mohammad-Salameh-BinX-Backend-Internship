@@ -33,10 +33,27 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             {
                 Id = appointment.Id,
                 PatientId = appointment.PatientId,
+                DoctorId = appointment.DoctorId,
                 AppointmentDate = appointment.AppointmentDate,
                 Reason = appointment.Reason,
                 Notes = appointment.Notes
             };
+        }
+
+        public async Task<List<AppointmentResponse>> GetByDoctorIdAsync(int doctorId)
+        {
+            var appointments = await _appointmentRepository
+                .GetByDoctorIdAsync(doctorId);
+
+            return appointments.Select(a => new AppointmentResponse
+            {
+                Id = a.Id,
+                PatientId = a.PatientId,
+                DoctorId = a.DoctorId,
+                AppointmentDate = a.AppointmentDate,
+                Reason = a.Reason,
+                Notes = a.Notes
+            }).ToList();
         }
 
         public async Task<AppointmentResponse?> CreateAsync(
@@ -48,9 +65,15 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             if (patient == null)
                 return null;
 
+            var doctor = await _appointmentRepository.GetDoctorByIdAsync(request.DoctorId);
+
+            if (doctor == null)
+                return null;
+
             var appointment = new Appointment
             {
                 PatientId = patient.Id,
+                DoctorId = request.DoctorId,
                 AppointmentDate = request.AppointmentDate,
                 Reason = request.Reason,
                 Notes = request.Notes
@@ -63,6 +86,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             {
                 Id = appointment.Id,
                 PatientId = appointment.PatientId,
+                DoctorId = appointment.DoctorId,
                 AppointmentDate = appointment.AppointmentDate,
                 Reason = appointment.Reason,
                 Notes = appointment.Notes
@@ -76,6 +100,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             if (appointment == null)
                 return false;
 
+            var doctor = await _appointmentRepository.GetDoctorByIdAsync(request.DoctorId);
+
+            if (doctor == null)
+                return false;
+
+            appointment.DoctorId = request.DoctorId;
             appointment.AppointmentDate = request.AppointmentDate;
             appointment.Reason = request.Reason;
             appointment.Notes = request.Notes;

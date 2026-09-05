@@ -25,6 +25,22 @@ namespace CardiacPatientMonitoringSystem.API.Repositories.Classes
                 .FirstOrDefaultAsync(v => v.Id == id);
         }
 
+        public async Task<List<VitalSign>> GetByPatientIdAsync(int patientId)
+        {
+            return await _context.VitalSigns
+                .Where(v => v.PatientId == patientId)
+                .OrderByDescending(v => v.RecordedAt)
+                .ToListAsync();
+        }
+
+        public async Task<bool> DoctorHasPatientAsync(int doctorId, int patientId)
+        {
+            return await _context.Appointments
+                .AnyAsync(a =>
+                    a.DoctorId == doctorId &&
+                    a.PatientId == patientId);
+        }
+
         public async Task<Patient?> GetPatientByUserIdAsync(string userId)
         {
             return await _context.Patients

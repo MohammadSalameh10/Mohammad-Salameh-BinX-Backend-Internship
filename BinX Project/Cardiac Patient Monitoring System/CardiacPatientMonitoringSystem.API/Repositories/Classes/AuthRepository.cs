@@ -55,5 +55,12 @@ namespace CardiacPatientMonitoringSystem.API.Repositories.Classes
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.UserId == userId);
         }
+
+        public async Task<Doctor?> GetDoctorByUserIdAsync(string userId)
+        {
+            return await _context.Doctors
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.UserId == userId);
+        }
     }
 }

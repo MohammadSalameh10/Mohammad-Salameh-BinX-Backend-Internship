@@ -101,6 +101,9 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             var patient = await _authRepository
                 .GetPatientByUserIdAsync(user.Id);
 
+            var doctor = await _authRepository
+                .GetDoctorByUserIdAsync(user.Id);
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -111,6 +114,12 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             {
                 claims.Add(
                     new Claim("PatientId", patient.Id.ToString()));
+            }
+
+            if (doctor != null)
+            {
+                claims.Add(
+                    new Claim("DoctorId", doctor.Id.ToString()));
             }
 
             foreach (var role in roles)

@@ -8,7 +8,7 @@
   },
   "item": [
     {
-      "name": "Auths",
+      "name": "Auth",
       "item": [
         {
           "name": "Register Patient",
@@ -33,13 +33,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/Auths/register",
+              "raw": "{{baseUrl}}/api/Auth/register",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "Auths",
+                "Auth",
                 "register"
               ]
             },
@@ -70,13 +70,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/Auths/login",
+              "raw": "{{baseUrl}}/api/Auth/login",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "Auths",
+                "Auth",
                 "login"
               ]
             },
@@ -348,6 +348,43 @@
           "response": []
         },
         {
+          "name": "Get Patient Vital Signs For Doctor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{doctorToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/VitalSigns/patient/:patientId/doctor",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "VitalSigns",
+                "patient",
+                ":patientId",
+                "doctor"
+              ],
+              "variable": [
+                {
+                  "key": "patientId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Create Vital Sign",
           "request": {
             "auth": {
@@ -513,34 +550,6 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/Medications",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "Medications"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Search Medications By Name",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
               "raw": "{{baseUrl}}/api/Medications?name=Aspirin",
               "host": [
                 "{{baseUrl}}"
@@ -587,6 +596,43 @@
               "variable": [
                 {
                   "key": "medicationId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Patient Medications For Doctor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{doctorToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Medications/patient/:patientId/doctor",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Medications",
+                "patient",
+                ":patientId",
+                "doctor"
+              ],
+              "variable": [
+                {
+                  "key": "patientId",
                   "value": "1"
                 }
               ]
@@ -807,7 +853,36 @@
           "response": []
         },
         {
-          "name": "Create Appointment",
+          "name": "Get Doctor Appointments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{doctorToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Appointments/doctor",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Appointments",
+                "doctor"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Appointment With Doctor",
           "request": {
             "auth": {
               "type": "bearer",
@@ -828,7 +903,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"appointmentDate\": \"2026-09-20T11:00:00\",\r\n  \"reason\": \"Cardiology follow-up consultation\",\r\n  \"notes\": \"Follow-up appointment to review recent cardiac readings and discuss current treatment plan.\"\r\n}",
+              "raw": "{\r\n  \"doctorId\": 1,\r\n  \"appointmentDate\": \"2026-09-25T11:00:00\",\r\n  \"reason\": \"Cardiology follow-up\",\r\n  \"notes\": \"Review recent cardiac readings\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -933,6 +1008,190 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Doctors",
+      "item": [
+        {
+          "name": "Get All Doctors",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Doctor By Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Doctors/:doctorId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Doctors",
+                ":doctorId"
+              ],
+              "variable": [
+                {
+                  "key": "doctorId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Doctor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"doctor2@cardiac.com\",\r\n  \"password\": \"Doctor@123\",\r\n  \"fullName\": \"Ahmad Khaled\",\r\n  \"phoneNumber\": \"0591234567\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/Doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Doctor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Ahmad Khaled Updated\",\r\n  \"phoneNumber\": \"0597654321\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/Doctors/:doctorId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Doctors",
+                ":doctorId"
+              ],
+              "variable": [
+                {
+                  "key": "doctorId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Doctor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Doctors/:doctorId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Doctors",
+                ":doctorId"
+              ],
+              "variable": [
+                {
+                  "key": "doctorId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -946,6 +1205,10 @@
     },
     {
       "key": "patientToken",
+      "secret": true
+    },
+    {
+      "key": "doctorToken",
       "secret": true
     }
   ]

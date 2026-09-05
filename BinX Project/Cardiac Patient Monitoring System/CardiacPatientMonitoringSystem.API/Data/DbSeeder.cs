@@ -17,7 +17,7 @@ namespace CardiacPatientMonitoringSystem.API.Data
             var context = services
                 .GetRequiredService<ApplicationDbContext>();
 
-            string[] roles = { "Admin", "Patient" };
+            string[] roles = { "Admin", "Patient", "Doctor" };
 
             foreach (var role in roles)
             {
@@ -113,6 +113,54 @@ namespace CardiacPatientMonitoringSystem.API.Data
                 await context.SaveChangesAsync();
             }
 
+            var doctorEmail = "doctor@cardiac.com";
+            var doctorPassword = "Doctor@123";
+
+            var doctorUser = await userManager.FindByEmailAsync(doctorEmail);
+
+            if (doctorUser == null)
+            {
+                doctorUser = new IdentityUser
+                {
+                    UserName = doctorEmail,
+                    Email = doctorEmail
+                };
+
+                var doctorUserResult = await userManager.CreateAsync(
+                    doctorUser,
+                    doctorPassword);
+
+                if (!doctorUserResult.Succeeded)
+                    return;
+            }
+
+            if (!await userManager.IsInRoleAsync(doctorUser, "Doctor"))
+            {
+                var doctorRoleResult = await userManager.AddToRoleAsync(
+                    doctorUser,
+                    "Doctor");
+
+                if (!doctorRoleResult.Succeeded)
+                    return;
+            }
+
+            var doctor = await context.Doctors
+                .FirstOrDefaultAsync(d => d.UserId == doctorUser.Id);
+
+            if (doctor == null)
+            {
+                doctor = new Doctor
+                {
+                    UserId = doctorUser.Id,
+                    FullName = "Test Doctor",
+                    PhoneNumber = "0599111111"
+                };
+
+                context.Doctors.Add(doctor);
+
+                await context.SaveChangesAsync();
+            }
+
             var hasVitalSigns = await context.VitalSigns
                 .AnyAsync(v => v.PatientId == patient.Id);
 
@@ -170,6 +218,7 @@ namespace CardiacPatientMonitoringSystem.API.Data
                 var appointment = new Appointment
                 {
                     PatientId = patient.Id,
+                    DoctorId = doctor.Id,
                     AppointmentDate = new DateTime(2026, 9, 1, 10, 0, 0),
                     Reason = "Routine cardiac follow-up",
                     Notes = "Synthetic test appointment"

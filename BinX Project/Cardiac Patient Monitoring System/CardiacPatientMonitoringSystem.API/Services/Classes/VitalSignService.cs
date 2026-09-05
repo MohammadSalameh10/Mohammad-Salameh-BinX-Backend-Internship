@@ -63,6 +63,31 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
+        public async Task<List<VitalSignResponse>?> GetPatientVitalSignsForDoctorAsync(int doctorId, int patientId)
+        {
+            var hasAccess = await _vitalSignRepository
+                .DoctorHasPatientAsync(doctorId, patientId);
+
+            if (!hasAccess)
+                return null;
+
+            var vitalSigns = await _vitalSignRepository
+                .GetByPatientIdAsync(patientId);
+
+            return vitalSigns
+                .Select(v => new VitalSignResponse
+                {
+                    Id = v.Id,
+                    PatientId = v.PatientId,
+                    HeartRate = v.HeartRate,
+                    SystolicBloodPressure = v.SystolicBloodPressure,
+                    DiastolicBloodPressure = v.DiastolicBloodPressure,
+                    OxygenSaturation = v.OxygenSaturation,
+                    RecordedAt = v.RecordedAt
+                })
+                .ToList();
+        }
+
         public async Task<VitalSignResponse?> CreateAsync(
             string userId,
             CreateVitalSignRequest request)

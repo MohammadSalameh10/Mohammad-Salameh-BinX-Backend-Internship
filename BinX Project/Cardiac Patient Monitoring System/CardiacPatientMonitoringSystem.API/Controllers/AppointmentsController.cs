@@ -36,6 +36,21 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
             return Ok(appointments);
         }
 
+        [HttpGet("doctor")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> GetDoctorAppointments()
+        {
+            var doctorIdClaim = User.FindFirstValue("DoctorId");
+
+            if (!int.TryParse(doctorIdClaim, out var doctorId))
+                return Forbid();
+
+            var appointments = await _appointmentService
+                .GetByDoctorIdAsync(doctorId);
+
+            return Ok(appointments);
+        }
+
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Patient")]
         public async Task<IActionResult> GetById(int id)
@@ -73,7 +88,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
                 request);
 
             if (appointment == null)
-                return BadRequest("Patient profile not found. Create a patient profile first.");
+                return BadRequest("Patient profile or doctor not found.");
 
             return CreatedAtAction(
                 nameof(GetById),

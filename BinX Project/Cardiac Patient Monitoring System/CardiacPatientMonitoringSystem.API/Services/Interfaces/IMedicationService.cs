@@ -7,6 +7,7 @@ namespace CardiacPatientMonitoringSystem.API.Services.Interfaces
     {
         Task<List<MedicationResponse>> GetAllAsync(string? name);
         Task<MedicationResponse?> GetByIdAsync(int id);
+        Task<List<MedicationResponse>?> GetPatientMedicationsForDoctorAsync(int doctorId, int patientId);
         Task<MedicationResponse?> CreateAsync(string userId, CreateMedicationRequest request);
         Task<bool> UpdateAsync(int id, UpdateMedicationRequest request);
         Task<bool> DeleteAsync(int id);

@@ -54,6 +54,31 @@ namespace CardiacPatientMonitoringSystem.API.Services.Classes
             };
         }
 
+        public async Task<List<MedicationResponse>?> GetPatientMedicationsForDoctorAsync(int doctorId, int patientId)
+        {
+            var hasAccess = await _medicationRepository
+                .DoctorHasPatientAsync(doctorId, patientId);
+
+            if (!hasAccess)
+                return null;
+
+            var medications = await _medicationRepository
+                .GetByPatientIdAsync(patientId);
+
+            return medications
+                .Select(m => new MedicationResponse
+                {
+                    Id = m.Id,
+                    PatientId = m.PatientId,
+                    Name = m.Name,
+                    Dosage = m.Dosage,
+                    Frequency = m.Frequency,
+                    StartDate = m.StartDate,
+                    EndDate = m.EndDate
+                })
+                .ToList();
+        }
+
         public async Task<MedicationResponse?> CreateAsync(
     string userId,
     CreateMedicationRequest request)

@@ -13,5 +13,6 @@ namespace CardiacPatientMonitoringSystem.API.Repositories.Interfaces
         Task AddPatientAsync(Patient patient);
 
         Task<Patient?> GetPatientByUserIdAsync(string userId);
+        Task<Doctor?> GetDoctorByUserIdAsync(string userId);
     }
 }

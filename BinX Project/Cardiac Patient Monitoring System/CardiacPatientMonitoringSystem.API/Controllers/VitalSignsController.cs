@@ -38,6 +38,26 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
             return Ok(vitalSign);
         }
 
+        [HttpGet("patient/{patientId}/doctor")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> GetPatientVitalSignsForDoctor(int patientId)
+        {
+            var doctorIdClaim = User.FindFirstValue("DoctorId");
+
+            if (!int.TryParse(doctorIdClaim, out var doctorId))
+                return Forbid();
+
+            var vitalSigns = await _vitalSignService
+                .GetPatientVitalSignsForDoctorAsync(
+                    doctorId,
+                    patientId);
+
+            if (vitalSigns == null)
+                return Forbid();
+
+            return Ok(vitalSigns);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Patient")]
         public async Task<IActionResult> Create(CreateVitalSignRequest request)

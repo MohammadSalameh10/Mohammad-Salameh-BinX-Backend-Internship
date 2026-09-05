@@ -38,6 +38,26 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
             return Ok(medication);
         }
 
+        [HttpGet("patient/{patientId}/doctor")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> GetPatientMedicationsForDoctor(int patientId)
+        {
+            var doctorIdClaim = User.FindFirstValue("DoctorId");
+
+            if (!int.TryParse(doctorIdClaim, out var doctorId))
+                return Forbid();
+
+            var medications = await _medicationService
+                .GetPatientMedicationsForDoctorAsync(
+                    doctorId,
+                    patientId);
+
+            if (medications == null)
+                return Forbid();
+
+            return Ok(medications);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Patient")]
         public async Task<IActionResult> Create(CreateMedicationRequest request)
