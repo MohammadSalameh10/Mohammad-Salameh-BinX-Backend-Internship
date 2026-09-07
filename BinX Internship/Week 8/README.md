@@ -12,11 +12,16 @@ The existing list endpoints were reviewed and measured first. No N+1 problem was
 
 The diagnostic endpoint produced 51 SQL queries for 50 VitalSign records, establishing a clear baseline for the optimization work that will continue during Sprint 3.
 
+Day 2 focused on fixing the diagnosed N+1 query problem using eager loading with `Include`, comparing eager loading with projection using `Select`, and measuring the actual before-and-after SQL query counts.
+
+The diagnostic VitalSigns endpoint was reduced from 51 SQL queries to 1 query using `Include`. The same endpoint was then converted to projection, which also used 1 SQL query while selecting only the required fields. `AsSplitQuery` was reviewed but not applied because the current project does not contain an endpoint that includes two or more collection navigation properties in the same query.
+
 ## Daily Work
 
-| Day   | Topic                                          | Project / Documentation |
-| ----- | ---------------------------------------------- | ----------------------- |
-| Day 1 | Sprint 3 Planning & Diagnosing the N+1 Problem | [View Day 1](./Day%201) |
+| Day   | Topic                                             | Project / Documentation |
+| ----- | ------------------------------------------------- | ----------------------- |
+| Day 1 | Sprint 3 Planning & Diagnosing the N+1 Problem    | [View Day 1](./Day%201) |
+| Day 2 | Query Optimization with Eager & Explicit Loading | [View Day 2](./Day%202) |
 
 ## Week 8 Highlights
 
@@ -166,6 +171,102 @@ The SQL query count is the primary measurement used for the optimization compari
 
 The response time is recorded as an observed baseline but may vary between executions.
 
+### N+1 Optimization with Include
+
+The N+1 diagnostic endpoint from Day 1 was optimized using eager loading.
+
+The related Patient entity was loaded together with each VitalSign using:
+
+```csharp
+.Include(v => v.Patient)
+```
+
+The generated SQL used an `INNER JOIN` between `VitalSigns` and `Patients`.
+
+The measured result was:
+
+```text
+Records: 50 VitalSigns
+SQL Queries: 1
+N+1 Detected: No
+Observed Response Time: 228 ms
+```
+
+The SQL query count dropped from:
+
+```text
+51 → 1
+```
+
+### Projection Optimization
+
+The same list-style endpoint was then converted from eager loading to projection using `Select`.
+
+The projection returned only the fields required by the response:
+
+- VitalSign ID
+- Patient ID
+- Heart rate
+- Recorded date
+- Patient name
+
+The generated SQL selected only those required columns while still using one database query.
+
+The measured result was:
+
+```text
+Records: 50 VitalSigns
+SQL Queries: 1
+N+1 Detected: No
+Observed Response Time: 35 ms
+```
+
+Projection was selected as the leaner approach for this list-style endpoint because it avoids loading unnecessary entity columns.
+
+### Include vs Projection
+
+Both approaches successfully removed the N+1 problem.
+
+| Approach | SQL Queries | Data Retrieved |
+| -------- | ----------: | -------------- |
+| Original N+1 implementation | 51 | VitalSigns plus repeated Patient queries |
+| `Include` | 1 | Full VitalSign and Patient entity data |
+| Projection with `Select` | 1 | Only required response fields |
+
+The SQL query count was used as the primary performance metric.
+
+Observed response times were recorded for reference but were not treated as the primary comparison because execution time can vary between runs.
+
+### Split Query Review
+
+`AsSplitQuery` was reviewed as part of Day 2.
+
+It is useful when a query includes two or more collection navigation properties and a single JOIN could create a cartesian-product explosion.
+
+`AsSplitQuery` was not applied because the current project does not contain an endpoint that includes two or more collection navigation properties in the same query.
+
+### Day 2 Performance Comparison
+
+The complete before-and-after measurements were:
+
+| Version | Records | SQL Queries | N+1 | Observed Response Time |
+| ------- | ------: | ----------: | --- | ---------------------: |
+| Before Optimization | 50 | 51 | Yes | 273 ms |
+| After `Include` | 50 | 1 | No | 228 ms |
+| After Projection | 50 | 1 | No | 35 ms |
+
+The confirmed query-count improvement was:
+
+```text
+Before: 51 SQL Queries
+After Include: 1 SQL Query
+After Projection: 1 SQL Query
+```
+
+The SQL query count was treated as the primary optimization metric.
+
+The observed response times were recorded for comparison, but they may vary between executions.
+
 ### Sprint 3 Backlog
 
 The current Sprint 3 backlog includes:
@@ -177,13 +278,15 @@ The current Sprint 3 backlog includes:
 | Measure query counts for 2–3 important list endpoints | Done |
 | Identify at least one N+1 query pattern | Done |
 | Document the confirmed N+1 issue as a backlog task | Done |
-| Optimize VitalSigns diagnostic N+1 query from 51 queries to a small fixed number | To Do |
-| Compare query counts before and after optimization | To Do |
+| Optimize VitalSigns diagnostic N+1 query from 51 queries to a small fixed number | Done |
+| Compare query counts before and after optimization | Done |
 | Carry forward Sprint 2 ownership-check testing improvement action | To Do |
 
 The initial query measurement and N+1 diagnosis work was completed during Day 1.
 
-The optimization and before/after performance comparison remain active Sprint 3 tasks.
+The N+1 optimization and before/after performance comparison were completed during Day 2.
+
+The Sprint 2 ownership-check testing improvement action remains active for future patient-specific resource endpoints.
 
 ## Tools Used
 
@@ -197,6 +300,11 @@ The optimization and before/after performance comparison remain active Sprint 3 
 - `EnableSensitiveDataLogging`
 - LINQ
 - `AsNoTracking`
+- `Include`
+- `ThenInclude`
+- `Select`
+- Projection
+- `AsSplitQuery`
 - Visual Studio
 - Swagger
 - Notion
