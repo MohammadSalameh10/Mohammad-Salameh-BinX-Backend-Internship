@@ -13,7 +13,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
-| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, review of existing list endpoints, diagnostic N+1 reproduction, performance baseline establishment, and Sprint 3 backlog planning | [View Week 8](./BinX%20Internship/Week%208) |
+| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, relationship loading with `ThenInclude`, projection with `Select`, N+1 optimization, before-and-after query comparison, `AsSplitQuery` review, performance baseline establishment, and Sprint 3 backlog tracking | [View Week 8](./BinX%20Internship/Week%208) |
 
 ## Repository Structure
 
@@ -70,7 +70,8 @@ BinX Internship/
 │   └── Day 5/
 └── Week 8/
     ├── README.md
-    └── Day 1/
+    ├── Day 1/
+    └── Day 2/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -202,6 +203,15 @@ Each week contains a summary README, and each completed day contains its own tas
 - Understanding repeated related-entity queries inside loops
 - Using realistic data volumes for query-performance testing
 - Establishing before-optimization query baselines
+- Fixing N+1 queries using eager loading with `Include`
+- Understanding deeper relationship loading using `ThenInclude`
+- Comparing eager loading with projection
+- Using `Select` to retrieve only the required fields
+- Reducing unnecessary column retrieval in list-style endpoints
+- Reviewing `AsSplitQuery` for multiple collection navigation properties
+- Understanding cartesian-product explosion in large JOIN-based queries
+- Verifying query-count improvements after optimization
+- Comparing before-and-after SQL query counts
 
 ### Pagination, Filtering, Sorting, and DTO Projection
 
@@ -389,6 +399,24 @@ Each week contains a summary README, and each completed day contains its own tas
 - Using SQL query count as the primary optimization metric
 - Documenting the confirmed N+1 scenario in the Sprint 3 backlog
 - Preparing the N+1 case for later optimization and before/after comparison
+- Fixing the diagnosed N+1 query problem using eager loading
+- Loading related Patient data using `Include`
+- Understanding how `ThenInclude` extends eager loading to deeper relationships
+- Re-running the same diagnostic endpoint after optimization
+- Confirming that the VitalSigns diagnostic query dropped from 51 SQL queries to 1
+- Comparing eager loading with projection
+- Converting the list-style diagnostic endpoint to projection using `Select`
+- Selecting only the required VitalSign and Patient fields
+- Confirming that projection also executes as one SQL query
+- Comparing full related-entity loading with lean field projection
+- Using projection as the preferred approach for the list-style diagnostic endpoint
+- Reviewing `AsSplitQuery` for queries that include multiple collection navigation properties
+- Understanding cartesian-product explosion caused by multiple collection JOINs
+- Confirming that `AsSplitQuery` was not required in the current project
+- Measuring query counts before and after optimization
+- Comparing 51 queries before optimization with 1 query after `Include`
+- Comparing 51 queries before optimization with 1 query after projection
+- Recording response time as an observational metric while using SQL query count as the primary performance metric
 
 ### API Architecture and Validation
 
@@ -643,6 +671,12 @@ Each week contains a summary README, and each completed day contains its own tas
 - ASP.NET Core `ILogger`
 - Structured logging
 - `Stopwatch`
+- EF Core eager loading with `Include`
+- Relationship chaining with `ThenInclude`
+- LINQ projection with `Select`
+- EF Core `AsSplitQuery`
+- SQL query-count comparison
+- Before-and-after performance measurement
 
 ## Author
 
