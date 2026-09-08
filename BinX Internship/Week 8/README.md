@@ -16,12 +16,19 @@ Day 2 focused on fixing the diagnosed N+1 query problem using eager loading with
 
 The diagnostic VitalSigns endpoint was reduced from 51 SQL queries to 1 query using `Include`. The same endpoint was then converted to projection, which also used 1 SQL query while selecting only the required fields. `AsSplitQuery` was reviewed but not applied because the current project does not contain an endpoint that includes two or more collection navigation properties in the same query.
 
+Day 3 focused on introducing Redis caching using ASP.NET Core's `IDistributedCache` abstraction and implementing the cache-aside pattern on the Medications list endpoint.
+
+Redis was run locally using Docker and registered through `Microsoft.Extensions.Caching.StackExchangeRedis`. The first `GET /api/Medications` request produced a cache miss and queried SQL Server, while the second request was served from Redis without issuing a new SQL query. Cache invalidation was also added to medication create, update, and delete operations so that the cached list is removed whenever the underlying data changes.
+
+The cache invalidation flow was verified by updating a Medication and immediately requesting the list again. The next GET queried SQL Server and returned the updated data, confirming that stale cached values were not returned.
+
 ## Daily Work
 
-| Day   | Topic                                             | Project / Documentation |
-| ----- | ------------------------------------------------- | ----------------------- |
-| Day 1 | Sprint 3 Planning & Diagnosing the N+1 Problem    | [View Day 1](./Day%201) |
+| Day   | Topic                                            | Project / Documentation |
+| ----- | ------------------------------------------------ | ----------------------- |
+| Day 1 | Sprint 3 Planning & Diagnosing the N+1 Problem   | [View Day 1](./Day%201) |
 | Day 2 | Query Optimization with Eager & Explicit Loading | [View Day 2](./Day%202) |
+| Day 3 | Introducing Redis Caching                        | [View Day 3](./Day%203) |
 
 ## Week 8 Highlights
 
@@ -267,6 +274,127 @@ The SQL query count was treated as the primary optimization metric.
 
 The observed response times were recorded for comparison, but they may vary between executions.
 
+### Redis Setup
+
+- Added `Microsoft.Extensions.Caching.StackExchangeRedis` to the API project.
+- Ran Redis locally using Docker.
+- Exposed Redis on `localhost:6379`.
+- Added the Redis connection string to `appsettings.json`.
+- Registered Redis using `AddStackExchangeRedisCache`.
+- Used ASP.NET Core's `IDistributedCache` abstraction instead of accessing Redis directly throughout the application.
+
+### Cache Candidate Selection
+
+- Reviewed which project data is appropriate for caching.
+- Selected the Medications list endpoint for the training implementation.
+- Documented that sensitive healthcare-related data should be cached carefully in real systems.
+- Used the cache key `medications:all`.
+- Kept filtered medication searches uncached to avoid unnecessary cache-key combinations.
+
+### Cache-Aside Implementation
+
+- Injected `IDistributedCache` into `MedicationService`.
+- Implemented cache-first lookup for `GET /api/Medications`.
+- Returned cached data immediately when available.
+- Queried SQL Server on a cache miss.
+- Serialized the Medication response list using `System.Text.Json`.
+- Stored the result in Redis for subsequent requests.
+- Configured an absolute cache expiration of 10 minutes.
+
+### Cache Miss Testing
+
+The first `GET /api/Medications` request produced a cache miss.
+
+The application queried SQL Server and stored the result in Redis.
+
+Measured result:
+
+```text
+Cache Status: Miss
+Database Query: Yes
+Observed API Time: 316 ms
+Status Code: 200 OK
+```
+
+### Cache Hit Testing
+
+The same request was executed again after the list had been cached.
+
+No new SQL query against the `Medications` table was generated.
+
+Measured result:
+
+```text
+Cache Status: Hit
+Database Query: No
+Observed API Time: 13 ms
+Status Code: 200 OK
+```
+
+The Postman client displayed an observed response time of approximately `22 ms`.
+
+### Cache Miss vs Cache Hit
+
+| Request | Cache Status | SQL Query | Observed API Time |
+| ------- | ------------ | --------- | ----------------: |
+| First GET | Miss | Yes | 316 ms |
+| Second GET | Hit | No | 13 ms |
+
+The cache hit avoided a SQL Server query entirely.
+
+Response time was recorded as an observed metric and may vary between executions.
+
+### Cache Invalidation
+
+- Added cache invalidation after successful Medication creation.
+- Added cache invalidation after successful Medication updates.
+- Added cache invalidation after successful Medication deletion.
+- Removed the `medications:all` entry using `RemoveAsync`.
+- Ensured that the next list request retrieves fresh data from SQL Server.
+
+### Cache Invalidation Verification
+
+Medication ID `2` was updated with:
+
+```text
+Name: Acamol
+Dosage: 1000 mg
+```
+
+The update returned `200 OK`.
+
+The next `GET /api/Medications` executed a new SQL query because the cached list had been invalidated.
+
+The response immediately returned the updated Medication values, confirming that stale data was not returned.
+
+### Cache Invalidation Flow
+
+```text
+GET /api/Medications
+        ↓
+Cache Miss
+        ↓
+SQL Server
+        ↓
+Store medications:all in Redis
+        ↓
+Second GET
+        ↓
+Cache Hit
+        ↓
+Return cached data
+        ↓
+Create / Update / Delete
+        ↓
+Remove medications:all
+        ↓
+Next GET
+        ↓
+Cache Miss
+        ↓
+Load fresh data from SQL Server
+```
+
 ### Sprint 3 Backlog
 
 The current Sprint 3 backlog includes:
@@ -280,6 +408,13 @@ The current Sprint 3 backlog includes:
 | Document the confirmed N+1 issue as a backlog task | Done |
 | Optimize VitalSigns diagnostic N+1 query from 51 queries to a small fixed number | Done |
 | Compare query counts before and after optimization | Done |
+| Set up Redis and register `IDistributedCache` | Done |
+| Implement cache-aside caching for `GET /api/Medications` | Done |
+| Add cache expiration for the Medications list | Done |
+| Invalidate Medication cache after create, update, and delete operations | Done |
+| Verify cache miss and cache hit behavior | Done |
+| Verify cache invalidation returns fresh data immediately | Done |
+| Measure cache miss vs cache hit response time | Done |
 | Carry forward Sprint 2 ownership-check testing improvement action | To Do |
 
 The initial query measurement and N+1 diagnosis work was completed during Day 1.
@@ -287,6 +422,8 @@ The initial query measurement and N+1 diagnosis work was completed during Day 1.
 The N+1 optimization and before/after performance comparison were completed during Day 2.
 
 The Sprint 2 ownership-check testing improvement action remains active for future patient-specific resource endpoints.
+
+Redis caching, cache-aside behavior, cache invalidation, and cache miss/hit performance measurement were completed during Day 3.
 
 ## Tools Used
 
@@ -305,6 +442,17 @@ The Sprint 2 ownership-check testing improvement action remains active for futur
 - `Select`
 - Projection
 - `AsSplitQuery`
+- Redis
+- Docker
+- `Microsoft.Extensions.Caching.StackExchangeRedis`
+- `IDistributedCache`
+- `DistributedCacheEntryOptions`
+- `GetStringAsync`
+- `SetStringAsync`
+- `RemoveAsync`
+- `System.Text.Json`
+- Cache-Aside Pattern
+- Cache Invalidation
 - Visual Studio
 - Swagger
 - Notion
