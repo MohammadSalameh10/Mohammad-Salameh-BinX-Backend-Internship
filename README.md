@@ -13,7 +13,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
-| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, relationship loading with `ThenInclude`, projection with `Select`, N+1 optimization, before-and-after query comparison, `AsSplitQuery` review, performance baseline establishment, and Sprint 3 backlog tracking | [View Week 8](./BinX%20Internship/Week%208) |
+| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, relationship loading with `ThenInclude`, projection with `Select`, N+1 optimization, before-and-after query comparison, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, and Sprint 3 backlog tracking | [View Week 8](./BinX%20Internship/Week%208) |
 
 ## Repository Structure
 
@@ -71,7 +71,8 @@ BinX Internship/
 └── Week 8/
     ├── README.md
     ├── Day 1/
-    └── Day 2/
+    ├── Day 2/
+    └── Day 3/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -417,6 +418,28 @@ Each week contains a summary README, and each completed day contains its own tas
 - Comparing 51 queries before optimization with 1 query after `Include`
 - Comparing 51 queries before optimization with 1 query after projection
 - Recording response time as an observational metric while using SQL query count as the primary performance metric
+- Introducing Redis caching into the Cardiac Patient Monitoring System API
+- Running Redis locally using Docker
+- Registering Redis through `Microsoft.Extensions.Caching.StackExchangeRedis`
+- Using ASP.NET Core's `IDistributedCache` abstraction
+- Configuring the Redis connection through `appsettings.json`
+- Selecting `GET /api/Medications` as the cache-aside training endpoint
+- Using the `medications:all` cache key
+- Implementing cache-first reads with `GetStringAsync`
+- Querying SQL Server only when the cache does not contain the Medication list
+- Serializing Medication responses using `System.Text.Json`
+- Storing cached values using `SetStringAsync`
+- Configuring an absolute cache expiration of 10 minutes
+- Verifying cache miss behavior with a SQL Server query
+- Verifying cache hit behavior without a new Medication SQL query
+- Comparing cache miss and cache hit response times
+- Invalidating the Medication list cache after successful create operations
+- Invalidating the Medication list cache after successful update operations
+- Invalidating the Medication list cache after successful delete operations
+- Removing stale cached data using `RemoveAsync`
+- Verifying that the first GET after an update returns fresh database data
+- Confirming that updated Medication values are returned immediately after cache invalidation
+- Reviewing caching considerations for sensitive healthcare-related data
 
 ### API Architecture and Validation
 
@@ -677,6 +700,20 @@ Each week contains a summary README, and each completed day contains its own tas
 - EF Core `AsSplitQuery`
 - SQL query-count comparison
 - Before-and-after performance measurement
+- Redis
+- Docker
+- `Microsoft.Extensions.Caching.StackExchangeRedis`
+- ASP.NET Core `IDistributedCache`
+- Redis connection configuration
+- Cache-aside pattern implementation
+- Cache expiration using `DistributedCacheEntryOptions`
+- Cache reads using `GetStringAsync`
+- Cache writes using `SetStringAsync`
+- Cache invalidation using `RemoveAsync`
+- JSON serialization using `System.Text.Json`
+- Cache miss and cache hit testing
+- Cache invalidation verification after write operations
+- Response-time comparison between cache miss and cache hit
 
 ## Author
 
