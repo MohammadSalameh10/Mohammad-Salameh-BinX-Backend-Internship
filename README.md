@@ -13,7 +13,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
-| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, relationship loading with `ThenInclude`, projection with `Select`, N+1 optimization, before-and-after query comparison, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, and Sprint 3 backlog tracking | [View Week 8](./BinX%20Internship/Week%208) |
+| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, relationship loading with `ThenInclude`, projection with `Select`, N+1 optimization, before-and-after query comparison, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, database indexing, single-column and composite indexes, EF Core Fluent API index configuration, index migrations, before-and-after query performance profiling, SQL Server Actual Execution Plans, `Index Scan`, `Index Seek`, and Sprint 3 backlog tracking | [View Week 8](./BinX%20Internship/Week%208) |
 
 ## Repository Structure
 
@@ -72,7 +72,8 @@ BinX Internship/
     ├── README.md
     ├── Day 1/
     ├── Day 2/
-    └── Day 3/
+    ├── Day 3/
+    └── Day 4/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -440,6 +441,27 @@ Each week contains a summary README, and each completed day contains its own tas
 - Verifying that the first GET after an update returns fresh database data
 - Confirming that updated Medication values are returned immediately after cache invalidation
 - Reviewing caching considerations for sensitive healthcare-related data
+- Reviewing existing query patterns to identify justified database index candidates
+- Avoiding unnecessary indexes on columns without real filtering or sorting usage
+- Confirming that `Patient.UserId` already has a unique index
+- Selecting `AppointmentDate` as a single-column index candidate
+- Selecting `PatientId + AppointmentDate` as a composite index candidate
+- Adding indexes using EF Core Fluent API
+- Creating the `AddAppointmentIndexes` migration
+- Applying the new indexes to SQL Server
+- Measuring appointment query behavior before and after indexing
+- Testing the filtered and sorted appointments query using `PatientId` and `AppointmentDate`
+- Testing the appointment list query sorted by `AppointmentDate`
+- Comparing API request times before and after indexing
+- Comparing Postman response times before and after indexing
+- Comparing EF Core SQL command timings before and after indexing
+- Using SQL Server Actual Execution Plans to validate index usage
+- Confirming `Index Scan (NonClustered)` for the `AppointmentDate` index
+- Confirming `Index Seek (NonClustered)` for the composite `PatientId + AppointmentDate` index
+- Confirming that no separate `Sort` operator was required for the tested indexed queries
+- Reviewing `Key Lookup (Clustered)` behavior for columns not stored in the nonclustered indexes
+- Treating response-time differences as observational measurements rather than proof by themselves
+- Using execution-plan evidence to justify the indexing decisions
 
 ### API Architecture and Validation
 
@@ -714,6 +736,17 @@ Each week contains a summary README, and each completed day contains its own tas
 - Cache miss and cache hit testing
 - Cache invalidation verification after write operations
 - Response-time comparison between cache miss and cache hit
+- EF Core Fluent API index configuration
+- EF Core index migrations
+- Database indexing
+- Single-column indexes
+- Composite indexes
+- SQL Server Actual Execution Plans
+- `Index Scan`
+- `Index Seek`
+- `Key Lookup`
+- Query performance profiling
+- Before-and-after index performance measurement
 
 ## Author
 
