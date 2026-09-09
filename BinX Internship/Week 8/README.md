@@ -22,6 +22,12 @@ Redis was run locally using Docker and registered through `Microsoft.Extensions.
 
 The cache invalidation flow was verified by updating a Medication and immediately requesting the list again. The next GET queried SQL Server and returned the updated data, confirming that stale cached values were not returned.
 
+Day 4 focused on database indexing and performance profiling. Existing query patterns were reviewed to identify justified index candidates, and two indexes were added to the `Appointments` table: a single-column index on `AppointmentDate` and a composite index on `PatientId + AppointmentDate`.
+
+The indexes were added using EF Core Fluent API and applied through a new `AddAppointmentIndexes` migration. Query behavior was measured before and after indexing using Postman response times, API request timing, EF Core SQL command timing, and SQL Server Actual Execution Plans.
+
+The execution plans confirmed that SQL Server used the `AppointmentDate` index through a nonclustered index scan and the composite `PatientId + AppointmentDate` index through a nonclustered index seek. The composite index provided the strongest evidence of effective index usage for the existing filtered and sorted appointment query.
+
 ## Daily Work
 
 | Day   | Topic                                            | Project / Documentation |
@@ -29,6 +35,7 @@ The cache invalidation flow was verified by updating a Medication and immediatel
 | Day 1 | Sprint 3 Planning & Diagnosing the N+1 Problem   | [View Day 1](./Day%201) |
 | Day 2 | Query Optimization with Eager & Explicit Loading | [View Day 2](./Day%202) |
 | Day 3 | Introducing Redis Caching                        | [View Day 3](./Day%203) |
+| Day 4 | Database Indexing & Performance Profiling        | [View Day 4](./Day%204) |
 
 ## Week 8 Highlights
 
@@ -395,6 +402,66 @@ Cache Miss
 Load fresh data from SQL Server
 ```
 
+### Database Indexing
+
+- Reviewed existing query patterns before adding new indexes.
+- Avoided adding indexes to columns that did not have a justified filtering or sorting pattern.
+- Confirmed that `Patient.UserId` was already configured as a unique index.
+- Selected `AppointmentDate` as a single-column index candidate.
+- Selected `PatientId + AppointmentDate` as a composite index candidate.
+- Added both indexes using EF Core Fluent API.
+- Created the `AddAppointmentIndexes` migration.
+- Applied the migration to SQL Server.
+- Confirmed that the previous single-column `PatientId` foreign key index was replaced by the composite index.
+
+### Index Performance Profiling
+
+Two appointment query patterns were measured before and after indexing.
+
+For the composite `PatientId + AppointmentDate` index:
+
+| Measurement | Before Index | After Index |
+| --- | ---: | ---: |
+| API Request Time | 101 ms | 22 ms |
+| Postman Response Time | 110 ms | 26 ms |
+| SQL Command Time | approximately 3–5 ms | approximately 1 ms |
+
+For the single-column `AppointmentDate` index:
+
+| Measurement | Before Index | After Index |
+| --- | ---: | ---: |
+| API Request Time | 174 ms | 28 ms |
+| Postman Response Time | 186 ms | 31 ms |
+| SQL Command Time | approximately 2 ms | approximately 2–3 ms |
+
+Response times were treated as observational measurements because they can vary between executions.
+
+### SQL Server Execution Plan Validation
+
+SQL Server Actual Execution Plans were used to verify that the new indexes were genuinely used.
+
+The `AppointmentDate` query used:
+
+`Index Scan (NonClustered)`
+
+The execution plan did not require a separate `Sort` operation.
+
+The filtered appointment query used the composite index through:
+
+`Index Seek (NonClustered)`
+
+The composite index supported both:
+
+`WHERE PatientId = ...`
+
+and:
+
+`ORDER BY AppointmentDate`
+
+A `Key Lookup (Clustered)` was still required to retrieve additional selected columns that were not stored in the nonclustered indexes.
+
+The composite index provided the strongest evidence of effective index usage for the current appointment query pattern.
+
 ### Sprint 3 Backlog
 
 The current Sprint 3 backlog includes:
@@ -416,6 +483,12 @@ The current Sprint 3 backlog includes:
 | Verify cache invalidation returns fresh data immediately | Done |
 | Measure cache miss vs cache hit response time | Done |
 | Carry forward Sprint 2 ownership-check testing improvement action | To Do |
+| Identify justified database index candidates | Done |
+| Add a single-column index on `AppointmentDate` | Done |
+| Add a composite index on `PatientId + AppointmentDate` | Done |
+| Create and apply the `AddAppointmentIndexes` migration | Done |
+| Measure appointment query performance before and after indexing | Done |
+| Validate index usage with SQL Server Actual Execution Plans | Done |
 
 The initial query measurement and N+1 diagnosis work was completed during Day 1.
 
@@ -424,6 +497,8 @@ The N+1 optimization and before/after performance comparison were completed duri
 The Sprint 2 ownership-check testing improvement action remains active for future patient-specific resource endpoints.
 
 Redis caching, cache-aside behavior, cache invalidation, and cache miss/hit performance measurement were completed during Day 3.
+
+Database indexing, before-and-after performance profiling, and SQL Server execution plan validation were completed during Day 4.
 
 ## Tools Used
 
@@ -453,6 +528,17 @@ Redis caching, cache-aside behavior, cache invalidation, and cache miss/hit perf
 - `System.Text.Json`
 - Cache-Aside Pattern
 - Cache Invalidation
+- EF Core Fluent API
+- EF Core Migrations
+- Database Indexing
+- Single-Column Index
+- Composite Index
+- SQL Server Management Studio
+- Actual Execution Plan
+- Index Scan
+- Index Seek
+- Key Lookup
+- Performance Profiling
 - Visual Studio
 - Swagger
 - Notion
