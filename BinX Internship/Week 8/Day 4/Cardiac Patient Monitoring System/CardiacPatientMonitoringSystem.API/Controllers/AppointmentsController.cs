@@ -19,40 +19,15 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll(
-           [FromQuery] string? reason,
-           [FromQuery] int? patientId,
-           [FromQuery] string? sort,
-           [FromQuery] int page = 1,
-           [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] string? reason, [FromQuery] int? patientId, [FromQuery] string? sort, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var appointments = await _appointmentService.GetAllAsync(
-                reason,
-                patientId,
-                sort,
-                page,
-                pageSize);
-
-            return Ok(appointments);
-        }
-
-        [HttpGet("doctor")]
-        [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> GetDoctorAppointments()
-        {
-            var doctorIdClaim = User.FindFirstValue("DoctorId");
-
-            if (!int.TryParse(doctorIdClaim, out var doctorId))
-                return Forbid();
-
-            var appointments = await _appointmentService
-                .GetByDoctorIdAsync(doctorId);
+            var appointments = await _appointmentService.GetAllAsync(reason, patientId, sort, page, pageSize);
 
             return Ok(appointments);
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin, Patient")]
+        [Authorize(Roles = "Admin,Patient")]
         public async Task<IActionResult> GetById(int id)
         {
             var appointment = await _appointmentService.GetByIdAsync(id);
@@ -88,7 +63,7 @@ namespace CardiacPatientMonitoringSystem.API.Controllers
                 request);
 
             if (appointment == null)
-                return BadRequest("Patient profile or doctor not found.");
+                return BadRequest("Patient profile not found. Create a patient profile first.");
 
             return CreatedAtAction(
                 nameof(GetById),
