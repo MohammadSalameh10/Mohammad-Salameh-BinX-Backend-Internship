@@ -28,6 +28,12 @@ The indexes were added using EF Core Fluent API and applied through a new `AddAp
 
 The execution plans confirmed that SQL Server used the `AppointmentDate` index through a nonclustered index scan and the composite `PatientId + AppointmentDate` index through a nonclustered index seek. The composite index provided the strongest evidence of effective index usage for the existing filtered and sorted appointment query.
 
+Day 5 focused on closing Sprint 3 through a structured Sprint Review, benchmark demo, backlog review, and retrospective.
+
+The Sprint 3 demo reused the measurable performance evidence collected during the previous days, including the N+1 query reduction from 51 SQL queries to 1, Redis cache miss and cache hit measurements, cache invalidation verification, and SQL Server execution plans for the new appointment indexes.
+
+All completed Sprint 3 performance tasks were reviewed against actual evidence before being marked as complete. One concrete improvement action was carried forward to Sprint 4: adding an automated regression test to protect the optimized VitalSigns query from reintroducing an N+1 pattern in future changes.
+
 ## Daily Work
 
 | Day   | Topic                                            | Project / Documentation |
@@ -36,6 +42,7 @@ The execution plans confirmed that SQL Server used the `AppointmentDate` index t
 | Day 2 | Query Optimization with Eager & Explicit Loading | [View Day 2](./Day%202) |
 | Day 3 | Introducing Redis Caching                        | [View Day 3](./Day%203) |
 | Day 4 | Database Indexing & Performance Profiling        | [View Day 4](./Day%204) |
+| Day 5 | Sprint Review, Benchmark Demo & Retrospective    | [View Day 5](./Day%205) |
 
 ## Week 8 Highlights
 
@@ -462,6 +469,56 @@ A `Key Lookup (Clustered)` was still required to retrieve additional selected co
 
 The composite index provided the strongest evidence of effective index usage for the current appointment query pattern.
 
+### Sprint 3 Benchmark Demo
+
+The Sprint 3 benchmark demo presented measurable evidence from the completed performance work.
+
+The main results were:
+
+- N+1 query count reduced from `51` queries to `1`.
+- Redis cache miss measured at `316 ms`.
+- Redis cache hit measured at `13 ms`.
+- Cache invalidation was verified after Medication updates.
+- The `AppointmentDate` index was confirmed with `Index Scan (NonClustered)`.
+- The composite `PatientId + AppointmentDate` index was confirmed with `Index Seek (NonClustered)`.
+
+### Sprint 3 Review
+
+Each completed Sprint 3 task was reviewed against actual evidence before being considered complete.
+
+The review confirmed completion of:
+
+- Query logging and performance-data preparation
+- N+1 diagnosis and optimization
+- Eager loading and projection comparison
+- Redis caching and cache invalidation
+- Database indexing
+- Before-and-after performance measurements
+- SQL Server execution plan validation
+
+### Sprint 3 Retrospective
+
+#### What Went Well
+
+- Performance improvements were supported by measurable evidence.
+- N+1 query behavior was diagnosed and optimized successfully.
+- Redis caching and invalidation were tested rather than only implemented.
+- Indexing decisions were based on real query patterns.
+- SQL Server execution plans were used to validate index usage.
+
+#### What Could Be Improved
+
+- Response-time measurements varied between executions, so query counts and execution plans provided stronger evidence.
+- The current performance checks are mainly manual and are not yet protected by automated regression tests.
+
+### Sprint 4 Improvement Action
+
+The following concrete action was defined for Sprint 4:
+
+```text
+Add an automated regression test to verify that the optimized VitalSigns query does not return to an N+1 query pattern after future code changes.
+```
+
 ### Sprint 3 Backlog
 
 The current Sprint 3 backlog includes:
@@ -482,13 +539,17 @@ The current Sprint 3 backlog includes:
 | Verify cache miss and cache hit behavior | Done |
 | Verify cache invalidation returns fresh data immediately | Done |
 | Measure cache miss vs cache hit response time | Done |
-| Carry forward Sprint 2 ownership-check testing improvement action | To Do |
+| Carry forward Sprint 2 ownership-check testing improvement action | Carried to Sprint 4 |
 | Identify justified database index candidates | Done |
 | Add a single-column index on `AppointmentDate` | Done |
 | Add a composite index on `PatientId + AppointmentDate` | Done |
 | Create and apply the `AddAppointmentIndexes` migration | Done |
 | Measure appointment query performance before and after indexing | Done |
 | Validate index usage with SQL Server Actual Execution Plans | Done |
+| Review Sprint 3 benchmark evidence | Done |
+| Close Sprint 3 backlog against measured results | Done |
+| Write Sprint 3 Retrospective | Done |
+| Define one concrete Sprint 4 improvement action | Done |
 
 The initial query measurement and N+1 diagnosis work was completed during Day 1.
 
@@ -499,6 +560,10 @@ The Sprint 2 ownership-check testing improvement action remains active for futur
 Redis caching, cache-aside behavior, cache invalidation, and cache miss/hit performance measurement were completed during Day 3.
 
 Database indexing, before-and-after performance profiling, and SQL Server execution plan validation were completed during Day 4.
+
+The Sprint 3 benchmark demo, backlog review, retrospective, and Sprint 4 improvement action were completed during Day 5.
+
+The remaining ownership-check testing improvement and the new N+1 regression-test action were carried forward to Sprint 4.
 
 ## Tools Used
 
@@ -539,8 +604,39 @@ Database indexing, before-and-after performance profiling, and SQL Server execut
 - Index Seek
 - Key Lookup
 - Performance Profiling
+- Sprint Review
+- Benchmark Demo
+- Before-and-After Performance Evidence
+- Sprint Backlog Review
+- Sprint Retrospective
+- Sprint 4 Backlog Planning
+- Performance Regression Testing Planning
 - Visual Studio
 - Swagger
 - Notion
 - Git
 - GitHub
+
+## Week 8 Summary
+
+Week 8 completed Phase 3 Sprint 3 with a focus on advanced queries and backend performance optimization in the Cardiac Patient Monitoring System API.
+
+The week included:
+
+- Diagnosing and reproducing an N+1 query pattern.
+- Reducing the diagnostic query count from `51` SQL queries to `1`.
+- Comparing eager loading with `Include` against projection using `Select`.
+- Reviewing `AsSplitQuery` and documenting why it was not required in the current project.
+- Introducing Redis caching using `IDistributedCache`.
+- Implementing the cache-aside pattern for `GET /api/Medications`.
+- Verifying cache miss, cache hit, and cache invalidation behavior.
+- Adding justified database indexes to the `Appointments` table.
+- Creating the `AddAppointmentIndexes` EF Core migration.
+- Measuring appointment query behavior before and after indexing.
+- Validating index usage using SQL Server Actual Execution Plans.
+- Completing a Sprint 3 benchmark demo using measurable before-and-after evidence.
+- Reviewing the Sprint 3 backlog and closing completed performance tasks.
+- Writing the Sprint 3 Retrospective.
+- Defining one concrete improvement action for Sprint 4.
+
+The main Sprint 4 improvement action is to add an automated regression test that verifies the optimized VitalSigns query does not return to an N+1 query pattern after future code changes.
