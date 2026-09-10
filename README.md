@@ -13,7 +13,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;5 | xUnit unit testing, dedicated test projects, service-layer unit testing, mocking dependencies with Moq, repository abstraction, integration testing with `WebApplicationFactory`, Entity Framework Core InMemory test databases, authenticated endpoint testing with JWT, centralized error handling, global exception middleware, standardized `ProblemDetails` responses, structured logging with `ILogger`, risk-based testing, `[Fact]`, `[Theory]`, `[InlineData]`, Arrange-Act-Assert, `dotnet test`, and Visual Studio Test Explorer | [View Week 5](./BinX%20Internship/Week%205) |
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
-| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, relationship loading with `ThenInclude`, projection with `Select`, N+1 optimization, before-and-after query comparison, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, database indexing, single-column and composite indexes, EF Core Fluent API index configuration, index migrations, before-and-after query performance profiling, SQL Server Actual Execution Plans, `Index Scan`, `Index Seek`, and Sprint 3 backlog tracking | [View Week 8](./BinX%20Internship/Week%208) |
+| Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, projection with `Select`, N+1 optimization, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, database indexing, single-column and composite indexes, EF Core index migrations, before-and-after performance profiling, SQL Server Actual Execution Plans, Sprint 3 benchmark demo, Sprint Review, Sprint Retrospective, backlog close-out, and Sprint 4 improvement planning | [View Week 8](./BinX%20Internship/Week%208) |
 
 ## Repository Structure
 
@@ -73,7 +73,8 @@ BinX Internship/
     ├── Day 1/
     ├── Day 2/
     ├── Day 3/
-    └── Day 4/
+    ├── Day 4/
+    └── Day 5/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -284,6 +285,18 @@ Each week contains a summary README, and each completed day contains its own tas
 - Identifying authorization and ownership testing improvements
 - Defining one concrete improvement action for Sprint 3
 - Carrying forward explicit ownership-check testing for future patient-specific resource endpoints
+- Running the Sprint 3 benchmark demo using measurable before-and-after performance evidence
+- Reviewing Sprint 3 backlog items against actual performance results
+- Confirming completed performance tasks before sprint close-out
+- Presenting N+1 query-count improvements
+- Presenting Redis cache miss and cache hit measurements
+- Presenting cache invalidation verification
+- Presenting SQL Server execution-plan evidence for database indexes
+- Writing the Sprint 3 Retrospective
+- Identifying what went well during the performance sprint
+- Identifying what could be improved in future performance validation
+- Defining one concrete improvement action for Sprint 4
+- Carrying forward performance regression testing into Sprint 4
 
 ### Sprint 2 Planning and Identity Integration Review
 
@@ -462,6 +475,19 @@ Each week contains a summary README, and each completed day contains its own tas
 - Reviewing `Key Lookup (Clustered)` behavior for columns not stored in the nonclustered indexes
 - Treating response-time differences as observational measurements rather than proof by themselves
 - Using execution-plan evidence to justify the indexing decisions
+- Running the Sprint 3 benchmark demo using measurable before-and-after evidence
+- Presenting the N+1 query-count reduction from 51 SQL queries to 1
+- Presenting Redis cache miss and cache hit measurements
+- Verifying cache invalidation as part of the Sprint Review
+- Presenting SQL Server execution-plan evidence for the appointment indexes
+- Reviewing completed Sprint 3 backlog items against actual performance evidence
+- Closing completed performance tasks based on measured results
+- Identifying remaining improvement opportunities for Sprint 4
+- Writing the Sprint 3 Retrospective
+- Recording what went well during the performance sprint
+- Identifying areas that could be improved in future performance validation
+- Defining a concrete Sprint 4 improvement action
+- Planning an automated regression test to protect the optimized VitalSigns query from reintroducing an N+1 pattern
 
 ### API Architecture and Validation
 
@@ -747,6 +773,13 @@ Each week contains a summary README, and each completed day contains its own tas
 - `Key Lookup`
 - Query performance profiling
 - Before-and-after index performance measurement
+- Sprint Review
+- Benchmark Demo
+- Before-and-after performance evidence
+- Sprint backlog review
+- Sprint Retrospective
+- Sprint 4 improvement planning
+- Performance regression test planning
 
 ## Author
 
