@@ -14,6 +14,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
 | Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, projection with `Select`, N+1 optimization, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, database indexing, single-column and composite indexes, EF Core index migrations, before-and-after performance profiling, SQL Server Actual Execution Plans, Sprint 3 benchmark demo, Sprint Review, Sprint Retrospective, backlog close-out, and Sprint 4 improvement planning | [View Week 8](./BinX%20Internship/Week%208) |
+| Week&nbsp;9 | Phase 3 Sprint 4 planning, full API endpoint test-coverage audit, risk-based test prioritization, authentication integration testing, registration integration testing, patient ownership testing, role-based authorization testing, `WebApplicationFactory` integration tests, ASP.NET Core Identity test setup, EF Core InMemory test configuration, JWT-based protected endpoint testing, and full automated test-suite validation | [View Week 9](./BinX%20Internship/Week%209) |
 
 ## Repository Structure
 
@@ -68,13 +69,16 @@ BinX Internship/
 │   ├── Day 3/
 │   ├── Day 4/
 │   └── Day 5/
-└── Week 8/
+├── Week 8/
+│   ├── README.md
+│   ├── Day 1/
+│   ├── Day 2/
+│   ├── Day 3/
+│   ├── Day 4/
+│   └── Day 5/
+└── Week 9/
     ├── README.md
-    ├── Day 1/
-    ├── Day 2/
-    ├── Day 3/
-    ├── Day 4/
-    └── Day 5/
+    └── Day 1/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -489,6 +493,35 @@ Each week contains a summary README, and each completed day contains its own tas
 - Defining a concrete Sprint 4 improvement action
 - Planning an automated regression test to protect the optimized VitalSigns query from reintroducing an N+1 pattern
 
+### Sprint 4 Planning and Test Coverage
+
+- Starting Phase 3 Sprint 4 for the Cardiac Patient Monitoring System API
+- Defining the Sprint 4 goal around testing, documentation, and deployment readiness
+- Carrying forward the Sprint 3 N+1 regression-test improvement action
+- Auditing integration-test coverage across all 23 API endpoints
+- Classifying endpoint coverage as happy path, error path, both, or neither
+- Separating service-level unit-test coverage from endpoint-level integration coverage
+- Prioritizing test gaps based on authentication, authorization, ownership, and business risk
+- Adding integration tests for `POST /api/Auths/login`
+- Testing successful login with `200 OK`
+- Verifying JWT token issuance after valid login
+- Testing invalid login credentials with `401 Unauthorized`
+- Adding integration tests for `POST /api/Auths/register`
+- Testing successful registration with `201 Created`
+- Testing duplicate-email registration with `400 Bad Request`
+- Preparing the `Patient` role inside the integration-test environment
+- Testing appointment ownership using `GET /api/Appointments/{id}`
+- Verifying own-appointment access with `200 OK`
+- Verifying cross-patient appointment access with `404 Not Found`
+- Testing role-based authorization using `GET /api/Patients`
+- Verifying Admin access with `200 OK`
+- Verifying Patient rejection with `403 Forbidden`
+- Configuring EF Core InMemory for registration integration tests
+- Ignoring the InMemory transaction warning in the test environment
+- Running the complete automated test suite
+- Confirming `25` total tests passed with `0` failures and `0` skipped
+- Keeping the N+1 automated regression test in the Sprint 4 backlog
+
 ### API Architecture and Validation
 
 - Request models for create and update operations
@@ -709,6 +742,20 @@ Each week contains a summary README, and each completed day contains its own tas
 - Verifying that unnecessary database operations are not performed during failure paths.
 - Running the complete test suite using `dotnet test`.
 - Interpreting complete test suite results and confirming that all tests pass successfully.
+- Auditing integration-test coverage across all API endpoints
+- Classifying endpoint coverage as happy path, error path, both, or neither
+- Applying risk-based test prioritization to authentication, authorization, ownership, and protected routes
+- Adding integration tests for login and registration endpoints
+- Testing successful and invalid authentication scenarios
+- Testing duplicate-email registration errors
+- Testing patient resource ownership using JWT `PatientId` claims
+- Testing role-based authorization with Admin and Patient roles
+- Verifying `403 Forbidden` for unauthorized role access
+- Verifying `404 Not Found` for cross-patient resource access
+- Seeding ASP.NET Core Identity roles inside the integration-test environment
+- Configuring EF Core InMemory to support the registration integration-test flow
+- Running the complete test suite after adding new coverage
+- Confirming `25` tests passed with `0` failures and `0` skipped
 
 ### Centralized Error Handling and Logging
 
