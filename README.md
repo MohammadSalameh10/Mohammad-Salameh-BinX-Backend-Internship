@@ -14,7 +14,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
 | Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, projection with `Select`, N+1 optimization, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, database indexing, single-column and composite indexes, EF Core index migrations, before-and-after performance profiling, SQL Server Actual Execution Plans, Sprint 3 benchmark demo, Sprint Review, Sprint Retrospective, backlog close-out, and Sprint 4 improvement planning | [View Week 8](./BinX%20Internship/Week%208) |
-| Week&nbsp;9 | Phase 3 Sprint 4 planning, full API endpoint test-coverage audit, risk-based test prioritization, authentication integration testing, registration integration testing, patient ownership testing, role-based authorization testing, `WebApplicationFactory` integration tests, ASP.NET Core Identity test setup, EF Core InMemory test configuration, JWT-based protected endpoint testing, and full automated test-suite validation | [View Week 9](./BinX%20Internship/Week%209) |
+| Week&nbsp;9 | Phase 3 Sprint 4 planning, full API endpoint test-coverage audit, risk-based test prioritization, authentication and registration integration testing, patient ownership testing, role-based authorization testing, `WebApplicationFactory` integration tests, EF Core InMemory test configuration, Swagger/OpenAPI XML documentation, realistic request and response examples, Postman collection finalization, collection variables, automated JWT token storage, per-request status-code test scripts, project README review, and full automated test-suite validation | [View Week 9](./BinX%20Internship/Week%209) |
 
 ## Repository Structure
 
@@ -78,7 +78,8 @@ BinX Internship/
 │   └── Day 5/
 └── Week 9/
     ├── README.md
-    └── Day 1/
+    ├── Day 1/
+    └── Day 2/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -521,6 +522,21 @@ Each week contains a summary README, and each completed day contains its own tas
 - Running the complete automated test suite
 - Confirming `25` total tests passed with `0` failures and `0` skipped
 - Keeping the N+1 automated regression test in the Sprint 4 backlog
+- Finalizing Swagger/OpenAPI documentation using XML documentation comments
+- Enabling XML documentation output with `GenerateDocumentationFile`
+- Connecting generated XML comments to Swagger using `IncludeXmlComments`
+- Adding meaningful summaries and parameter descriptions to important endpoints
+- Documenting expected response status codes in Swagger
+- Adding realistic request examples for login, registration, and appointment creation
+- Adding a documented login response model with a JWT token example
+- Reviewing and finalizing the complete Postman collection
+- Organizing Postman requests into logical API-resource folders
+- Using `baseUrl`, `adminToken`, and `patientToken` collection variables consistently
+- Automatically storing Admin and Patient JWT tokens using Post-response scripts
+- Adding at least one expected status-code test script to every Postman request
+- Exporting the finalized Week 9 Day 2 Postman collection
+- Reviewing the existing project README against professional documentation requirements
+- Confirming that the existing README already contains setup, database, migrations, API documentation, Postman, testing, and local-run instructions
 
 ### API Architecture and Validation
 
@@ -700,6 +716,15 @@ Each week contains a summary README, and each completed day contains its own tas
 - Demonstrating cross-patient access rejection with `404 Not Found`
 - Demonstrating Admin-only endpoint rejection with `403 Forbidden`
 - Including deliberate rejection cases as evidence that the authorization model works correctly
+- Reviewing the complete Postman collection for final documentation readiness
+- Confirming all required API endpoints are present and organized by resource
+- Using `baseUrl`, `adminToken`, and `patientToken` collection variables consistently
+- Automatically saving Admin JWT tokens after successful login
+- Automatically saving Patient JWT tokens after successful login
+- Using Post-response scripts to store JWT tokens in collection variables
+- Adding at least one expected status-code test script to every Postman request
+- Verifying status-code assertions using `pm.test`
+- Finalizing and exporting the Week 9 Day 2 Postman collection
 
 ### Unit Testing with xUnit
 
@@ -827,6 +852,20 @@ Each week contains a summary README, and each completed day contains its own tas
 - Sprint Retrospective
 - Sprint 4 improvement planning
 - Performance regression test planning
+- Swashbuckle.AspNetCore
+- Swagger / OpenAPI XML documentation
+- `GenerateDocumentationFile`
+- `IncludeXmlComments`
+- XML `<summary>`, `<param>`, and `<response>` comments
+- Realistic Swagger request examples
+- `ProducesResponseType`
+- Swagger response model documentation
+- Postman Post-response scripts
+- Postman collection variables
+- Automatic JWT token storage in Postman
+- Per-request Postman status-code tests using `pm.test`
+- Final Postman collection export
+- Professional project README review
 
 ## Author
 
