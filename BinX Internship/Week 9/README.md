@@ -23,11 +23,22 @@ The complete test suite finished with:
 
 The Sprint 3 improvement action to protect the optimized VitalSigns query against future N+1 regressions was also carried forward into the Sprint 4 backlog.
 
+Day 2 focused on finalizing the API documentation using Swagger/OpenAPI and Postman.
+
+XML documentation output was enabled and connected to Swagger so meaningful endpoint summaries, parameter descriptions, and documented response codes could be displayed directly in the Swagger UI.
+
+Realistic request examples were added for login, registration, and appointment creation, and the login endpoint was documented with a realistic JWT response example.
+
+The Postman collection was then reviewed and finalized by organizing the requests, verifying the required endpoints, using collection variables consistently, automatically storing Admin and Patient JWT tokens after login, and adding at least one expected status-code test script to every request.
+
+The existing project README was also reviewed against the professional documentation requirements and confirmed to already contain the required setup, migration, technology stack, API documentation, Postman, testing, and local-run instructions.
+
 ## Daily Work
 
-| Day   | Topic                                               | Project / Documentation |
-| ----- | --------------------------------------------------- | ----------------------- |
-| Day 1 | Sprint 4 Planning & Closing Test Coverage Gaps      | [View Day 1](./Day%201) |
+| Day   | Topic                                                | Project / Documentation |
+| ----- | ---------------------------------------------------- | ----------------------- |
+| Day 1 | Sprint 4 Planning & Closing Test Coverage Gaps       | [View Day 1](./Day%201) |
+| Day 2 | Finalizing API Documentation (Swagger/OpenAPI & Postman) | [View Day 2](./Day%202) |
 
 ## Week 9 Highlights
 
@@ -178,6 +189,58 @@ This action remains part of the Sprint 4 backlog.
 
 It was not completed during Day 1 because the Day 1 implementation focused first on the highest-risk uncovered integration-test gaps involving authentication, registration, ownership, and role-based authorization.
 
+### Swagger XML Documentation
+
+- Enabled XML documentation output in the API project.
+- Connected the generated XML documentation file to Swagger using `IncludeXmlComments`.
+- Added meaningful XML comments to five important endpoints.
+- Documented endpoint summaries, request parameters, and expected response status codes.
+- Verified that the XML comments appear correctly in Swagger UI.
+
+### Swagger Request and Response Examples
+
+- Added realistic request examples for:
+  - `POST /api/Auths/login`
+  - `POST /api/Auths/register`
+  - `POST /api/Appointments`
+- Replaced default placeholder values with realistic request data.
+- Added a documented `200 OK` response model for the login endpoint.
+- Added a realistic JWT token example to the login response documentation.
+
+### Postman Collection Finalization
+
+- Reviewed the complete Postman collection.
+- Confirmed that the required API endpoints are present.
+- Organized requests into logical folders:
+  - `Auths`
+  - `Patients`
+  - `VitalSigns`
+  - `Medications`
+  - `Appointments`
+- Used collection variables consistently:
+  - `{{baseUrl}}`
+  - `{{adminToken}}`
+  - `{{patientToken}}`
+- Configured Admin login to automatically store the JWT in `adminToken`.
+- Configured Patient login to automatically store the JWT in `patientToken`.
+- Added at least one expected status-code test script to every request.
+- Exported the finalized Week 9 Day 2 Postman collection.
+
+### Project README Review
+
+- Reviewed the existing project README against the Day 2 documentation requirements.
+- Confirmed that the README already includes:
+  - Project overview
+  - Technology stack
+  - Setup requirements
+  - Database configuration
+  - EF Core migration instructions
+  - Swagger documentation
+  - Postman collection information
+  - Automated testing information
+  - Local project run instructions
+- No full README rewrite was required because the existing documentation already covered the required setup and project information.
+
 ### Sprint 4 Backlog
 
 The current Sprint 4 backlog includes:
@@ -194,10 +257,14 @@ The current Sprint 4 backlog includes:
 | Add role-authorization tests for `GET /api/Patients` | Done |
 | Run the complete automated test suite | Done |
 | Keep all tests passing after the new coverage work | Done |
-| Add automated N+1 regression protection for the optimized VitalSigns query | Pending |
-| Continue closing remaining high-value endpoint coverage gaps | Pending |
-| Complete Sprint 4 project documentation | Pending |
-| Prepare the application for deployment | Pending |
+| Add automated N+1 regression protection for the optimized VitalSigns query    | Pending |
+| Continue closing remaining high-value endpoint coverage gaps                  | Pending |
+| Finalize Swagger/OpenAPI documentation with XML comments                      | Done    |
+| Add realistic Swagger request and response examples                           | Done    |
+| Finalize the Postman collection and add status-code tests                     | Done    |
+| Review the existing project README against professional documentation needs    | Done    |
+| Complete remaining Sprint 4 project documentation                             | Pending |
+| Prepare the application for deployment                                        | Pending |
 
 ## Tools Used
 
@@ -213,6 +280,14 @@ The current Sprint 4 backlog includes:
 - `RoleManager<IdentityRole>`
 - JWT Bearer Authentication
 - `HttpClient`
+- Swashbuckle.AspNetCore
+- Swagger / OpenAPI
+- XML Documentation Comments
+- `GenerateDocumentationFile`
+- `IncludeXmlComments`
+- `ProducesResponseType`
+- Postman Test Scripts
+- Postman Collection Variables
 - Visual Studio Test Explorer
 - Postman
 - Visual Studio
