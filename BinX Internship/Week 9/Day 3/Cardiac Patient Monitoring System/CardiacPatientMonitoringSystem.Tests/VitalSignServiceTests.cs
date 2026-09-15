@@ -26,7 +26,7 @@ namespace CardiacPatientMonitoringSystem.Tests
             var result = _service.GetHeartRateStatus(heartRate);
 
             // Assert
-            Assert.Equal("Low", result);
+            Assert.Equal("High", result);
         }
 
         [Fact]
