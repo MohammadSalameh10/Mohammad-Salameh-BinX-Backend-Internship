@@ -33,12 +33,19 @@ The Postman collection was then reviewed and finalized by organizing the request
 
 The existing project README was also reviewed against the professional documentation requirements and confirmed to already contain the required setup, migration, technology stack, API documentation, Postman, testing, and local-run instructions.
 
+Day 3 focused on building and verifying a CI pipeline with GitHub Actions.
+
+A workflow was created to run automatically on `push` and `pull_request`, using `.NET 10` to restore dependencies, build the solution, and run the complete automated test suite.
+
+The pipeline was first verified with a successful run, then one test was deliberately broken to confirm that GitHub Actions correctly marks the workflow as failed. After restoring the original assertion, the pipeline returned to a passing state. A workflow status badge was also added to the Day 3 README.
+
 ## Daily Work
 
 | Day   | Topic                                                | Project / Documentation |
 | ----- | ---------------------------------------------------- | ----------------------- |
 | Day 1 | Sprint 4 Planning & Closing Test Coverage Gaps       | [View Day 1](./Day%201) |
 | Day 2 | Finalizing API Documentation (Swagger/OpenAPI & Postman) | [View Day 2](./Day%202) |
+| Day 3 | Building the CI/CD Pipeline with GitHub Actions      | [View Day 3](./Day%203) |
 
 ## Week 9 Highlights
 
@@ -265,6 +272,28 @@ The current Sprint 4 backlog includes:
 | Review the existing project README against professional documentation needs    | Done    |
 | Complete remaining Sprint 4 project documentation                             | Pending |
 | Prepare the application for deployment                                        | Pending |
+| Create GitHub Actions CI workflow | Done |
+| Trigger the CI pipeline on `push` and `pull_request` | Done |
+| Automatically restore, build, and test the project in GitHub Actions | Done |
+| Verify that the pipeline fails when a test fails | Done |
+| Fix the test and confirm the pipeline returns to passing | Done |
+| Add a CI workflow status badge to the Day 3 README | Done |
+
+### GitHub Actions CI Pipeline
+
+- Created a GitHub Actions workflow in `.github/workflows/build-and-test.yml`.
+- Configured the workflow to run on:
+  - `push`
+  - `pull_request`
+- Configured the pipeline to use `.NET 10`.
+- Automated:
+  - `dotnet restore`
+  - `dotnet build --no-restore`
+  - `dotnet test --no-build`
+- Verified that the complete test suite passes successfully in GitHub Actions.
+- Deliberately broke one test to confirm that the workflow correctly fails when a test fails.
+- Restored the test and confirmed that the workflow returned to a passing state.
+- Added a workflow status badge to the Day 3 README.
 
 ## Tools Used
 
@@ -289,6 +318,7 @@ The current Sprint 4 backlog includes:
 - Postman Test Scripts
 - Postman Collection Variables
 - Visual Studio Test Explorer
+- GitHub Actions
 - Postman
 - Visual Studio
 - Git
