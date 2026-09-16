@@ -14,7 +14,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;6 | Phase 3 Sprint 1 planning, project database design review, ERD finalization, EF Core model and migration verification, SQL Server schema validation, paginated read endpoints, query-parameter filtering and sorting, DTO projection, over-fetching reduction, write operations with business logic, EF Core transaction handling, commit and rollback behavior, pull request workflow, Sprint Review, Postman demo, Sprint Retrospective, core API route review, and sprint backlog close-out                                              | [View Week 6](./BinX%20Internship/Week%206) |
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
 | Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, projection with `Select`, N+1 optimization, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, database indexing, single-column and composite indexes, EF Core index migrations, before-and-after performance profiling, SQL Server Actual Execution Plans, Sprint 3 benchmark demo, Sprint Review, Sprint Retrospective, backlog close-out, and Sprint 4 improvement planning | [View Week 8](./BinX%20Internship/Week%208) |
-| Week&nbsp;9 | Phase 3 Sprint 4 planning, full API endpoint test-coverage audit, risk-based test prioritization, authentication and registration integration testing, patient ownership testing, role-based authorization testing, `WebApplicationFactory` integration tests, EF Core InMemory test configuration, Swagger/OpenAPI XML documentation, realistic request and response examples, Postman collection finalization, automated JWT token storage, per-request status-code tests, GitHub Actions CI pipeline, automated restore/build/test workflow, push and pull-request triggers, deliberate CI failure verification, and workflow status badges | [View Week 9](./BinX%20Internship/Week%209) |
+| Week&nbsp;9 | Phase 3 Sprint 4 planning, full API endpoint test-coverage audit, risk-based test prioritization, authentication and registration integration testing, patient ownership testing, role-based authorization testing, `WebApplicationFactory` integration tests, EF Core InMemory test configuration, Swagger/OpenAPI XML documentation, realistic request and response examples, Postman collection finalization, automated JWT token storage, per-request status-code tests, GitHub Actions CI pipeline, automated restore/build/test workflow, push and pull-request triggers, deliberate CI failure verification, workflow status badges, Railway deployment, Docker-based `.NET 10` hosting, production SQL Server and Redis configuration, production environment variables, EF Core production migrations, live API verification, and automated CI/CD deployment after successful tests on `main` | [View Week 9](./BinX%20Internship/Week%209) |
 
 ## Repository Structure
 
@@ -80,7 +80,8 @@ BinX Internship/
     ├── README.md
     ├── Day 1/
     ├── Day 2/
-    └── Day 3/
+    ├── Day 3/
+    └── Day 4/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -538,6 +539,21 @@ Each week contains a summary README, and each completed day contains its own tas
 - Exporting the finalized Week 9 Day 2 Postman collection
 - Reviewing the existing project README against professional documentation requirements
 - Confirming that the existing README already contains setup, database, migrations, API documentation, Postman, testing, and local-run instructions
+- Deploying the Cardiac Patient Monitoring System API to Railway
+- Adding a `Dockerfile` for `.NET 10` deployment
+- Configuring the Railway service root directory
+- Creating a production SQL Server database
+- Enabling remote SQL Server access for the Railway-hosted API
+- Configuring production environment variables for SQL Server, Redis, and JWT
+- Creating and linking a Redis service in Railway
+- Applying EF Core migrations to the production database
+- Verifying the live Railway API using Postman
+- Confirming successful live authentication with `POST /api/Auths/login`
+- Extending the GitHub Actions workflow with a Railway deploy job
+- Storing the Railway project token securely using GitHub Secrets
+- Making deployment depend on successful build and automated tests
+- Restricting automated deployment to pushes on the `main` branch
+- Verifying the complete GitHub Actions build, test, and Railway deployment flow
 
 ### API Architecture and Validation
 
@@ -868,6 +884,17 @@ Each week contains a summary README, and each completed day contains its own tas
 - Final Postman collection export
 - Professional project README review
 - Git and GitHub workflows
+- Railway
+- Railway CLI
+- Railway project tokens
+- GitHub Secrets
+- Docker-based deployment
+- Production environment variables
+- Production SQL Server hosting
+- Remote SQL Server access
+- Production Redis service
+- Automated deployment after successful CI checks
+- CI/CD deployment restricted to pushes on `main`
 
 ## Author
 
