@@ -342,10 +342,6 @@ The update returned:
 
 ![Update Medication](./05-update-medication.png)
 
-The console confirmed that SQL Server executed the Medication update.
-
-![Update and Cache Invalidation](./06a-update-and-invalidation.png)
-
 Immediately after the update, the following endpoint was executed:
 
 ```http
@@ -379,57 +375,6 @@ Dosage: 1000 mg
 ![Fresh Data After Update](./07-fresh-data-after-update.png)
 
 This confirmed that stale cached data was not returned after the update.
-
----
-
-## Cache Invalidation Flow
-
-The tested flow was:
-
-```text
-GET /api/Medications
-        ↓
-Cache Miss
-        ↓
-SQL Server
-        ↓
-Store medications:all in Redis
-        ↓
-Second GET
-        ↓
-Cache Hit
-        ↓
-Return data from Redis
-        ↓
-PUT /api/Medications/2
-        ↓
-Update SQL Server
-        ↓
-Remove medications:all
-        ↓
-Next GET
-        ↓
-Cache Miss
-        ↓
-Load fresh data from SQL Server
-        ↓
-Store fresh list in Redis
-```
-
----
-
-## Caching Considerations
-
-Caching is most useful for data that:
-
-- Is read frequently.
-- Changes relatively infrequently.
-- Can tolerate a short cache lifetime.
-- Benefits from avoiding repeated database queries.
-
-Data that changes frequently or must always be current may not be a good caching candidate.
-
-In a real healthcare system, additional care is required before caching sensitive or patient-related information. Security, privacy, authorization, expiration, encryption, and regulatory requirements should all be considered.
 
 ---
 
