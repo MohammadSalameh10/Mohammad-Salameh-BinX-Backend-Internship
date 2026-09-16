@@ -87,20 +87,6 @@ Update-Database
 
 To verify whether the indexes actually improved query behavior, the same appointment queries were measured before and after applying the `AddAppointmentIndexes` migration.
 
-Two query patterns were tested:
-
-1. Filtering appointments by `PatientId` and sorting by `AppointmentDate`.
-2. Sorting all appointments by `AppointmentDate`.
-
-Measurements included:
-
-- API request time from the custom request timing middleware
-- Postman response time
-- EF Core SQL command timing
-- SQL Server Actual Execution Plan
-
-The same query parameters and test data were used for each before-and-after comparison.
-
 ## Composite Index Performance Test
 
 The composite index was tested using the existing appointment query that filters by patient and sorts by appointment date.
