@@ -219,25 +219,6 @@ A `Key Lookup (Clustered)` was still required to retrieve additional selected co
 
 ![Composite Index Execution Plan](./10-composite-index-execution-plan.png)
 
-## Performance Findings
-
-The indexing work showed that performance decisions should be validated with real measurements rather than assumptions.
-
-For the `AppointmentDate` index:
-
-- SQL Server used a nonclustered index scan.
-- No separate sort operation was required.
-- SQL execution time remained almost unchanged because the test dataset was relatively small.
-
-For the composite `PatientId + AppointmentDate` index:
-
-- SQL Server used a nonclustered index seek.
-- The filter on `PatientId` and the sort on `AppointmentDate` were both supported by the same index.
-- No separate sort operation was required.
-- The observed API and SQL timings were lower after indexing.
-
-The composite index provided the strongest evidence of effective index usage for the current application query pattern.
-
 ## Tools Used
 
 - C#
