@@ -241,31 +241,6 @@ The repeated SQL pattern was visible in the EF Core console logs.
 
 ---
 
-## N+1 Baseline
-
-The confirmed diagnostic baseline is:
-
-```text
-Endpoint:
-GET /api/VitalSigns/diagnostic-n-plus-one
-
-Records:
-50 VitalSigns
-
-Actual SQL Queries:
-51
-
-N+1:
-Confirmed
-
-Response Time:
-234 ms
-```
-
-This diagnostic endpoint was introduced specifically for the performance lab and does not represent a pre-existing issue in the original production endpoints.
-
----
-
 ## Tools Used
 
 - ASP.NET Core Web API
