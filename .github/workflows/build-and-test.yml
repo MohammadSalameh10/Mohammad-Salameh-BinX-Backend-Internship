@@ -34,6 +34,5 @@ jobs:
       - run: npm install -g @railway/cli
 
       - run: railway up --service "Mohammad-Salameh-BinX-Backend-Internship" --detach
-        working-directory: './BinX Internship/Week 9/Day 3/Cardiac Patient Monitoring System'
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
