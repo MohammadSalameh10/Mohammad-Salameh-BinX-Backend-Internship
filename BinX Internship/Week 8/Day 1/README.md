@@ -30,14 +30,6 @@ Sprint 3 was planned around measurable database performance improvements.
 
 Improve the performance of the Cardiac Patient Monitoring System API by measuring database query behavior on important list endpoints, identifying and reducing N+1 query problems, and verifying measurable improvements in database query count.
 
-### Sprint 2 Retrospective Action
-
-The following improvement action was carried forward from Sprint 2:
-
-```text
-Write an explicit ownership-check test for every new patient-specific resource endpoint.
-```
-
 ### Performance Targets
 
 The initial Sprint 3 performance targets are:
