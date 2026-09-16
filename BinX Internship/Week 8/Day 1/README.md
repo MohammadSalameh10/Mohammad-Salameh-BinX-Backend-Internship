@@ -76,38 +76,6 @@ The database was seeded with:
 50 Appointments
 ```
 
-The seeding logic checks the current number of records and only inserts the missing amount.
-
-Example:
-
-```csharp
-var vitalSignCount = await context.VitalSigns
-    .CountAsync(v => v.PatientId == patient.Id);
-
-if (vitalSignCount < 50)
-{
-    var vitalSigns = new List<VitalSign>();
-
-    for (int i = vitalSignCount; i < 50; i++)
-    {
-        vitalSigns.Add(new VitalSign
-        {
-            PatientId = patient.Id,
-            HeartRate = 65 + (i % 35),
-            SystolicBloodPressure = 110 + (i % 20),
-            DiastolicBloodPressure = 70 + (i % 15),
-            OxygenSaturation = 95 + (i % 5),
-            RecordedAt = new DateTime(2026, 8, 1)
-                .AddHours(i * 6)
-        });
-    }
-
-    context.VitalSigns.AddRange(vitalSigns);
-}
-```
-
-The same approach was applied to medications and appointments.
-
 ---
 
 ## Query Count Measurements
