@@ -207,24 +207,6 @@ Response Time: 35 ms
 
 ---
 
-## Include vs Projection
-
-Both approaches removed the N+1 problem and produced one SQL query.
-
-| Approach | SQL Queries | Data Retrieved |
-| -------- | ----------: | -------------- |
-| Original N+1 implementation | 51 | VitalSigns + repeated Patient queries |
-| `Include` | 1 | Full VitalSign and Patient entity data |
-| Projection with `Select` | 1 | Only the required response fields |
-
-The main difference is that projection retrieves only the required columns.
-
-For this list-style endpoint, projection is the leaner approach.
-
-`Include` is more suitable when the endpoint genuinely needs the complete related entity data.
-
----
-
 ## Split Queries
 
 `AsSplitQuery` can be useful when a query includes two or more collection navigation properties.
@@ -268,17 +250,6 @@ Before: 51 SQL Queries
 After Include: 1 SQL Query
 After Projection: 1 SQL Query
 ```
-
----
-
-## Technical Decision
-
-For the current list-style diagnostic endpoint, projection was kept as the preferred implementation because:
-
-- It removes the N+1 problem.
-- It keeps the query count at one.
-- It retrieves only the fields required by the response.
-- It avoids loading unnecessary entity columns.
 
 ---
 
