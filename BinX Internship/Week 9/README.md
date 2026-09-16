@@ -38,6 +38,11 @@ Day 3 focused on building and verifying a CI pipeline with GitHub Actions.
 A workflow was created to run automatically on `push` and `pull_request`, using `.NET 10` to restore dependencies, build the solution, and run the complete automated test suite.
 
 The pipeline was first verified with a successful run, then one test was deliberately broken to confirm that GitHub Actions correctly marks the workflow as failed. After restoring the original assertion, the pipeline returned to a passing state. A workflow status badge was also added to the Day 3 README.
+Day 4 focused on deploying the Cardiac Patient Monitoring System API to Railway and extending the existing GitHub Actions workflow into a complete CI/CD pipeline.
+
+The production environment was configured with a remote SQL Server database, Redis, JWT environment variables, and EF Core migrations. The live API was verified through Postman using the Railway public URL.
+
+After the manual deployment was confirmed, the GitHub Actions workflow was extended with a Railway deployment job that runs only after the build and automated tests succeed on a push to the `main` branch. The automated deployment was verified successfully in both GitHub Actions and Railway.
 
 ## Daily Work
 
@@ -46,6 +51,7 @@ The pipeline was first verified with a successful run, then one test was deliber
 | Day 1 | Sprint 4 Planning & Closing Test Coverage Gaps       | [View Day 1](./Day%201) |
 | Day 2 | Finalizing API Documentation (Swagger/OpenAPI & Postman) | [View Day 2](./Day%202) |
 | Day 3 | Building the CI/CD Pipeline with GitHub Actions      | [View Day 3](./Day%203) |
+| Day 4 | Deploying to Railway & Extending the CI/CD Pipeline | [View Day 4](./Day%204) |
 
 ## Week 9 Highlights
 
@@ -271,13 +277,21 @@ The current Sprint 4 backlog includes:
 | Finalize the Postman collection and add status-code tests                     | Done    |
 | Review the existing project README against professional documentation needs    | Done    |
 | Complete remaining Sprint 4 project documentation                             | Pending |
-| Prepare the application for deployment                                        | Pending |
+| Prepare the application for deployment | Done |
 | Create GitHub Actions CI workflow | Done |
 | Trigger the CI pipeline on `push` and `pull_request` | Done |
 | Automatically restore, build, and test the project in GitHub Actions | Done |
 | Verify that the pipeline fails when a test fails | Done |
 | Fix the test and confirm the pipeline returns to passing | Done |
 | Add a CI workflow status badge to the Day 3 README | Done |
+| Deploy the capstone API to Railway | Done |
+| Configure production SQL Server, Redis, and JWT environment variables | Done |
+| Apply EF Core migrations to the production database | Done |
+| Verify the live API through the public Railway URL | Done |
+| Extend GitHub Actions with a Railway deploy job | Done |
+| Gate deployment on successful build and automated tests | Done |
+| Restrict automated deployment to pushes on `main` | Done |
+| Verify the complete automated CI/CD deployment flow | Done |
 
 ### GitHub Actions CI Pipeline
 
@@ -294,6 +308,28 @@ The current Sprint 4 backlog includes:
 - Deliberately broke one test to confirm that the workflow correctly fails when a test fails.
 - Restored the test and confirmed that the workflow returned to a passing state.
 - Added a workflow status badge to the Day 3 README.
+
+### Railway Deployment & CI/CD Automation
+
+- Deployed the Cardiac Patient Monitoring System API to Railway.
+- Added a `Dockerfile` so Railway could build and run the `.NET 10` API.
+- Configured the Railway service root directory for the capstone project.
+- Created a production SQL Server database and enabled remote access.
+- Configured production environment variables for:
+  - `ConnectionStrings__DefaultConnection`
+  - `ConnectionStrings__Redis`
+  - `Jwt__Issuer`
+  - `Jwt__Audience`
+  - `Jwt__Key`
+- Created and linked a Redis service in Railway.
+- Applied EF Core migrations to the production SQL Server database.
+- Verified the live API through Postman using the Railway public URL.
+- Confirmed `POST /api/Auths/login` returns `200 OK` from the live deployment.
+- Extended the GitHub Actions workflow with a Railway deployment job.
+- Stored the Railway project token securely in GitHub Secrets as `RAILWAY_TOKEN`.
+- Configured deployment to run only after the build and automated tests succeed.
+- Restricted automated deployment to pushes on the `main` branch.
+- Verified the complete build, test, and Railway deployment flow successfully.
 
 ## Tools Used
 
@@ -319,6 +355,13 @@ The current Sprint 4 backlog includes:
 - Postman Collection Variables
 - Visual Studio Test Explorer
 - GitHub Actions
+- Railway
+- Docker
+- MonsterASP.NET
+- SQL Server Production Database
+- Redis
+- GitHub Secrets
+- Railway CLI
 - Postman
 - Visual Studio
 - Git
