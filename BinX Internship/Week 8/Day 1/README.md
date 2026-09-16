@@ -298,38 +298,6 @@ This diagnostic endpoint was introduced specifically for the performance lab and
 
 ---
 
-## Sprint Backlog Update
-
-The following Sprint 3 backlog items were completed during Day 1:
-
-```text
-Enable EF Core query logging in the development environment → Done
-
-Seed the database with 50+ realistic test records → Done
-
-Measure query counts for 2-3 important list endpoints → Done
-
-Identify at least one genuine N+1 problem → Done
-
-Document the confirmed N+1 issue as a backlog task → Done
-```
-
-The confirmed optimization task was added to the backlog:
-
-```text
-Optimize VitalSigns diagnostic N+1 query from 51 queries to a small fixed number
-```
-
-Status:
-
-```text
-To Do
-```
-
-The optimization and before/after comparison remain for the next performance work.
-
----
-
 ## Tools Used
 
 - ASP.NET Core Web API
