@@ -176,14 +176,6 @@ Each Sprint 3 performance task was reviewed against measurable evidence before b
 | Profile index performance | Before-and-after measurements were captured | Done |
 | Validate index usage | SQL Server execution plans confirmed `Index Scan` and `Index Seek` | Done |
 
-## Sprint 4 Backlog Items
-
-The main Sprint 3 performance work was completed successfully.
-
-The following performance improvement opportunity was carried forward to Sprint 4:
-
-- Add an automated regression test to verify that the optimized VitalSigns query does not return to an N+1 query pattern after future code changes.
-
 ## Sprint 3 Retrospective
 
 ### What Went Well
@@ -199,10 +191,6 @@ The following performance improvement opportunity was carried forward to Sprint 
 
 - Some response-time measurements varied between executions, so query counts and execution plans provide more reliable evidence.
 - The current performance checks are mainly manual and are not yet protected by automated regression tests.
-
-### Sprint 4 Action
-
-Add an automated regression test to verify that the optimized VitalSigns query does not return to an N+1 query pattern after future code changes.
 
 ## Tools Used
 
@@ -220,4 +208,3 @@ Add an automated regression test to verify that the optimized VitalSigns query d
 - Visual Studio
 - Git
 - GitHub
-
