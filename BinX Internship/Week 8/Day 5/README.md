@@ -204,52 +204,6 @@ The following performance improvement opportunity was carried forward to Sprint 
 
 Add an automated regression test to verify that the optimized VitalSigns query does not return to an N+1 query pattern after future code changes.
 
-## Sprint 3 Summary
-
-Sprint 3 focused on improving backend performance using measurable evidence.
-
-### N+1 Query Optimization
-
-The diagnostic VitalSigns endpoint was reduced from:
-
-`51 SQL queries`
-
-to:
-
-`1 SQL query`
-
-using eager loading and projection.
-
-### Redis Caching
-
-Redis caching was implemented for:
-
-`GET /api/Medications`
-
-Observed results:
-
-- Cache Miss: `316 ms`
-- Cache Hit: `13 ms`
-
-Cache invalidation was also verified after Medication create, update, and delete operations.
-
-### Database Indexing
-
-Two indexes were added to the `Appointments` table:
-
-- `AppointmentDate`
-- `PatientId + AppointmentDate`
-
-The composite index was validated using SQL Server Actual Execution Plans and produced:
-
-`Index Seek (NonClustered)`
-
-for the filtered appointment query.
-
-### Sprint 3 Result
-
-Sprint 3 successfully introduced measurable query optimization, Redis caching, cache invalidation, database indexing, and performance profiling into the Cardiac Patient Monitoring System API.
-
 ## Tools Used
 
 - C#
