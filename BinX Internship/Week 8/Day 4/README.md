@@ -105,7 +105,6 @@ Observed results:
 | --- | ---: |
 | API Request Time | 101 ms |
 | Postman Response Time | 110 ms |
-| SQL Command Time | approximately 3–5 ms |
 
 ![Composite Index Before - Postman](./01-before-composite-postman.png)
 
@@ -121,7 +120,6 @@ Observed results:
 | --- | ---: |
 | API Request Time | 22 ms |
 | Postman Response Time | 26 ms |
-| SQL Command Time | approximately 1 ms |
 
 ![Composite Index After - Postman](./03-after-composite-postman.png)
 
@@ -143,7 +141,6 @@ Observed results:
 | --- | ---: |
 | API Request Time | 174 ms |
 | Postman Response Time | 186 ms |
-| SQL Command Time | approximately 2 ms |
 
 ![AppointmentDate Index Before - Postman](./05-before-date-postman.png)
 
@@ -159,7 +156,6 @@ Observed results:
 | --- | ---: |
 | API Request Time | 28 ms |
 | Postman Response Time | 31 ms |
-| SQL Command Time | approximately 2–3 ms |
 
 ![AppointmentDate Index After - Postman](./07-after-date-postman.png)
 
