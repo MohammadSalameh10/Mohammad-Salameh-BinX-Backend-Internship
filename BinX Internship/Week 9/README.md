@@ -21,8 +21,6 @@ The complete test suite finished with:
 0 Skipped
 ```
 
-The Sprint 3 improvement action to protect the optimized VitalSigns query against future N+1 regressions was also carried forward into the Sprint 4 backlog.
-
 Day 2 focused on finalizing the API documentation using Swagger/OpenAPI and Postman.
 
 XML documentation output was enabled and connected to Swagger so meaningful endpoint summaries, parameter descriptions, and documented response codes could be displayed directly in the Swagger UI.
@@ -44,6 +42,14 @@ The production environment was configured with a remote SQL Server database, Red
 
 After the manual deployment was confirmed, the GitHub Actions workflow was extended with a Railway deployment job that runs only after the build and automated tests succeed on a push to the `main` branch. The automated deployment was verified successfully in both GitHub Actions and Railway.
 
+Day 5 focused on completing the final Definition of Done audit for the Cardiac Patient Monitoring System API and closing Sprint 4.
+
+The audit verified the live API, Swagger/OpenAPI and Postman documentation, ERD and EF Core migrations, project README requirements, Railway deployment, GitHub Actions CI/CD pipeline, and a successful build with zero compiler warnings.
+
+A documentation gap identified during the audit was corrected by adding the required production environment variables and API documentation paths to the main project README. The checklist was then re-checked and all Definition of Done items passed.
+
+The sprint concluded with the Sprint 4 Review and Retrospective, preparing the completed project for the Week 10 final presentation.
+
 ## Daily Work
 
 | Day   | Topic                                                | Project / Documentation |
@@ -52,6 +58,7 @@ After the manual deployment was confirmed, the GitHub Actions workflow was exten
 | Day 2 | Finalizing API Documentation (Swagger/OpenAPI & Postman) | [View Day 2](./Day%202) |
 | Day 3 | Building the CI/CD Pipeline with GitHub Actions      | [View Day 3](./Day%203) |
 | Day 4 | Deploying to Railway & Extending the CI/CD Pipeline | [View Day 4](./Day%204) |
+| Day 5 | Definition of Done Audit, Sprint Review & Retrospective | [View Day 5](./Day%205) |
 
 ## Week 9 Highlights
 
@@ -190,18 +197,6 @@ The suite currently includes:
 
 The new Day 1 work added `8` integration tests covering authentication, registration, appointment ownership, and role-based authorization.
 
-### Sprint 3 Improvement Action
-
-The following improvement action was carried forward from Sprint 3:
-
-```text
-Add an automated regression test to verify that the optimized VitalSigns query does not return to an N+1 query pattern after future code changes.
-```
-
-This action remains part of the Sprint 4 backlog.
-
-It was not completed during Day 1 because the Day 1 implementation focused first on the highest-risk uncovered integration-test gaps involving authentication, registration, ownership, and role-based authorization.
-
 ### Swagger XML Documentation
 
 - Enabled XML documentation output in the API project.
@@ -290,6 +285,16 @@ The current Sprint 4 backlog includes:
 | Gate deployment on successful build and automated tests | Done |
 | Restrict automated deployment to pushes on `main` | Done |
 | Verify the complete automated CI/CD deployment flow | Done |
+| Complete the final Definition of Done audit | Done |
+| Verify the live API against the Railway public URL | Done |
+| Verify Swagger/OpenAPI and Postman documentation | Done |
+| Verify ERD and EF Core migrations | Done |
+| Review and complete the main project README | Done |
+| Verify the Railway deployment and GitHub Actions CI/CD pipeline | Done |
+| Build the project with zero compiler warnings | Done |
+| Complete the Sprint 4 Review | Done |
+| Complete the Sprint 4 Retrospective | Done |
+| Prepare the project for the Week 10 final presentation | Done |
 
 ### GitHub Actions CI Pipeline
 
@@ -328,6 +333,22 @@ The current Sprint 4 backlog includes:
 - Configured deployment to run only after the build and automated tests succeed.
 - Restricted automated deployment to pushes on the `main` branch.
 - Verified the complete build, test, and Railway deployment flow successfully.
+
+### Definition of Done Audit & Sprint 4 Close-Out
+
+- Completed the final Definition of Done audit against the actual project.
+- Verified that the live Railway API is reachable and working.
+- Confirmed Swagger/OpenAPI documentation is complete.
+- Confirmed the Postman collection includes at least one test per endpoint.
+- Verified the ERD and EF Core migrations.
+- Reviewed the main project README and fixed the remaining documentation gaps.
+- Added production environment variable documentation.
+- Added direct Swagger and OpenAPI documentation paths.
+- Verified the Railway deployment and GitHub Actions CI/CD pipeline.
+- Ran a successful project build with zero compiler warnings.
+- Completed the Sprint 4 Review.
+- Completed the Sprint 4 Retrospective.
+- Closed Phase 3 and prepared the project for the Week 10 final presentation.
 
 ## Tools Used
 
