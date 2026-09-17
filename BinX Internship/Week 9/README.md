@@ -270,13 +270,11 @@ The current Sprint 4 backlog includes:
 | Add role-authorization tests for `GET /api/Patients` | Done |
 | Run the complete automated test suite | Done |
 | Keep all tests passing after the new coverage work | Done |
-| Add automated N+1 regression protection for the optimized VitalSigns query    | Pending |
-| Continue closing remaining high-value endpoint coverage gaps                  | Pending |
-| Finalize Swagger/OpenAPI documentation with XML comments                      | Done    |
-| Add realistic Swagger request and response examples                           | Done    |
-| Finalize the Postman collection and add status-code tests                     | Done    |
-| Review the existing project README against professional documentation needs    | Done    |
-| Complete remaining Sprint 4 project documentation                             | Pending |
+| Finalize Swagger/OpenAPI documentation with XML comments | Done |
+| Add realistic Swagger request and response examples | Done |
+| Finalize the Postman collection and add status-code tests | Done |
+| Review the existing project README against professional documentation needs | Done |
+| Complete remaining Sprint 4 project documentation | Done |
 | Prepare the application for deployment | Done |
 | Create GitHub Actions CI workflow | Done |
 | Trigger the CI pipeline on `push` and `pull_request` | Done |
