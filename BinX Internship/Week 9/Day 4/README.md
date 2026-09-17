@@ -16,6 +16,8 @@ Because the project targets `.NET 10` and Railway could not build the applicatio
 
 The Railway service was then connected to the GitHub repository and deployed successfully.
 
+![Railway Services Online](./railway-services-online.png)
+
 The live API is available at:
 
 `https://mohammad-salameh-binx-backend-internship-production.up.railway.app`
@@ -34,7 +36,11 @@ The following production configuration values were added:
 - `Jwt__Audience`
 - `Jwt__Key`
 
+![Railway Production Variables](./railway-production-variables.png)
+
 A production SQL Server database was created on MonsterASP.NET and remote access was enabled so the Railway-hosted API could connect to it.
+
+![Production SQL Database](./production-sql-database.png)
 
 A Redis service was also created on Railway and linked to the API through a Railway reference variable.
 
@@ -46,6 +52,8 @@ After the production environment was configured and the database migrations were
 
 The live API was tested through Postman using the Railway public URL as the collection `baseUrl`.
 
+![Postman Production Base URL](./postman-production-baseurl.png)
+
 The login endpoint was tested successfully:
 
 `POST /api/Auths/login`
@@ -53,6 +61,8 @@ The login endpoint was tested successfully:
 The request returned:
 
 `200 OK`
+
+![Live API Login Success](./live-api-login-success.png)
 
 and a valid JWT token, confirming that the deployed API could successfully use the production database, ASP.NET Core Identity, and JWT authentication.
 
@@ -101,6 +111,8 @@ The pipeline completed the following sequence successfully:
 3. Run the automated test suite
 4. Run the Railway deployment job
 
+![GitHub Actions CI/CD Success](./github-actions-cicd-success.png)
+
 The deployment job was configured with:
 
 ```yaml
@@ -110,6 +122,8 @@ needs: build
 so the application is not deployed unless the build and tests succeed first.
 
 After fixing the Railway deployment source path, the GitHub Actions workflow completed successfully and Railway confirmed the new deployment as active.
+
+![Railway Deployment Success](./railway-deployment-success.png)
 
 This verified that the project now has a working CI/CD pipeline where a successful push to `main` automatically builds, tests, and deploys the live API.
 
