@@ -309,6 +309,20 @@ Update-Database
 
 ---
 
+## Environment Variables
+
+Production configuration is provided through environment variables instead of storing sensitive values in the repository.
+
+Required variables:
+
+- `ConnectionStrings__DefaultConnection`
+- `ConnectionStrings__Redis`
+- `Jwt__Issuer`
+- `Jwt__Audience`
+- `Jwt__Key`
+
+---
+
 ## Seed Data
 
 The application automatically adds synthetic development data when the project starts.
@@ -934,6 +948,14 @@ Skipped: 0
 ## Swagger
 
 Swagger/OpenAPI is available while running the application in the Development environment and can be used to inspect endpoints and request/response models.
+
+Swagger UI:
+
+`/swagger`
+
+OpenAPI document:
+
+`/openapi/v1.json`
 
 ---
 
