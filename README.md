@@ -15,6 +15,7 @@ This repository contains my daily work, exercises, documentation, and projects c
 | Week&nbsp;7 | Phase 3 Sprint 2 planning, ASP.NET Core Identity integration review, linked Patient registration, EF Core transaction-based registration, domain-specific `PatientId` JWT claims, endpoint-by-endpoint RBAC review, appointment ownership checks, negative authorization testing, custom request timing middleware, cross-cutting concern implementation, middleware pipeline integration, complete authentication and RBAC Postman demo, Sprint 2 backlog close-out, Sprint Retrospective, and Sprint 3 improvement planning | [View Week 7](./BinX%20Internship/Week%207) |
 | Week&nbsp;8 | Phase 3 Sprint 3 planning, Entity Framework Core query performance analysis, EF Core SQL query logging, realistic performance test data seeding, SQL query-count measurement, N+1 query diagnosis, eager loading with `Include`, projection with `Select`, N+1 optimization, `AsSplitQuery` review, Redis caching with `IDistributedCache`, cache-aside implementation, cache expiration, cache invalidation on writes, cache miss and cache hit testing, database indexing, single-column and composite indexes, EF Core index migrations, before-and-after performance profiling, SQL Server Actual Execution Plans, Sprint 3 benchmark demo, Sprint Review, Sprint Retrospective, backlog close-out, and Sprint 4 improvement planning | [View Week 8](./BinX%20Internship/Week%208) |
 | Week&nbsp;9 | Phase 3 Sprint 4 planning, full API endpoint test-coverage audit, risk-based test prioritization, authentication and registration integration testing, patient ownership testing, role-based authorization testing, `WebApplicationFactory` integration tests, EF Core InMemory test configuration, Swagger/OpenAPI XML documentation, realistic request and response examples, Postman collection finalization, automated JWT token storage, per-request status-code tests, GitHub Actions CI pipeline, automated restore/build/test workflow, push and pull-request triggers, deliberate CI failure verification, workflow status badges, Railway deployment, Docker-based `.NET 10` hosting, production SQL Server and Redis configuration, production environment variables, EF Core production migrations, live API verification, automated CI/CD deployment after successful tests on `main`, final Definition of Done audit, project documentation re-check, zero-warning build verification, Sprint 4 Review, Sprint Retrospective, Phase 3 close-out, and Week 10 presentation preparation | [View Week 9](./BinX%20Internship/Week%209) |
+| Week&nbsp;10 | Final repository polish for the team project, GitHub portfolio preparation, commit-history review, cleanup of merged local branches, GitHub profile repository pinning, profile README review, and outlining the structure of the final project presentation | [View Week 10](./BinX%20Internship/Week%2010) |
 
 ## Repository Structure
 
@@ -76,13 +77,16 @@ BinX Internship/
 │   ├── Day 3/
 │   ├── Day 4/
 │   └── Day 5/
-└── Week 9/
+├── Week 9/
+│   ├── README.md
+│   ├── Day 1/
+│   ├── Day 2/
+│   ├── Day 3/
+│   ├── Day 4/
+│   └── Day 5/
+└── Week 10/
     ├── README.md
-    ├── Day 1/
-    ├── Day 2/
-    ├── Day 3/
-    ├── Day 4/
-    └── Day 5/
+    └── Day 1/
 ```
 
 Each week contains a summary README, and each completed day contains its own task documentation and project files when implementation is required.
@@ -922,6 +926,24 @@ Each week contains a summary README, and each completed day contains its own tas
 - Production Redis service
 - Automated deployment after successful CI checks
 - CI/CD deployment restricted to pushes on `main`
+
+### Final Repository & Portfolio Preparation
+
+- Reviewing a team repository as a professional portfolio artifact
+- Searching for leftover debug code and temporary development artifacts
+- Reviewing `TODO` and `FIXME` comments
+- Reviewing commented-out experimental code
+- Cleaning merged local Git branches
+- Preserving unmerged team branches that may still be in active use
+- Verifying a clean Git working tree
+- Reviewing complete Git commit history
+- Evaluating commit messages as part of professional engineering practice
+- Reviewing Conventional Commit-style prefixes such as `feat:`, `fix:`, and `docs:`
+- Pinning the team project repository to a GitHub profile
+- Reviewing an existing GitHub profile README
+- Preparing the outline of the final project presentation
+- Structuring the presentation around the problem, architecture, technical decisions, biggest challenge, performance work, testing, final outcome, and conclusion
+- Deferring the full presentation deck until the team project is fully completed
 
 ## Author
 
