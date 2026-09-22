@@ -20,12 +20,19 @@ The backend automated test suite was executed to collect real project metrics, c
 
 A CV bullet was also prepared using the actual project stack and verified testing results, and a LinkedIn post draft was created for use after the project is fully completed.
 
+Day 3 focused on preparing for the final project presentation through rehearsal planning, live demo preparation, technical Q&A preparation, and presentation timing.
+
+Because the team project and final presentation are still under active development, the final timed rehearsal and complete live demo were documented as preparation plans rather than completed activities.
+
+Five likely technical questions were also prepared with clear answers covering the project architecture, ASP.NET Core and FastAPI integration, response validation, testing approach, scalability considerations, and future improvements.
+
 ## Daily Work
 
 | Day   | Topic                                                     | Documentation           |
 | ----- | --------------------------------------------------------- | ----------------------- |
 | Day 1 | Finalizing the GitHub Repository & Portfolio Presentation | [View Day 1](./Day%201) |
 | Day 2 | Preparing the Case Study & CV/LinkedIn Update             | [View Day 2](./Day%202) |
+| Day 3 | Presentation Rehearsal & Live Demo Practice               | [View Day 3](./Day%203) |
 
 ## Week 10 Highlights
 
@@ -87,6 +94,18 @@ A CV bullet was also prepared using the actual project stack and verified testin
 - Prepared a LinkedIn post draft for the team project.
 - Deferred publishing the final project announcement until the project is fully completed.
 
+### Presentation Rehearsal & Live Demo Preparation
+
+- Prepared a structured rehearsal plan for the final project presentation.
+- Planned to rehearse the complete presentation out loud and measure the total presentation time.
+- Planned to include the live demo as part of the final timed rehearsal.
+- Prepared a fallback strategy using a backup demo recording in case of network, hosting, or service issues.
+- Prepared five likely technical questions with clear and honest answers.
+- Prepared answers covering architecture, ASP.NET Core and FastAPI integration, invalid-response handling, testing, scalability, and future improvements.
+- Planned a second rehearsal and mock Q&A after the final project presentation and demo are ready.
+- Planned to verify the final presentation timing only after the complete project, presentation deck, and live demo are finalized.
+- Kept incomplete rehearsal and demo activities documented as preparation plans because the team project is still under active development.
+
 ## Tools Used
 
 - GitHub
@@ -97,3 +116,5 @@ A CV bullet was also prepared using the actual project stack and verified testin
 - FastAPI
 - xUnit
 - .NET CLI
+- Postman
+- PowerPoint or Google Slides
