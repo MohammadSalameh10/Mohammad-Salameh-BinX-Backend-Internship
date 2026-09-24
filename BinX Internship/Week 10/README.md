@@ -32,6 +32,14 @@ Because the team project and final presentation are still under active developme
 
 A pre-presentation checklist was prepared to verify the deployed API, presentation file, Postman collection, demo flow, and backup recording before the final session. A structured approach was also prepared for answering technical questions honestly and documenting any questions or genuine project gaps after the presentation.
 
+Day 5 focused on reviewing the final evaluation structure of the 10-week BinX Backend Internship and preparing for the final code review, official feedback, certification outcome, and program wrap-up.
+
+The final grade is based on technical skill development, sprint and deliverable quality, professionalism and consistency, and the final presentation.
+
+Because the final code review, official evaluation scores, written feedback, and certification result are provided after the final assessment process, these items were documented as preparation plans until the official results are received.
+
+The day also included preparing a personal reflection on the full 10-week internship experience and the engineering habits developed throughout the program.
+
 ## Daily Work
 
 | Day   | Topic                                                     | Documentation           |
@@ -40,6 +48,7 @@ A pre-presentation checklist was prepared to verify the deployed API, presentati
 | Day 2 | Preparing the Case Study & CV/LinkedIn Update             | [View Day 2](./Day%202) |
 | Day 3 | Presentation Rehearsal & Live Demo Practice               | [View Day 3](./Day%203) |
 | Day 4 | Final Presentation to BinX Tech Staff                     | [View Day 4](./Day%204) |
+| Day 5 | Code Review, Feedback & Certification                     | [View Day 5](./Day%205) |
 
 ## Week 10 Highlights
 
@@ -130,6 +139,24 @@ A pre-presentation checklist was prepared to verify the deployed API, presentati
 - Prepared a structure for recording the questions asked immediately after the presentation.
 - Prepared a follow-up structure for documenting genuine technical or presentation gaps revealed during the session.
 - Kept the actual final presentation, live demo, and Q&A documented as planned activities until they are completed.
+
+### Final Evaluation, Code Review & Certification Preparation
+
+- Reviewed the four weighted evaluation criteria used for the final program grade.
+- Confirmed that Technical Skill Development represents `40%` of the final grade.
+- Confirmed that Sprint / Deliverable Quality represents `30%`.
+- Confirmed that Professionalism & Consistency represents `20%`.
+- Confirmed that the Final Presentation represents `10%`.
+- Reviewed the final code review scope for the complete capstone project.
+- Prepared for review areas including architecture, code quality, automated testing, security practices, error handling, and service integration.
+- Prepared a structure for documenting the official final scores after they are received.
+- Reviewed the minimum direct passing grade of `70/100`.
+- Reviewed the Outstanding, Pass, Conditional Pass, and Does Not Pass outcomes.
+- Prepared a section for documenting the official mentor and review-panel feedback.
+- Prepared a section for documenting the final certification outcome and any required next steps.
+- Kept the final grade, certification result, and official feedback undocumented until they are formally received.
+- Prepared a personal reflection covering the full 10-week internship experience.
+- Reflected on evidence-based engineering, testing before shipping, code quality, security, teamwork, and continuous improvement.
 
 ## Tools Used
 
